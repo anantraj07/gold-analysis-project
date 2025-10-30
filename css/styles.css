@@ -1209,3 +1209,368 @@ button:focus {
 .skip-link:focus {
     top: 0;
 }
+/* ============================================
+   BUG FIXES - Add to END of styles.css
+   ============================================ */
+
+/* Fix 1: Footer Links Clickability */
+.footer {
+    background: var(--light-bg);
+    border-top: 2px solid var(--primary-gold);
+    padding: 2rem;
+    margin-top: 3rem;
+    position: relative;
+    z-index: 1;
+    pointer-events: auto;
+}
+
+.footer * {
+    pointer-events: auto;
+}
+
+.footer-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    margin-bottom: 2rem;
+    position: relative;
+    z-index: 2;
+}
+
+.footer-section {
+    position: relative;
+    z-index: 3;
+}
+
+.footer-section h3 {
+    color: var(--primary-gold);
+    margin-bottom: 1rem;
+    cursor: default;
+}
+
+.footer-section p {
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.footer-section a {
+    color: var(--accent-cyan);
+    text-decoration: none;
+    margin-bottom: 0.5rem;
+    display: block;
+    font-size: 0.9rem;
+    cursor: pointer !important;
+    pointer-events: auto !important;
+    position: relative;
+    z-index: 100;
+    transition: all 0.3s ease;
+}
+
+.footer-section a:hover {
+    color: var(--primary-gold);
+    text-decoration: underline;
+    transform: translateX(5px);
+}
+
+.footer-section a:active {
+    color: var(--dark-gold);
+}
+
+.footer-bottom {
+    border-top: 1px solid var(--border-color);
+    padding-top: 1.5rem;
+    text-align: center;
+    color: var(--text-muted);
+    position: relative;
+    z-index: 2;
+}
+
+.footer-bottom p {
+    margin: 0.5rem 0;
+    font-size: 0.85rem;
+}
+
+.footer-bottom strong {
+    color: var(--primary-gold);
+}
+
+/* Fix 2: Theme Toggle Button Improvements */
+.theme-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: var(--primary-gold);
+    border: 2px solid var(--dark-gold);
+    cursor: pointer !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+    transition: all 0.3s ease;
+    pointer-events: auto !important;
+}
+
+.theme-toggle:hover {
+    transform: scale(1.1) rotate(15deg);
+    box-shadow: 0 6px 20px rgba(255, 215, 0, 0.5);
+    background: var(--dark-gold);
+}
+
+.theme-toggle:active {
+    transform: scale(0.95) rotate(0deg);
+}
+
+.theme-icon {
+    font-size: 24px;
+    line-height: 1;
+    display: inline-block;
+    pointer-events: none;
+}
+
+/* Fix 3: Ensure all interactive elements are clickable */
+button, a, input, select, textarea {
+    cursor: pointer;
+    pointer-events: auto;
+}
+
+button {
+    border: none;
+    background: none;
+    cursor: pointer;
+}
+
+/* Fix 4: Mobile menu fixes */
+.mobile-menu-toggle {
+    display: none;
+    flex-direction: column;
+    background: none;
+    border: none;
+    cursor: pointer !important;
+    gap: 5px;
+    pointer-events: auto !important;
+    z-index: 1001;
+}
+
+.mobile-menu-toggle span {
+    width: 25px;
+    height: 3px;
+    background: var(--primary-gold);
+    border-radius: 3px;
+    transition: all 0.3s ease;
+}
+
+/* Fix 5: Navigation links */
+.nav-link {
+    color: var(--text-light);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    position: relative;
+    cursor: pointer !important;
+    pointer-events: auto !important;
+}
+
+/* Fix 6: Chart containers proper sizing */
+.chart-container {
+    background: rgba(255, 215, 0, 0.03);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    min-height: 400px;
+    position: relative;
+}
+
+.chart-container canvas {
+    max-width: 100%;
+    height: auto !important;
+}
+
+/* Fix 7: Ensure proper light theme styles */
+body.light-theme {
+    --dark-bg: #ffffff;
+    --light-bg: #f8f9fa;
+    --text-light: #1a1a1a;
+    --text-muted: #666666;
+    --accent-cyan: #0066cc;
+    --accent-orange: #cc6600;
+    --border-color: #dddddd;
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+}
+
+body.light-theme .navbar {
+    background: rgba(248, 249, 250, 0.95);
+}
+
+body.light-theme .price-table {
+    background: rgba(255, 255, 255, 0.5);
+}
+
+body.light-theme .theme-toggle {
+    background: var(--dark-gold);
+    border-color: var(--primary-gold);
+}
+
+/* Fix 8: Smooth transitions */
+body, 
+body * {
+    transition: background-color 0.3s ease, 
+                color 0.3s ease, 
+                border-color 0.3s ease;
+}
+
+/* Fix 9: Prevent text selection on buttons */
+.theme-toggle,
+.mobile-menu-toggle,
+.btn,
+.tab-btn {
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+/* Fix 10: Better responsive layout */
+@media (max-width: 768px) {
+    .theme-toggle {
+        top: 15px;
+        right: 15px;
+        width: 45px;
+        height: 45px;
+        font-size: 20px;
+    }
+    
+    .mobile-menu-toggle {
+        display: flex;
+    }
+    
+    .footer-section a {
+        padding: 0.5rem 0;
+    }
+}
+
+/* Fix 11: Print styles */
+@media print {
+    .theme-toggle,
+    .mobile-menu-toggle {
+        display: none !important;
+    }
+}
+
+/* Fix 12: Focus states for accessibility */
+.theme-toggle:focus,
+.nav-link:focus,
+.footer-section a:focus,
+button:focus,
+a:focus {
+    outline: 2px solid var(--accent-cyan);
+    outline-offset: 2px;
+}
+
+/* Fix 13: Loading state for charts */
+.chart-container.loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+}
+
+.chart-container.loading::after {
+    content: "Loading chart...";
+    color: var(--text-muted);
+    font-size: 1.1rem;
+}
+
+/* NEW: Inflation Correlation Section Styles */
+.inflation-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.correlation-insight {
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(0, 255, 0, 0.05) 100%);
+    border-left: 4px solid var(--primary-gold);
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin: 1.5rem 0;
+}
+
+.correlation-insight h4 {
+    color: var(--primary-gold);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.correlation-insight ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+.correlation-insight li {
+    margin-bottom: 0.75rem;
+    padding-left: 1.5rem;
+    position: relative;
+}
+
+.correlation-insight li::before {
+    content: "✓";
+    color: #00ff00;
+    position: absolute;
+    left: 0;
+    font-weight: bold;
+}
+
+.statistical-details {
+    background: rgba(255, 215, 0, 0.05);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.statistical-details h4 {
+    color: var(--accent-cyan);
+    margin-bottom: 1rem;
+}
+
+.statistical-details p {
+    margin: 0.5rem 0;
+    line-height: 1.8;
+}
+
+.statistical-details strong {
+    color: var(--primary-gold);
+}
+
+/* Animation for new charts appearing */
+@keyframes fadeInChart {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.chart-container {
+    animation: fadeInChart 0.5s ease-out;
+}
+
+/* Ensure charts are visible */
+canvas {
+    display: block !important;
+    max-width: 100% !important;
+    height: auto !important;
+}
