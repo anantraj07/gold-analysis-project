@@ -1081,8 +1081,8 @@ body {
     }
 
     .theme-toggle {
-        top: 15px;
-        right: 15px;
+        bottom: 20px;       /* moved from top to bottom */
+        left: 20px; 
         width: 45px;
         height: 45px;
         font-size: 20px;
@@ -1298,8 +1298,8 @@ button:focus {
 /* Fix 2: Theme Toggle Button Improvements */
 .theme-toggle {
     position: fixed;
-    top: 20px;
-    right: 20px;
+   bottom: 20px;       /* moved from top to bottom */
+    left: 20px; 
     z-index: 1000;
     width: 50px;
     height: 50px;
@@ -1439,8 +1439,8 @@ body * {
 /* Fix 10: Better responsive layout */
 @media (max-width: 768px) {
     .theme-toggle {
-        top: 15px;
-        right: 15px;
+        bottom: 20px;       /* moved from top to bottom */
+        left: 20px; 
         width: 45px;
         height: 45px;
         font-size: 20px;
