@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Methodology | Gold Price Analysis</title>
+    <meta name="description" content="Research methodology, data sources, and statistical methods used in this project">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- Theme Toggle Button -->
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+        <span class="theme-icon">🌙</span>
+    </button>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <span class="brand-icon">💰</span>
+                <span class="brand-text">Gold Analysis 2025</span>
+            </div>
+            
+            <button class="mobile-menu-toggle" id="mobileMenuToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="index.html" class="nav-link">Home</a></li>
+                <li><a href="statistics.html" class="nav-link">Statistics</a></li>
+                <li><a href="survey.html" class="nav-link">Survey</a></li>
+                <li><a href="methodology.html" class="nav-link active">Methodology</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="hero">
+        <div class="container">
+            <h1 class="hero-title">Research Methodology</h1>
+            <p class="hero-subtitle">Comprehensive Documentation of Methods & Approach</p>
+            <p class="hero-info">Statistical Methods I | Academic Year 2024-25</p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <section class="content-section">
+        <div class="container">
+            
+            <h2 class="section-title">📋 Executive Summary</h2>
+            <div class="content-box">
+                <p>This research project employs a mixed-methods approach combining quantitative statistical analysis of historical gold prices with qualitative insights from investor surveys. The study examines gold price behavior over a 33-month period (January 2023 - October 2025) using both descriptive and inferential statistical techniques to evaluate gold's role as an inflation hedge and understand investor attitudes toward gold investment.</p>
+            </div>
+
+            <h2 class="section-title">🎯 Research Objectives</h2>
+            <div class="objectives-grid">
+                <div class="objective-card">
+                    <div class="objective-num">1</div>
+                    <h3>Descriptive Analysis</h3>
+                    <p>Characterize gold price distribution and volatility patterns using central tendency measures, dispersion measures, and distribution shape analysis.</p>
+                </div>
+
+                <div class="objective-card">
+                    <div class="objective-num">2</div>
+                    <h3>Trend Analysis</h3>
+                    <p>Identify and quantify long-term price trends using linear regression and time-series decomposition techniques.</p>
+                </div>
+
+                <div class="objective-card">
+                    <div class="objective-num">3</div>
+                    <h3>Inflation Hedge Testing</h3>
+                    <p>Statistically test the hypothesis that gold prices correlate with inflation using correlation analysis and hypothesis testing.</p>
+                </div>
+
+                <div class="objective-card">
+                    <div class="objective-num">4</div>
+                    <h3>Market Relationships</h3>
+                    <p>Examine relationships between gold prices and other economic variables (USD index, interest rates) using multivariate analysis.</p>
+                </div>
+
+                <div class="objective-card">
+                    <div class="objective-num">5</div>
+                    <h3>Investor Attitudes</h3>
+                    <p>Assess investor perceptions, investment intentions, and demographic factors through survey-based research.</p>
+                </div>
+
+                <div class="objective-card">
+                    <div class="objective-num">6</div>
+                    <h3>Volatility Dynamics</h3>
+                    <p>Analyze how volatility has evolved over time and test for structural breaks in price behavior.</p>
+                </div>
+            </div>
+
+            <h2 class="section-title">📊 Data Collection & Sources</h2>
+            
+            <div class="methodology-section">
+                <h3>Primary Data: Historical Price Data</h3>
+                <div class="method-box">
+                    <p><strong>Source:</strong> Indian Bullion Association, RBI Database, and Financial Websites</p>
+                    <p><strong>Period:</strong> January 3, 2023 - October 2, 2025</p>
+                    <p><strong>Frequency:</strong> Daily closing prices (trading days only)</p>
+                    <p><strong>Data Points:</strong> 643 observations</p>
+                    <p><strong>Variables:</strong></p>
+                    <ul>
+                        <li>Gold Price (₹ per 10 grams 24K)</li>
+                        <li>USD/INR Exchange Rate</li>
+                        <li>Gold Price in USD per troy ounce</li>
+                    </ul>
+                    <p><strong>Quality Assurance:</strong> Data verified for consistency, checked for missing values (none found), validated against multiple sources.</p>
+                </div>
+
+                <h3>Secondary Data: Economic Indicators</h3>
+                <div class="method-box">
+                    <p><strong>CPI Inflation:</strong> Reserve Bank of India official reports</p>
+                    <p><strong>Interest Rates:</strong> RBI Repo Rate and Fed Rate (official sources)</p>
+                    <p><strong>Exchange Rate:</strong> Daily RBI published rates</p>
+                    <p><strong>Market Data:</strong> Bloomberg, Reuters, and financial databases</p>
+                </div>
+
+                <h3>Primary Data: Survey</h3>
+                <div class="method-box">
+                    <p><strong>Method:</strong> Online questionnaire (Google Forms)</p>
+                    <p><strong>Target Respondents:</strong> Individuals interested in or holding gold investments</p>
+                    <p><strong>Sample Size (Target):</strong> 500 responses</p>
+                    <p><strong>Current Responses:</strong> 15 (3% of target)</p>
+                    <p><strong>Questions:</strong> 20 questions (multiple choice, rating scales, open-ended)</p>
+                    <p><strong>Duration:</strong> 3-5 minutes per respondent</p>
+                    <p><strong>Distribution:</strong> Social media, email lists, academic networks</p>
+                </div>
+            </div>
+
+            <h2 class="section-title">🔬 Statistical Methods</h2>
+            
+            <div class="methodology-section">
+                <h3>Descriptive Statistics</h3>
+                <div class="method-box">
+                    <p><strong>Measures of Central Tendency:</strong></p>
+                    <ul>
+                        <li>Mean (arithmetic average)</li>
+                        <li>Median (50th percentile)</li>
+                        <li>Mode (most frequent value)</li>
+                    </ul>
+                    <p><strong>Measures of Dispersion:</strong></p>
+                    <ul>
+                        <li>Standard Deviation (σ)</li>
+                        <li>Variance (σ²)</li>
+                        <li>Coefficient of Variation (CV = σ/μ)</li>
+                        <li>Range and Interquartile Range (IQR)</li>
+                    </ul>
+                    <p><strong>Distribution Characteristics:</strong></p>
+                    <ul>
+                        <li>Skewness (distribution asymmetry)</li>
+                        <li>Kurtosis (distribution tailedness)</li>
+                        <li>Percentiles and Quartiles</li>
+                    </ul>
+                </div>
+
+                <h3>Hypothesis Testing</h3>
+                <div class="method-box">
+                    <p><strong>Hypothesis 1: Gold as Inflation Hedge</strong></p>
+                    <ul>
+                        <li>Test: Pearson Correlation Coefficient</li>
+                        <li>H₀: ρ = 0 (no correlation with inflation)</li>
+                        <li>H₁: ρ > 0 (positive correlation)</li>
+                        <li>Significance Level: α = 0.05</li>
+                    </ul>
+                    <p><strong>Hypothesis 2: Trend Existence</strong></p>
+                    <ul>
+                        <li>Test: Linear Regression Analysis</li>
+                        <li>H₀: β₁ = 0 (no trend)</li>
+                        <li>H₁: β₁ ≠ 0 (significant trend)</li>
+                        <li>Method: Ordinary Least Squares (OLS)</li>
+                    </ul>
+                    <p><strong>Hypothesis 3: Volatility Changes</strong></p>
+                    <ul>
+                        <li>Test: Levene's Test for Equality of Variances</li>
+                        <li>H₀: σ₁² = σ₂² = σ₃² (equal variances across periods)</li>
+                        <li>H₁: Not all variances are equal</li>
+                    </ul>
+                    <p><strong>Hypothesis 4: USD Index Relationship</strong></p>
+                    <ul>
+                        <li>Test: Pearson Correlation (negative expected)</li>
+                        <li>H₀: ρ = 0</li>
+                        <li>H₁: ρ < 0 (inverse relationship)</li>
+                    </ul>
+                </div>
+
+                <h3>Inferential Statistics</h3>
+                <div class="method-box">
+                    <p><strong>Confidence Intervals (95% and 99%):</strong></p>
+                    <ul>
+                        <li>CI for population mean: X̄ ± t(α/2) × (s/√n)</li>
+                        <li>CI for population proportion</li>
+                        <li>CI for regression slope</li>
+                    </ul>
+                    <p><strong>Regression Analysis:</strong></p>
+                    <ul>
+                        <li>Model: Y = β₀ + β₁X + ε</li>
+                        <li>Estimation: OLS method</li>
+                        <li>Diagnostics: R², Adjusted R², F-statistic</li>
+                        <li>Residual Analysis: Normality, homoscedasticity, autocorrelation</li>
+                    </ul>
+                    <p><strong>Correlation & Covariance:</strong></p>
+                    <ul>
+                        <li>Pearson Correlation Coefficient (r)</li>
+                        <li>Spearman Rank Correlation</li>
+                        <li>Correlation matrix analysis</li>
+                    </ul>
+                </div>
+
+                <h3>Normality Testing</h3>
+                <div class="method-box">
+                    <p><strong>Shapiro-Wilk Test:</strong> Tests if data follows normal distribution</p>
+                    <ul>
+                        <li>H₀: Data is normally distributed</li>
+                        <li>p-value &gt; 0.05: Fail to reject (approximately normal)</li>
+                        <li>p-value &lt; 0.05: Reject (non-normal)</li>
+                    </ul>
+                    <p><strong>Q-Q Plot:</strong> Visual assessment of normality</p>
+                    <p><strong>Histogram Analysis:</strong> Distribution shape examination</p>
+                </div>
+            </div>
+
+            <h2 class="section-title">📈 Time Series Analysis</h2>
+            <div class="methodology-section">
+                <div class="method-box">
+                    <p><strong>Decomposition:</strong> Separation of trend, seasonal, and random components</p>
+                    <p><strong>Trend Analysis:</strong> Linear and polynomial regression fitting</p>
+                    <p><strong>Seasonality:</strong> Detection of seasonal patterns (quarterly, yearly)</p>
+                    <p><strong>Volatility Clustering:</strong> Analysis of volatility persistence</p>
+                    <p><strong>Moving Averages:</strong> 30-day and 90-day moving averages for smoothing</p>
+                    <p><strong>Autocorrelation:</strong> ACF/PACF analysis for serial dependence</p>
+                </div>
+            </div>
+
+            <h2 class="section-title">🎓 Sampling Methodology (Survey)</h2>
+            <div class="methodology-section">
+                <div class="method-box">
+                    <p><strong>Sampling Method:</strong> Convenience sampling (non-probability)</p>
+                    <p><strong>Population:</strong> Individuals with interest in or knowledge of gold investment</p>
+                    <p><strong>Sample Size Strategy:</strong> Target 500+ responses for statistical power</p>
+                    <p><strong>Sampling Error:</strong> Estimated margin of error at 4.4% (95% CI, 500 responses)</p>
+                    <p><strong>Distribution Channels:</strong></p>
+                    <ul>
+                        <li>Social media platforms (LinkedIn, Twitter, Facebook)</li>
+                        <li>Financial communities and forums</li>
+                        <li>Email lists and academic networks</li>
+                        <li>Project website direct link</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h2 class="section-title">✅ Data Quality & Limitations</h2>
+            <div class="methodology-section">
+                <h3>Quality Measures</h3>
+                <div class="method-box">
+                    <p><strong>Verification:</strong> All data points cross-referenced with multiple sources</p>
+                    <p><strong>Completeness:</strong> 643 complete price records with no missing values</p>
+                    <p><strong>Accuracy:</strong> Price data accurate to nearest rupee</p>
+                    <p><strong>Consistency:</strong> Data format standardized across entire dataset</p>
+                </div>
+
+                <h3>Limitations</h3>
+                <div class="method-box">
+                    <p><strong>Sample Size:</strong> Survey currently has 15 responses (3% of target)</p>
+                    <p><strong>Sampling Bias:</strong> Convenience sample may not represent general population</p>
+                    <p><strong>Time Period:</strong> 33-month analysis may not capture long-term patterns</p>
+                    <p><strong>External Factors:</strong> Geopolitical events and policy changes not explicitly modeled</p>
+                    <p><strong>Survivorship Bias:</strong> Analysis covers only historical completed periods</p>
+                </div>
+            </div>
+
+            <h2 class="section-title">🖥️ Tools & Technology</h2>
+            <div class="methodology-section">
+                <div class="method-box">
+                    <p><strong>Data Storage:</strong> CSV format with validation</p>
+                    <p><strong>Analysis Tools:</strong> Excel, Python (NumPy, Pandas, SciPy)</p>
+                    <p><strong>Visualization:</strong> Chart.js for interactive charts, HTML5/CSS3</p>
+                    <p><strong>Web Platform:</strong> HTML5, CSS3, Vanilla JavaScript</p>
+                    <p><strong>Survey Platform:</strong> Google Forms (automated data collection)</p>
+                    <p><strong>Statistical Tests:</strong> R functions, Python SciPy library</p>
+                </div>
+            </div>
+
+            <h2 class="section-title">📐 Formula Reference</h2>
+            <div class="formulas-grid">
+                <div class="formula-card">
+                    <h4>Mean</h4>
+                    <p>μ = (Σx) / n</p>
+                </div>
+                <div class="formula-card">
+                    <h4>Standard Deviation</h4>
+                    <p>σ = √(Σ(x-μ)² / n)</p>
+                </div>
+                <div class="formula-card">
+                    <h4>Pearson Correlation</h4>
+                    <p>r = Cov(X,Y) / (σₓ × σᵧ)</p>
+                </div>
+                <div class="formula-card">
+                    <h4>Linear Regression</h4>
+                    <p>Y = β₀ + β₁X + ε</p>
+                </div>
+                <div class="formula-card">
+                    <h4>Coefficient of Variation</h4>
+                    <p>CV = (σ / μ) × 100%</p>
+                </div>
+                <div class="formula-card">
+                    <h4>Confidence Interval</h4>
+                    <p>CI = X̄ ± t(α/2) × (s/√n)</p>
+                </div>
+            </div>
+
+            <h2 class="section-title">📚 Ethical Considerations</h2>
+            <div class="methodology-section">
+                <div class="method-box">
+                    <p><strong>Data Privacy:</strong> Survey responses collected anonymously with no personal identifiers</p>
+                    <p><strong>Informed Consent:</strong> Participants informed about survey purpose and data usage</p>
+                    <p><strong>Transparency:</strong> All methods documented and disclosed in this section</p>
+                    <p><strong>Academic Integrity:</strong> Project conducted for educational purposes only</p>
+                    <p><strong>Disclaimer:</strong> Analysis is not financial advice and should not be used for investment decisions</p>
+                </div>
+            </div>
+
+            <h2 class="section-title">📖 References & Further Reading</h2>
+            <div class="methodology-section">
+                <div class="method-box">
+                    <p><strong>Statistical Methods:</strong> Descriptive and Inferential Statistics by Anderson, Sweeney & Williams</p>
+                    <p><strong>Time Series Analysis:</strong> Time Series Analysis and Its Applications by Shumway & Stoffer</p>
+                    <p><strong>Research Design:</strong> Research Design and Statistical Analysis by Keppel & Wickens</p>
+                    <p><strong>Gold Market:</strong> World Gold Council Reports and Research Papers</p>
+                    <p><strong>Economic Data:</strong> Reserve Bank of India Official Reports and Databases</p>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Project Info</h3>
+                    <p>Statistical Methods I</p>
+                    <p>Research Project</p>
+                    <p>Mixed Methods Approach</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <a href="index.html">Home</a>
+                    <a href="statistics.html">Statistics</a>
+                    <a href="survey.html">Survey</a>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Documentation</h3>
+                    <p>Complete Methodology</p>
+                    <p>Data Sources</p>
+                    <p>Statistical Methods</p>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p><strong>⚠️ For Academic Purposes Only • Not Financial Advice</strong></p>
+                <p>© 2025 Gold Price Analysis Project</p>
+                <p>Research conducted with academic rigor and transparency</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/theme.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
