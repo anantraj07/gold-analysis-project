@@ -1,0 +1,1211 @@
+/* ============================================
+   GOLD PRICE ANALYSIS - COMPLETE STYLESHEET
+   ============================================ */
+
+:root {
+    --primary-gold: #FFD700;
+    --dark-gold: #DAA520;
+    --dark-bg: #0a0a0a;
+    --light-bg: #1a1a1a;
+    --text-light: #ffffff;
+    --text-muted: #888888;
+    --accent-cyan: #00ffff;
+    --accent-orange: #FFA500;
+    --border-color: #333333;
+}
+
+body.light-theme {
+    --dark-bg: #ffffff;
+    --light-bg: #f8f9fa;
+    --text-light: #1a1a1a;
+    --text-muted: #666666;
+    --accent-cyan: #0066cc;
+    --accent-orange: #cc6600;
+    --border-color: #dddddd;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, var(--dark-bg) 0%, var(--light-bg) 100%);
+    color: var(--text-light);
+    line-height: 1.6;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* ============================================
+   THEME TOGGLE
+   ============================================ */
+
+.theme-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: var(--primary-gold);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+    transition: all 0.3s ease;
+}
+
+.theme-toggle:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(255, 215, 0, 0.5);
+}
+
+.theme-toggle:active {
+    transform: scale(0.95);
+}
+
+/* ============================================
+   NAVIGATION
+   ============================================ */
+
+.navbar {
+    background: rgba(26, 26, 26, 0.95);
+    border-bottom: 2px solid var(--primary-gold);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(10px);
+}
+
+.nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 20px;
+    font-weight: bold;
+    color: var(--primary-gold);
+}
+
+.brand-icon {
+    font-size: 28px;
+}
+
+.nav-menu {
+    display: flex;
+    list-style: none;
+    gap: 2rem;
+}
+
+.nav-link {
+    color: var(--text-light);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    position: relative;
+}
+
+.nav-link:hover,
+.nav-link.active {
+    color: var(--primary-gold);
+}
+
+.nav-link.active::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--primary-gold);
+}
+
+.mobile-menu-toggle {
+    display: none;
+    flex-direction: column;
+    background: none;
+    border: none;
+    cursor: pointer;
+    gap: 5px;
+}
+
+.mobile-menu-toggle span {
+    width: 25px;
+    height: 3px;
+    background: var(--primary-gold);
+    border-radius: 3px;
+    transition: all 0.3s ease;
+}
+
+/* ============================================
+   HERO SECTION
+   ============================================ */
+
+.hero {
+    background: linear-gradient(135deg, var(--light-bg) 0%, rgba(255, 215, 0, 0.1) 100%);
+    padding: 4rem 2rem;
+    text-align: center;
+    border-bottom: 2px solid var(--primary-gold);
+}
+
+.hero-title {
+    font-size: 3rem;
+    color: var(--primary-gold);
+    margin-bottom: 1rem;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.hero-subtitle {
+    font-size: 1.5rem;
+    color: var(--text-light);
+    margin-bottom: 0.5rem;
+}
+
+.hero-info,
+.hero-course {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    margin-bottom: 0.25rem;
+}
+
+.hero-cta {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 2rem;
+    flex-wrap: wrap;
+}
+
+/* ============================================
+   BUTTONS
+   ============================================ */
+
+.btn {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-size: 0.95rem;
+}
+
+.btn-primary {
+    background: var(--primary-gold);
+    color: #000;
+}
+
+.btn-primary:hover {
+    background: var(--dark-gold);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
+}
+
+.btn-secondary {
+    background: transparent;
+    color: var(--primary-gold);
+    border: 2px solid var(--primary-gold);
+}
+
+.btn-secondary:hover {
+    background: var(--primary-gold);
+    color: #000;
+}
+
+.btn-large {
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+}
+
+/* ============================================
+   CONTAINER & SECTIONS
+   ============================================ */
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+.stats-section {
+    padding: 3rem 2rem;
+}
+
+.stats-section.alt-bg {
+    background: rgba(255, 215, 0, 0.05);
+    border-top: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.section-title {
+    font-size: 2rem;
+    color: var(--primary-gold);
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.section-subtitle {
+    text-align: center;
+    color: var(--text-muted);
+    margin-bottom: 2rem;
+}
+
+/* ============================================
+   CURRENT PRICES BANNER
+   ============================================ */
+
+.current-prices {
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, transparent 100%);
+    padding: 2rem;
+    border: 2px solid var(--primary-gold);
+    border-radius: 10px;
+    margin-bottom: 2rem;
+}
+
+.price-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.price-card {
+    background: rgba(255, 215, 0, 0.05);
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1.5rem;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.price-card:hover {
+    border-color: var(--primary-gold);
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(255, 215, 0, 0.2);
+}
+
+.price-card.highlight {
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 215, 0, 0.05) 100%);
+    border-color: var(--primary-gold);
+}
+
+.price-label {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.price-value {
+    font-size: 2rem;
+    color: var(--primary-gold);
+    font-weight: bold;
+    margin: 0.5rem 0;
+}
+
+.price-change {
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+.price-change.positive {
+    color: #00ff00;
+}
+
+.price-change.negative {
+    color: #ff4444;
+}
+
+.price-change.neutral {
+    color: var(--text-muted);
+}
+
+.price-subtext {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+/* ============================================
+   GRID LAYOUTS
+   ============================================ */
+
+.stats-grid,
+.survey-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: rgba(255, 215, 0, 0.05);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1.5rem;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    border-color: var(--primary-gold);
+    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.15);
+    transform: translateY(-3px);
+}
+
+.stat-card.highlight {
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 215, 0, 0.05) 100%);
+    border-color: var(--primary-gold);
+}
+
+.stat-icon {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.stat-label {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.5rem;
+}
+
+.stat-value {
+    font-size: 1.8rem;
+    color: var(--primary-gold);
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+.stat-value.negative {
+    color: #ff6b6b;
+}
+
+.stat-subtext {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+/* ============================================
+   SURVEY SPECIFIC
+   ============================================ */
+
+.survey-stat-card {
+    background: rgba(255, 215, 0, 0.05);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1.5rem;
+    text-align: center;
+}
+
+.stat-number {
+    font-size: 2.5rem;
+    color: var(--primary-gold);
+    font-weight: bold;
+}
+
+.stat-progress {
+    background: var(--primary-gold);
+    height: 4px;
+    border-radius: 2px;
+    margin-top: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    color: #000;
+}
+
+.survey-charts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.chart-container {
+    background: rgba(255, 215, 0, 0.03);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1.5rem;
+}
+
+.chart-container h3 {
+    color: var(--primary-gold);
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+}
+
+.chart-container canvas {
+    max-width: 100%;
+    height: auto;
+}
+
+.chart-legend {
+    margin-top: 1rem;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.chart-legend p {
+    margin: 0.3rem 0;
+}
+
+/* ============================================
+   TABS
+   ============================================ */
+
+.tabs {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid var(--border-color);
+    flex-wrap: wrap;
+}
+
+.tab-btn {
+    padding: 0.75rem 1.5rem;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-weight: 600;
+    border-bottom: 3px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.tab-btn:hover {
+    color: var(--primary-gold);
+}
+
+.tab-btn.active {
+    color: var(--primary-gold);
+    border-bottom-color: var(--primary-gold);
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ============================================
+   TABLES
+   ============================================ */
+
+.table-container {
+    overflow-x: auto;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+.price-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.price-table thead {
+    background: rgba(255, 215, 0, 0.1);
+    border-bottom: 2px solid var(--primary-gold);
+}
+
+.price-table th {
+    padding: 1rem;
+    text-align: left;
+    color: var(--primary-gold);
+    font-weight: 600;
+}
+
+.price-table td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.price-table tbody tr:hover {
+    background: rgba(255, 215, 0, 0.05);
+}
+
+.price-table .positive {
+    color: #00ff00;
+}
+
+.price-table .negative {
+    color: #ff6b6b;
+}
+
+/* ============================================
+   BOXES & CARDS
+   ============================================ */
+
+.analysis-box,
+.content-box,
+.method-box,
+.insight-box {
+    background: rgba(255, 215, 0, 0.03);
+    border-left: 4px solid var(--primary-gold);
+    border-radius: 5px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+}
+
+.analysis-box h4,
+.insight-box h4 {
+    color: var(--primary-gold);
+    margin-bottom: 1rem;
+}
+
+.analysis-box ul,
+.insight-box ul,
+.method-box ul {
+    margin-left: 1.5rem;
+    margin-top: 0.75rem;
+}
+
+.analysis-box li,
+.method-box li {
+    margin-bottom: 0.5rem;
+    color: var(--text-light);
+}
+
+/* ============================================
+   HYPOTHESIS & HYPOTHESIS CARDS
+   ============================================ */
+
+.hypothesis-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.hypothesis-card {
+    background: rgba(255, 215, 0, 0.05);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.hypothesis-card:hover {
+    border-color: var(--primary-gold);
+    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.1);
+}
+
+.hypothesis-card h3 {
+    color: var(--primary-gold);
+    margin-bottom: 1rem;
+    font-size: 1.05rem;
+}
+
+.hypothesis-content p {
+    margin: 0.5rem 0;
+    font-size: 0.9rem;
+}
+
+.result {
+    background: rgba(255, 215, 0, 0.1);
+    border-left: 3px solid #00ff00;
+    padding: 1rem;
+    border-radius: 4px;
+    margin-top: 1rem;
+}
+
+.result p {
+    margin: 0.35rem 0;
+    color: var(--text-light);
+}
+
+/* ============================================
+   INSIGHTS & OBJECTIVES
+   ============================================ */
+
+.insights-grid,
+.objectives-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.insight-card,
+.objective-card {
+    background: rgba(255, 215, 0, 0.05);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.insight-card:hover,
+.objective-card:hover {
+    border-color: var(--primary-gold);
+    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.15);
+    transform: translateY(-3px);
+}
+
+.insight-icon,
+.objective-num {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.insight-card h3,
+.objective-card h3 {
+    color: var(--primary-gold);
+    margin-bottom: 0.75rem;
+}
+
+.insight-card p,
+.objective-card p {
+    color: var(--text-light);
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+/* ============================================
+   CONFIDENCE INTERVALS
+   ============================================ */
+
+.ci-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.ci-card {
+    background: rgba(255, 215, 0, 0.05);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1.5rem;
+}
+
+.ci-card h3 {
+    color: var(--primary-gold);
+    margin-bottom: 1rem;
+    font-size: 1rem;
+}
+
+.ci-result {
+    background: rgba(255, 215, 0, 0.08);
+    border-left: 3px solid var(--accent-cyan);
+    padding: 1rem;
+    border-radius: 4px;
+}
+
+.ci-value {
+    color: var(--primary-gold);
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+.ci-interpretation,
+.ci-margin {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-top: 0.3rem;
+}
+
+/* ============================================
+   CORRELATION TABLE
+   ============================================ */
+
+.correlation-table {
+    margin-top: 1.5rem;
+    overflow-x: auto;
+}
+
+.correlation-table table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.correlation-table th,
+.correlation-table td {
+    padding: 0.75rem;
+    text-align: center;
+    border: 1px solid var(--border-color);
+}
+
+.correlation-table th {
+    background: rgba(255, 215, 0, 0.1);
+    color: var(--primary-gold);
+    font-weight: 600;
+}
+
+.correlation-table tbody tr:nth-child(odd) {
+    background: rgba(255, 215, 0, 0.02);
+}
+
+/* ============================================
+   FORMULAS GRID
+   ============================================ */
+
+.formulas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.formula-card {
+    background: rgba(255, 215, 0, 0.08);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1.5rem;
+    text-align: center;
+}
+
+.formula-card h4 {
+    color: var(--primary-gold);
+    margin-bottom: 0.75rem;
+}
+
+.formula-card p {
+    font-family: 'Courier New', monospace;
+    color: var(--accent-cyan);
+    font-size: 0.9rem;
+}
+
+/* ============================================
+   QUESTIONS LIST
+   ============================================ */
+
+.questions-list {
+    display: grid;
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+}
+
+.question-item {
+    background: rgba(255, 215, 0, 0.03);
+    border-left: 3px solid var(--primary-gold);
+    padding: 1rem;
+    border-radius: 4px;
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+}
+
+.q-num {
+    background: var(--primary-gold);
+    color: #000;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    flex-shrink: 0;
+}
+
+.question-item p {
+    color: var(--text-light);
+}
+
+/* ============================================
+   CTA BANNER
+   ============================================ */
+
+.cta-banner {
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 165, 0, 0.1) 100%);
+    border: 2px solid var(--primary-gold);
+    border-radius: 10px;
+    padding: 2rem;
+    text-align: center;
+    margin: 2rem 0;
+}
+
+.cta-banner h2,
+.cta-banner h3 {
+    color: var(--primary-gold);
+    margin-bottom: 0.5rem;
+}
+
+.cta-banner p {
+    color: var(--text-light);
+    margin-bottom: 1rem;
+}
+
+.banner-subtext,
+.banner-stats {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+}
+
+/* ============================================
+   SURVEY BANNER
+   ============================================ */
+
+.survey-banner {
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 165, 0, 0.1) 100%);
+    border: 2px solid var(--primary-gold);
+    border-radius: 10px;
+    padding: 2rem;
+    margin: 3rem 0 2rem 0;
+}
+
+.survey-banner h2 {
+    color: var(--primary-gold);
+    margin-bottom: 0.5rem;
+}
+
+.survey-banner p {
+    color: var(--text-light);
+}
+
+.survey-banner strong {
+    color: var(--primary-gold);
+}
+
+/* ============================================
+   METHODOLOGY SECTION
+   ============================================ */
+
+.methodology-section {
+    margin-bottom: 2rem;
+}
+
+.methodology-section h3 {
+    color: var(--primary-gold);
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+    border-bottom: 2px solid var(--primary-gold);
+    padding-bottom: 0.5rem;
+}
+
+.content-section {
+    padding: 2rem;
+}
+
+.content-box {
+    background: rgba(255, 215, 0, 0.03);
+    border-left: 4px solid var(--primary-gold);
+    padding: 1.5rem;
+    border-radius: 5px;
+    margin-bottom: 2rem;
+}
+
+/* ============================================
+   FOOTER
+   ============================================ */
+
+.footer {
+    background: var(--light-bg);
+    border-top: 2px solid var(--primary-gold);
+    padding: 2rem;
+    margin-top: 3rem;
+}
+
+.footer-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.footer-section h3 {
+    color: var(--primary-gold);
+    margin-bottom: 1rem;
+}
+
+.footer-section p {
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.footer-section a {
+    color: var(--accent-cyan);
+    text-decoration: none;
+    margin-bottom: 0.5rem;
+    display: block;
+    font-size: 0.9rem;
+}
+
+.footer-section a:hover {
+    color: var(--primary-gold);
+    text-decoration: underline;
+}
+
+.footer-bottom {
+    border-top: 1px solid var(--border-color);
+    padding-top: 1.5rem;
+    text-align: center;
+    color: var(--text-muted);
+}
+
+.footer-bottom p {
+    margin: 0.5rem 0;
+    font-size: 0.85rem;
+}
+
+.footer-bottom strong {
+    color: var(--primary-gold);
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+
+@media (max-width: 768px) {
+    .nav-menu {
+        display: none;
+        position: absolute;
+        top: 60px;
+        right: 0;
+        flex-direction: column;
+        background: var(--light-bg);
+        width: 100%;
+        border-bottom: 2px solid var(--primary-gold);
+        gap: 0;
+    }
+
+    .nav-menu.active {
+        display: flex;
+    }
+
+    .nav-menu li {
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .nav-menu li a {
+        display: block;
+        padding: 1rem 2rem;
+    }
+
+    .mobile-menu-toggle {
+        display: flex;
+    }
+
+    .hero-title {
+        font-size: 2rem;
+    }
+
+    .hero-subtitle {
+        font-size: 1.1rem;
+    }
+
+    .hero-cta {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .btn {
+        width: 100%;
+        max-width: 300px;
+    }
+
+    .stats-grid,
+    .survey-stats-grid,
+    .hypothesis-grid,
+    .insights-grid,
+    .objectives-grid,
+    .ci-grid,
+    .formulas-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .survey-charts-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .price-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .tabs {
+        flex-direction: column;
+        gap: 0;
+    }
+
+    .tab-btn {
+        border-bottom: 3px solid var(--border-color);
+    }
+
+    .tab-btn.active {
+        border-left: 3px solid var(--primary-gold);
+        border-bottom: none;
+    }
+
+    .table-container {
+        font-size: 0.85rem;
+    }
+
+    .price-table th,
+    .price-table td {
+        padding: 0.5rem;
+    }
+
+    .hero-cta {
+        gap: 0.5rem;
+    }
+
+    .theme-toggle {
+        top: 15px;
+        right: 15px;
+        width: 45px;
+        height: 45px;
+        font-size: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 0 1rem;
+    }
+
+    .hero {
+        padding: 2rem 1rem;
+    }
+
+    .hero-title {
+        font-size: 1.5rem;
+    }
+
+    .section-title {
+        font-size: 1.5rem;
+    }
+
+    .nav-brand .brand-text {
+        font-size: 14px;
+    }
+
+    .price-value {
+        font-size: 1.5rem;
+    }
+
+    .stats-section {
+        padding: 1.5rem 1rem;
+    }
+
+    .cta-banner,
+    .survey-banner {
+        padding: 1.5rem 1rem;
+    }
+}
+
+/* ============================================
+   PRINT STYLES
+   ============================================ */
+
+@media print {
+    .theme-toggle,
+    .navbar,
+    .hero-cta,
+    .cta-banner,
+    .survey-banner,
+    .mobile-menu-toggle {
+        display: none;
+    }
+
+    body {
+        background: white;
+        color: #000;
+    }
+
+    .stat-card,
+    .hypothesis-card,
+    .price-card {
+        page-break-inside: avoid;
+    }
+}
+
+/* ============================================
+   ANIMATIONS
+   ============================================ */
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.stat-card {
+    animation: fadeInUp 0.5s ease backwards;
+}
+
+.stat-card:nth-child(1) { animation-delay: 0.1s; }
+.stat-card:nth-child(2) { animation-delay: 0.2s; }
+.stat-card:nth-child(3) { animation-delay: 0.3s; }
+.stat-card:nth-child(4) { animation-delay: 0.4s; }
+
+/* ============================================
+   ACCESSIBILITY
+   ============================================ */
+
+a:focus,
+button:focus {
+    outline: 2px solid var(--accent-cyan);
+    outline-offset: 2px;
+}
+
+.skip-link {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    background: var(--primary-gold);
+    color: #000;
+    padding: 8px;
+    text-decoration: none;
+    z-index: 100;
+}
+
+.skip-link:focus {
+    top: 0;
+}
