@@ -1,5 +1,5 @@
 /* ============================================
-   GOLD PRICE ANALYSIS - COMPLETE STYLESHEET
+   GOLD PRICE ANALYSIS - OPTIMIZED STYLESHEET
    ============================================ */
 
 :root {
@@ -23,6 +23,10 @@ body.light-theme {
     --accent-orange: #cc6600;
     --border-color: #dddddd;
 }
+
+/* ============================================
+   BASE STYLES
+   ============================================ */
 
 * {
     margin: 0;
@@ -48,30 +52,43 @@ body {
 
 .theme-toggle {     
     position: fixed;     
-    bottom: 20px;       /* moved from top to bottom */
-    left: 20px;         /* moved from right to left */
+    bottom: 20px;
+    left: 20px;
     z-index: 1000;     
     width: 50px;     
     height: 50px;     
     border-radius: 50%;     
     background: var(--primary-gold);     
-    border: none;     
+    border: 2px solid var(--dark-gold);
     cursor: pointer;     
     display: flex;     
     align-items: center;     
     justify-content: center;     
     font-size: 24px;     
     box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);     
-    transition: all 0.3s ease; 
+    transition: all 0.3s ease;
+    user-select: none;
 }
 
 .theme-toggle:hover {
-    transform: scale(1.1);
+    transform: scale(1.1) rotate(15deg);
     box-shadow: 0 6px 20px rgba(255, 215, 0, 0.5);
+    background: var(--dark-gold);
 }
 
 .theme-toggle:active {
-    transform: scale(0.95);
+    transform: scale(0.95) rotate(0deg);
+}
+
+.theme-toggle:focus {
+    outline: 2px solid var(--accent-cyan);
+    outline-offset: 2px;
+}
+
+.theme-icon {
+    font-size: 24px;
+    line-height: 1;
+    pointer-events: none;
 }
 
 /* ============================================
@@ -83,8 +100,12 @@ body {
     border-bottom: 2px solid var(--primary-gold);
     position: sticky;
     top: 0;
-    z-index: 100;
+    z-index: 999;
     backdrop-filter: blur(10px);
+}
+
+body.light-theme .navbar {
+    background: rgba(248, 249, 250, 0.95);
 }
 
 .nav-container {
@@ -145,6 +166,7 @@ body {
     border: none;
     cursor: pointer;
     gap: 5px;
+    z-index: 1001;
 }
 
 .mobile-menu-toggle span {
@@ -208,6 +230,7 @@ body {
     text-decoration: none;
     transition: all 0.3s ease;
     font-size: 0.95rem;
+    user-select: none;
 }
 
 .btn-primary {
@@ -268,6 +291,10 @@ body {
     text-align: center;
     color: var(--text-muted);
     margin-bottom: 2rem;
+}
+
+.content-section {
+    padding: 2rem;
 }
 
 /* ============================================
@@ -350,20 +377,23 @@ body {
    ============================================ */
 
 .stats-grid,
-.survey-stats-grid {
+.survey-stats-grid,
+.inflation-stats-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 1.5rem;
     margin-bottom: 2rem;
 }
 
-.stat-card {
+.stat-card,
+.survey-stat-card {
     background: rgba(255, 215, 0, 0.05);
     border: 1px solid var(--border-color);
     border-radius: 8px;
     padding: 1.5rem;
     text-align: center;
     transition: all 0.3s ease;
+    animation: fadeInUp 0.5s ease backwards;
 }
 
 .stat-card:hover {
@@ -376,6 +406,11 @@ body {
     background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 215, 0, 0.05) 100%);
     border-color: var(--primary-gold);
 }
+
+.stat-card:nth-child(1) { animation-delay: 0.1s; }
+.stat-card:nth-child(2) { animation-delay: 0.2s; }
+.stat-card:nth-child(3) { animation-delay: 0.3s; }
+.stat-card:nth-child(4) { animation-delay: 0.4s; }
 
 .stat-icon {
     font-size: 2rem;
@@ -390,11 +425,16 @@ body {
     margin-bottom: 0.5rem;
 }
 
-.stat-value {
+.stat-value,
+.stat-number {
     font-size: 1.8rem;
     color: var(--primary-gold);
     font-weight: bold;
     margin-bottom: 0.5rem;
+}
+
+.stat-number {
+    font-size: 2.5rem;
 }
 
 .stat-value.negative {
@@ -404,24 +444,6 @@ body {
 .stat-subtext {
     font-size: 0.8rem;
     color: var(--text-muted);
-}
-
-/* ============================================
-   SURVEY SPECIFIC
-   ============================================ */
-
-.survey-stat-card {
-    background: rgba(255, 215, 0, 0.05);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    padding: 1.5rem;
-    text-align: center;
-}
-
-.stat-number {
-    font-size: 2.5rem;
-    color: var(--primary-gold);
-    font-weight: bold;
 }
 
 .stat-progress {
@@ -436,6 +458,10 @@ body {
     color: #000;
 }
 
+/* ============================================
+   CHARTS
+   ============================================ */
+
 .survey-charts-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -448,6 +474,10 @@ body {
     border: 1px solid var(--border-color);
     border-radius: 8px;
     padding: 1.5rem;
+    margin-bottom: 2rem;
+    min-height: 400px;
+    position: relative;
+    animation: fadeInChart 0.5s ease-out;
 }
 
 .chart-container h3 {
@@ -458,7 +488,8 @@ body {
 
 .chart-container canvas {
     max-width: 100%;
-    height: auto;
+    height: auto !important;
+    display: block !important;
 }
 
 .chart-legend {
@@ -469,6 +500,18 @@ body {
 
 .chart-legend p {
     margin: 0.3rem 0;
+}
+
+.chart-container.loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.chart-container.loading::after {
+    content: "Loading chart...";
+    color: var(--text-muted);
+    font-size: 1.1rem;
 }
 
 /* ============================================
@@ -493,6 +536,7 @@ body {
     font-weight: 600;
     border-bottom: 3px solid transparent;
     transition: all 0.3s ease;
+    user-select: none;
 }
 
 .tab-btn:hover {
@@ -513,17 +557,6 @@ body {
     animation: fadeIn 0.3s ease;
 }
 
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
 /* ============================================
    TABLES
    ============================================ */
@@ -534,39 +567,64 @@ body {
     border: 1px solid var(--border-color);
 }
 
-.price-table {
+.price-table,
+.correlation-table table {
     width: 100%;
     border-collapse: collapse;
     background: rgba(0, 0, 0, 0.2);
 }
 
-.price-table thead {
+body.light-theme .price-table {
+    background: rgba(255, 255, 255, 0.5);
+}
+
+.price-table thead,
+.correlation-table thead {
     background: rgba(255, 215, 0, 0.1);
     border-bottom: 2px solid var(--primary-gold);
 }
 
-.price-table th {
+.price-table th,
+.correlation-table th {
     padding: 1rem;
     text-align: left;
     color: var(--primary-gold);
     font-weight: 600;
 }
 
-.price-table td {
+.correlation-table th,
+.correlation-table td {
+    text-align: center;
+    border: 1px solid var(--border-color);
+}
+
+.price-table td,
+.correlation-table td {
     padding: 0.75rem 1rem;
     border-bottom: 1px solid var(--border-color);
 }
 
-.price-table tbody tr:hover {
+.price-table tbody tr:hover,
+.correlation-table tbody tr:hover {
     background: rgba(255, 215, 0, 0.05);
+}
+
+.correlation-table tbody tr:nth-child(odd) {
+    background: rgba(255, 215, 0, 0.02);
 }
 
 .price-table .positive {
     color: #00ff00;
 }
 
-.price-table .negative {
+.price-table .negative,
+.stat-value.negative {
     color: #ff6b6b;
+}
+
+.correlation-table {
+    margin-top: 1.5rem;
+    overflow-x: auto;
 }
 
 /* ============================================
@@ -576,7 +634,8 @@ body {
 .analysis-box,
 .content-box,
 .method-box,
-.insight-box {
+.insight-box,
+.correlation-insight {
     background: rgba(255, 215, 0, 0.03);
     border-left: 4px solid var(--primary-gold);
     border-radius: 5px;
@@ -584,23 +643,74 @@ body {
     margin: 1.5rem 0;
 }
 
+.correlation-insight {
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(0, 255, 0, 0.05) 100%);
+}
+
 .analysis-box h4,
-.insight-box h4 {
+.insight-box h4,
+.correlation-insight h4 {
     color: var(--primary-gold);
     margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 }
 
 .analysis-box ul,
 .insight-box ul,
-.method-box ul {
+.method-box ul,
+.correlation-insight ul {
     margin-left: 1.5rem;
     margin-top: 0.75rem;
 }
 
+.correlation-insight ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+
 .analysis-box li,
-.method-box li {
+.method-box li,
+.correlation-insight li {
     margin-bottom: 0.5rem;
     color: var(--text-light);
+}
+
+.correlation-insight li {
+    margin-bottom: 0.75rem;
+    padding-left: 1.5rem;
+    position: relative;
+}
+
+.correlation-insight li::before {
+    content: "✓";
+    color: #00ff00;
+    position: absolute;
+    left: 0;
+    font-weight: bold;
+}
+
+.statistical-details {
+    background: rgba(255, 215, 0, 0.05);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.statistical-details h4 {
+    color: var(--accent-cyan);
+    margin-bottom: 1rem;
+}
+
+.statistical-details p {
+    margin: 0.5rem 0;
+    line-height: 1.8;
+}
+
+.statistical-details strong {
+    color: var(--primary-gold);
 }
 
 /* ============================================
@@ -744,37 +854,6 @@ body {
 }
 
 /* ============================================
-   CORRELATION TABLE
-   ============================================ */
-
-.correlation-table {
-    margin-top: 1.5rem;
-    overflow-x: auto;
-}
-
-.correlation-table table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-.correlation-table th,
-.correlation-table td {
-    padding: 0.75rem;
-    text-align: center;
-    border: 1px solid var(--border-color);
-}
-
-.correlation-table th {
-    background: rgba(255, 215, 0, 0.1);
-    color: var(--primary-gold);
-    font-weight: 600;
-}
-
-.correlation-table tbody tr:nth-child(odd) {
-    background: rgba(255, 215, 0, 0.02);
-}
-
-/* ============================================
    FORMULAS GRID
    ============================================ */
 
@@ -842,10 +921,11 @@ body {
 }
 
 /* ============================================
-   CTA BANNER
+   CTA & SURVEY BANNERS
    ============================================ */
 
-.cta-banner {
+.cta-banner,
+.survey-banner {
     background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 165, 0, 0.1) 100%);
     border: 2px solid var(--primary-gold);
     border-radius: 10px;
@@ -854,15 +934,29 @@ body {
     margin: 2rem 0;
 }
 
+.survey-banner {
+    margin: 3rem 0 2rem 0;
+}
+
 .cta-banner h2,
-.cta-banner h3 {
+.cta-banner h3,
+.survey-banner h2 {
     color: var(--primary-gold);
     margin-bottom: 0.5rem;
 }
 
-.cta-banner p {
+.cta-banner p,
+.survey-banner p {
     color: var(--text-light);
     margin-bottom: 1rem;
+}
+
+.survey-banner p {
+    margin-bottom: 0;
+}
+
+.survey-banner strong {
+    color: var(--primary-gold);
 }
 
 .banner-subtext,
@@ -870,31 +964,6 @@ body {
     color: var(--text-muted);
     font-size: 0.9rem;
     margin-top: 0.5rem;
-}
-
-/* ============================================
-   SURVEY BANNER
-   ============================================ */
-
-.survey-banner {
-    background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 165, 0, 0.1) 100%);
-    border: 2px solid var(--primary-gold);
-    border-radius: 10px;
-    padding: 2rem;
-    margin: 3rem 0 2rem 0;
-}
-
-.survey-banner h2 {
-    color: var(--primary-gold);
-    margin-bottom: 0.5rem;
-}
-
-.survey-banner p {
-    color: var(--text-light);
-}
-
-.survey-banner strong {
-    color: var(--primary-gold);
 }
 
 /* ============================================
@@ -913,18 +982,6 @@ body {
     padding-bottom: 0.5rem;
 }
 
-.content-section {
-    padding: 2rem;
-}
-
-.content-box {
-    background: rgba(255, 215, 0, 0.03);
-    border-left: 4px solid var(--primary-gold);
-    padding: 1.5rem;
-    border-radius: 5px;
-    margin-bottom: 2rem;
-}
-
 /* ============================================
    FOOTER
    ============================================ */
@@ -934,6 +991,8 @@ body {
     border-top: 2px solid var(--primary-gold);
     padding: 2rem;
     margin-top: 3rem;
+    position: relative;
+    z-index: 1;
 }
 
 .footer-content {
@@ -960,11 +1019,18 @@ body {
     margin-bottom: 0.5rem;
     display: block;
     font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
 }
 
 .footer-section a:hover {
     color: var(--primary-gold);
     text-decoration: underline;
+    transform: translateX(5px);
+}
+
+.footer-section a:active {
+    color: var(--dark-gold);
 }
 
 .footer-bottom {
@@ -984,6 +1050,60 @@ body {
 }
 
 /* ============================================
+   ACCESSIBILITY
+   ============================================ */
+
+a:focus,
+button:focus,
+.theme-toggle:focus,
+.nav-link:focus,
+.footer-section a:focus {
+    outline: 2px solid var(--accent-cyan);
+    outline-offset: 2px;
+}
+
+.skip-link {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    background: var(--primary-gold);
+    color: #000;
+    padding: 8px;
+    text-decoration: none;
+    z-index: 1001;
+}
+
+.skip-link:focus {
+    top: 0;
+}
+
+/* ============================================
+   ANIMATIONS
+   ============================================ */
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInChart {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ============================================
    RESPONSIVE DESIGN
    ============================================ */
 
@@ -998,6 +1118,7 @@ body {
         width: 100%;
         border-bottom: 2px solid var(--primary-gold);
         gap: 0;
+        z-index: 998;
     }
 
     .nav-menu.active {
@@ -1028,6 +1149,7 @@ body {
     .hero-cta {
         flex-direction: column;
         align-items: center;
+        gap: 0.5rem;
     }
 
     .btn {
@@ -1041,7 +1163,8 @@ body {
     .insights-grid,
     .objectives-grid,
     .ci-grid,
-    .formulas-grid {
+    .formulas-grid,
+    .inflation-stats-grid {
         grid-template-columns: 1fr;
     }
 
@@ -1072,20 +1195,22 @@ body {
     }
 
     .price-table th,
-    .price-table td {
+    .price-table td,
+    .correlation-table th,
+    .correlation-table td {
         padding: 0.5rem;
     }
 
-    .hero-cta {
-        gap: 0.5rem;
-    }
-
     .theme-toggle {
-        bottom: 20px;       /* moved from top to bottom */
+        bottom: 20px;
         left: 20px; 
         width: 45px;
         height: 45px;
         font-size: 20px;
+    }
+
+    .footer-section a {
+        padding: 0.5rem 0;
     }
 }
 
@@ -1149,19 +1274,7 @@ body {
         page-break-inside: avoid;
     }
 }
-
-/* ============================================
-   ANIMATIONS
-   ============================================ */
-
-@keyframes slideIn {
-    from {
-        opacity: 0;
-        transform: translateX(-20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0);
+        transform: translateY(0);
     }
 }
 
@@ -1172,405 +1285,3 @@ body {
     }
     to {
         opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.stat-card {
-    animation: fadeInUp 0.5s ease backwards;
-}
-
-.stat-card:nth-child(1) { animation-delay: 0.1s; }
-.stat-card:nth-child(2) { animation-delay: 0.2s; }
-.stat-card:nth-child(3) { animation-delay: 0.3s; }
-.stat-card:nth-child(4) { animation-delay: 0.4s; }
-
-/* ============================================
-   ACCESSIBILITY
-   ============================================ */
-
-a:focus,
-button:focus {
-    outline: 2px solid var(--accent-cyan);
-    outline-offset: 2px;
-}
-
-.skip-link {
-    position: absolute;
-    top: -40px;
-    left: 0;
-    background: var(--primary-gold);
-    color: #000;
-    padding: 8px;
-    text-decoration: none;
-    z-index: 100;
-}
-
-.skip-link:focus {
-    top: 0;
-}
-/* ============================================
-   BUG FIXES - Add to END of styles.css
-   ============================================ */
-
-/* Fix 1: Footer Links Clickability */
-.footer {
-    background: var(--light-bg);
-    border-top: 2px solid var(--primary-gold);
-    padding: 2rem;
-    margin-top: 3rem;
-    position: relative;
-    z-index: 1;
-    pointer-events: auto;
-}
-
-.footer * {
-    pointer-events: auto;
-}
-
-.footer-content {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 2rem;
-    margin-bottom: 2rem;
-    position: relative;
-    z-index: 2;
-}
-
-.footer-section {
-    position: relative;
-    z-index: 3;
-}
-
-.footer-section h3 {
-    color: var(--primary-gold);
-    margin-bottom: 1rem;
-    cursor: default;
-}
-
-.footer-section p {
-    color: var(--text-muted);
-    margin-bottom: 0.5rem;
-    font-size: 0.9rem;
-}
-
-.footer-section a {
-    color: var(--accent-cyan);
-    text-decoration: none;
-    margin-bottom: 0.5rem;
-    display: block;
-    font-size: 0.9rem;
-    cursor: pointer !important;
-    pointer-events: auto !important;
-    position: relative;
-    z-index: 100;
-    transition: all 0.3s ease;
-}
-
-.footer-section a:hover {
-    color: var(--primary-gold);
-    text-decoration: underline;
-    transform: translateX(5px);
-}
-
-.footer-section a:active {
-    color: var(--dark-gold);
-}
-
-.footer-bottom {
-    border-top: 1px solid var(--border-color);
-    padding-top: 1.5rem;
-    text-align: center;
-    color: var(--text-muted);
-    position: relative;
-    z-index: 2;
-}
-
-.footer-bottom p {
-    margin: 0.5rem 0;
-    font-size: 0.85rem;
-}
-
-.footer-bottom strong {
-    color: var(--primary-gold);
-}
-
-/* Fix 2: Theme Toggle Button Improvements */
-.theme-toggle {
-    position: fixed;
-   bottom: 20px;       /* moved from top to bottom */
-    left: 20px; 
-    z-index: 1000;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    background: var(--primary-gold);
-    border: 2px solid var(--dark-gold);
-    cursor: pointer !important;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 24px;
-    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
-    transition: all 0.3s ease;
-    pointer-events: auto !important;
-}
-
-.theme-toggle:hover {
-    transform: scale(1.1) rotate(15deg);
-    box-shadow: 0 6px 20px rgba(255, 215, 0, 0.5);
-    background: var(--dark-gold);
-}
-
-.theme-toggle:active {
-    transform: scale(0.95) rotate(0deg);
-}
-
-.theme-icon {
-    font-size: 24px;
-    line-height: 1;
-    display: inline-block;
-    pointer-events: none;
-}
-
-/* Fix 3: Ensure all interactive elements are clickable */
-button, a, input, select, textarea {
-    cursor: pointer;
-    pointer-events: auto;
-}
-
-button {
-    border: none;
-    background: none;
-    cursor: pointer;
-}
-
-/* Fix 4: Mobile menu fixes */
-.mobile-menu-toggle {
-    display: none;
-    flex-direction: column;
-    background: none;
-    border: none;
-    cursor: pointer !important;
-    gap: 5px;
-    pointer-events: auto !important;
-    z-index: 1001;
-}
-
-.mobile-menu-toggle span {
-    width: 25px;
-    height: 3px;
-    background: var(--primary-gold);
-    border-radius: 3px;
-    transition: all 0.3s ease;
-}
-
-/* Fix 5: Navigation links */
-.nav-link {
-    color: var(--text-light);
-    text-decoration: none;
-    transition: all 0.3s ease;
-    font-weight: 500;
-    position: relative;
-    cursor: pointer !important;
-    pointer-events: auto !important;
-}
-
-/* Fix 6: Chart containers proper sizing */
-.chart-container {
-    background: rgba(255, 215, 0, 0.03);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    padding: 1.5rem;
-    margin-bottom: 2rem;
-    min-height: 400px;
-    position: relative;
-}
-
-.chart-container canvas {
-    max-width: 100%;
-    height: auto !important;
-}
-
-/* Fix 7: Ensure proper light theme styles */
-body.light-theme {
-    --dark-bg: #ffffff;
-    --light-bg: #f8f9fa;
-    --text-light: #1a1a1a;
-    --text-muted: #666666;
-    --accent-cyan: #0066cc;
-    --accent-orange: #cc6600;
-    --border-color: #dddddd;
-    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-}
-
-body.light-theme .navbar {
-    background: rgba(248, 249, 250, 0.95);
-}
-
-body.light-theme .price-table {
-    background: rgba(255, 255, 255, 0.5);
-}
-
-body.light-theme .theme-toggle {
-    background: var(--dark-gold);
-    border-color: var(--primary-gold);
-}
-
-/* Fix 8: Smooth transitions */
-body, 
-body * {
-    transition: background-color 0.3s ease, 
-                color 0.3s ease, 
-                border-color 0.3s ease;
-}
-
-/* Fix 9: Prevent text selection on buttons */
-.theme-toggle,
-.mobile-menu-toggle,
-.btn,
-.tab-btn {
-    user-select: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-}
-
-/* Fix 10: Better responsive layout */
-@media (max-width: 768px) {
-    .theme-toggle {
-        bottom: 20px;       /* moved from top to bottom */
-        left: 20px; 
-        width: 45px;
-        height: 45px;
-        font-size: 20px;
-    }
-    
-    .mobile-menu-toggle {
-        display: flex;
-    }
-    
-    .footer-section a {
-        padding: 0.5rem 0;
-    }
-}
-
-/* Fix 11: Print styles */
-@media print {
-    .theme-toggle,
-    .mobile-menu-toggle {
-        display: none !important;
-    }
-}
-
-/* Fix 12: Focus states for accessibility */
-.theme-toggle:focus,
-.nav-link:focus,
-.footer-section a:focus,
-button:focus,
-a:focus {
-    outline: 2px solid var(--accent-cyan);
-    outline-offset: 2px;
-}
-
-/* Fix 13: Loading state for charts */
-.chart-container.loading {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 400px;
-}
-
-.chart-container.loading::after {
-    content: "Loading chart...";
-    color: var(--text-muted);
-    font-size: 1.1rem;
-}
-
-/* NEW: Inflation Correlation Section Styles */
-.inflation-stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 1.5rem;
-    margin-bottom: 2rem;
-}
-
-.correlation-insight {
-    background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(0, 255, 0, 0.05) 100%);
-    border-left: 4px solid var(--primary-gold);
-    padding: 1.5rem;
-    border-radius: 8px;
-    margin: 1.5rem 0;
-}
-
-.correlation-insight h4 {
-    color: var(--primary-gold);
-    margin-bottom: 1rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.correlation-insight ul {
-    list-style-type: none;
-    padding-left: 0;
-}
-
-.correlation-insight li {
-    margin-bottom: 0.75rem;
-    padding-left: 1.5rem;
-    position: relative;
-}
-
-.correlation-insight li::before {
-    content: "✓";
-    color: #00ff00;
-    position: absolute;
-    left: 0;
-    font-weight: bold;
-}
-
-.statistical-details {
-    background: rgba(255, 215, 0, 0.05);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    padding: 1.5rem;
-    margin-top: 1.5rem;
-}
-
-.statistical-details h4 {
-    color: var(--accent-cyan);
-    margin-bottom: 1rem;
-}
-
-.statistical-details p {
-    margin: 0.5rem 0;
-    line-height: 1.8;
-}
-
-.statistical-details strong {
-    color: var(--primary-gold);
-}
-
-/* Animation for new charts appearing */
-@keyframes fadeInChart {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.chart-container {
-    animation: fadeInChart 0.5s ease-out;
-}
-
-/* Ensure charts are visible */
-canvas {
-    display: block !important;
-    max-width: 100% !important;
-    height: auto !important;
-}
