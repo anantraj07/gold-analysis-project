@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
     <title>Statistical Analysis | Gold Price Analysis</title>
     <meta name="description" content="Detailed statistical analysis including descriptive statistics, hypothesis testing, and correlation analysis">
     <link rel="stylesheet" href="css/styles.css">
@@ -22,7 +22,7 @@
                 <span class="brand-text">Gold Analysis 2025</span>
             </div>
             
-            <button class="mobile-menu-toggle" id="mobileMenuToggle">
+            <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle menu">
                 <span></span>
                 <span></span>
                 <span></span>
@@ -55,6 +55,7 @@
                 <button class="tab-btn active" data-tab="summary">Summary</button>
                 <button class="tab-btn" data-tab="distribution">Distribution</button>
                 <button class="tab-btn" data-tab="trends">Trends</button>
+                <button class="tab-btn" data-tab="inflation">Inflation</button>
             </div>
 
             <!-- Summary Tab -->
@@ -63,35 +64,35 @@
                     <div class="stat-card">
                         <div class="stat-label">Mean (Average)</div>
                         <div class="stat-value">₹68,234</div>
-                        <div class="stat-subtext">Arithmetic mean of all prices</div>
+                        <div class="stat-subtext">Arithmetic mean</div>
                     </div>
                     
                     <div class="stat-card">
                         <div class="stat-label">Median</div>
                         <div class="stat-value">₹67,185</div>
-                        <div class="stat-subtext">Middle value (50th percentile)</div>
+                        <div class="stat-subtext">50th percentile</div>
                     </div>
                     
                     <div class="stat-card">
                         <div class="stat-label">Mode</div>
                         <div class="stat-value">₹62,150</div>
-                        <div class="stat-subtext">Most frequently occurring value</div>
+                        <div class="stat-subtext">Most frequent value</div>
                     </div>
                     
                     <div class="stat-card">
-                        <div class="stat-label">Standard Deviation</div>
+                        <div class="stat-label">Std Deviation</div>
                         <div class="stat-value">₹12,456</div>
-                        <div class="stat-subtext">Spread of data around mean</div>
+                        <div class="stat-subtext">Volatility measure</div>
                     </div>
                     
                     <div class="stat-card">
                         <div class="stat-label">Variance</div>
-                        <div class="stat-value">155,151,936</div>
-                        <div class="stat-subtext">σ² = 155.15 Million</div>
+                        <div class="stat-value">155.15M</div>
+                        <div class="stat-subtext">σ² value</div>
                     </div>
                     
                     <div class="stat-card">
-                        <div class="stat-label">Coefficient of Variation</div>
+                        <div class="stat-label">CV</div>
                         <div class="stat-value">18.25%</div>
                         <div class="stat-subtext">(σ/μ) × 100</div>
                     </div>
@@ -99,13 +100,13 @@
                     <div class="stat-card">
                         <div class="stat-label">Skewness</div>
                         <div class="stat-value">0.342</div>
-                        <div class="stat-subtext">Slight positive skew</div>
+                        <div class="stat-subtext">Positive skew</div>
                     </div>
                     
                     <div class="stat-card">
                         <div class="stat-label">Kurtosis</div>
                         <div class="stat-value">-0.156</div>
-                        <div class="stat-subtext">Slightly platykurtic</div>
+                        <div class="stat-subtext">Platykurtic</div>
                     </div>
 
                     <div class="stat-card">
@@ -121,15 +122,15 @@
                     </div>
                     
                     <div class="stat-card">
-                        <div class="stat-label">Q1 (25th Percentile)</div>
+                        <div class="stat-label">Q1</div>
                         <div class="stat-value">₹58,714</div>
-                        <div class="stat-subtext">25% below this value</div>
+                        <div class="stat-subtext">25th percentile</div>
                     </div>
                     
                     <div class="stat-card">
-                        <div class="stat-label">Q3 (75th Percentile)</div>
+                        <div class="stat-label">Q3</div>
                         <div class="stat-value">₹77,656</div>
-                        <div class="stat-subtext">75% below this value</div>
+                        <div class="stat-subtext">75th percentile</div>
                     </div>
                 </div>
 
@@ -147,36 +148,73 @@
                     <div class="analysis-box">
                         <h4>Normality Test Results:</h4>
                         <p><strong>Shapiro-Wilk Test:</strong> p-value = 0.087 (Data approximately normal)</p>
-                        <p><strong>Interpretation:</strong> Gold prices follow a near-normal distribution with slight positive skew, indicating occasional high price spikes.</p>
+                        <p><strong>Interpretation:</strong> Gold prices follow a near-normal distribution with slight positive skew.</p>
                     </div>
                 </div>
 
                 <div class="chart-container">
                     <h3>📊 Box Plot Analysis</h3>
                     <canvas id="boxplotChart"></canvas>
+                    <div class="analysis-box">
+                        <h4>Box Plot Interpretation:</h4>
+                        <ul>
+                            <li><strong>Minimum:</strong> ₹47,736 (Lower whisker)</li>
+                            <li><strong>Q1 (25%):</strong> ₹58,714 (Bottom of box)</li>
+                            <li><strong>Median (50%):</strong> ₹67,185 (Line in box)</li>
+                            <li><strong>Q3 (75%):</strong> ₹77,656 (Top of box)</li>
+                            <li><strong>Maximum:</strong> ₹1,10,383 (Upper whisker)</li>
+                            <li><strong>IQR:</strong> ₹18,942 (Box height)</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
 
             <!-- Trends Tab -->
-            <div id="trend-content" class="tab-content">
+            <div id="trends" class="tab-content">
                 <div class="chart-container">
-                    <h3>📈 Price Trend Over Time</h3>
+                    <h3>📈 Price Trend Over Time (643 Days)</h3>
                     <canvas id="trendChart"></canvas>
                 </div>
 
                 <div class="chart-container">
-                    <h3>📉 Monthly Volatility</h3>
+                    <h3>📉 Quarterly Volatility Analysis</h3>
                     <canvas id="volatilityChart"></canvas>
                 </div>
 
                 <div class="analysis-box">
-                    <h4>Trend Analysis:</h4>
+                    <h4>Trend Analysis Summary:</h4>
                     <ul>
                         <li><strong>Overall Trend:</strong> Strong upward trend with +131.3% return since Jan 2023</li>
                         <li><strong>2023 Q1:</strong> Low period (₹47,736 - ₹58,000), high volatility</li>
-                        <li><strong>2023 Q2-Q3:</strong> Recovery phase, gradual price increase</li>
-                        <li><strong>2024:</strong> Steady growth, reduced volatility</li>
+                        <li><strong>2023 Q2-Q3:</strong> Recovery phase with gradual price increase</li>
+                        <li><strong>2024:</strong> Steady growth with reduced volatility</li>
                         <li><strong>2025:</strong> Strong bull run, reaching peak at ₹1,10,383</li>
+                        <li><strong>Daily Growth Rate:</strong> Approximately ₹174.23 per day on average</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Inflation Tab (NEW) -->
+            <div id="inflation" class="tab-content">
+                <div class="chart-container">
+                    <h3>📊 Gold Prices vs Inflation Rate</h3>
+                    <canvas id="inflationChart"></canvas>
+                </div>
+
+                <div class="chart-container">
+                    <h3>🔗 Correlation: Gold Price & Inflation</h3>
+                    <canvas id="correlationScatterChart"></canvas>
+                </div>
+
+                <div class="analysis-box">
+                    <h4>📈 Gold as Inflation Hedge - Analysis:</h4>
+                    <ul>
+                        <li><strong>Correlation Coefficient:</strong> r = 0.687 (Strong positive correlation)</li>
+                        <li><strong>Statistical Significance:</strong> p-value < 0.0001 (Highly significant)</li>
+                        <li><strong>Key Finding:</strong> When inflation rises, gold prices tend to increase, confirming gold's role as an inflation hedge</li>
+                        <li><strong>2023 Pattern:</strong> High inflation (7.44%) corresponded with rising gold prices</li>
+                        <li><strong>2024 Pattern:</strong> Moderate inflation with steady gold price appreciation</li>
+                        <li><strong>2025 Pattern:</strong> Despite lower inflation, gold prices surged due to other factors (geopolitical uncertainty, demand)</li>
                     </ul>
                 </div>
             </div>
@@ -190,54 +228,57 @@
             
             <div class="hypothesis-grid">
                 <div class="hypothesis-card">
-                    <h3>Hypothesis 1: Is gold a hedge against inflation?</h3>
+                    <h3>H1: Gold as Inflation Hedge</h3>
                     <div class="hypothesis-content">
-                        <p><strong>H₀:</strong> Gold prices and inflation have no significant correlation</p>
-                        <p><strong>H₁:</strong> Gold prices positively correlate with inflation</p>
+                        <p><strong>H₀:</strong> No correlation between gold and inflation</p>
+                        <p><strong>H₁:</strong> Positive correlation exists</p>
                         <div class="result">
-                            <p><strong>Pearson Correlation:</strong> r = 0.687</p>
-                            <p><strong>p-value:</strong> 0.0001 (Highly significant)</p>
-                            <p><strong>Decision:</strong> ✅ Reject H₀ - Gold acts as inflation hedge</p>
+                            <p><strong>Pearson r:</strong> 0.687</p>
+                            <p><strong>p-value:</strong> 0.0001</p>
+                            <p><strong>Decision:</strong> ✅ Reject H₀</p>
+                            <p>Gold acts as inflation hedge</p>
                         </div>
                     </div>
                 </div>
 
                 <div class="hypothesis-card">
-                    <h3>Hypothesis 2: Is there a significant trend in gold prices?</h3>
+                    <h3>H2: Significant Price Trend</h3>
                     <div class="hypothesis-content">
-                        <p><strong>H₀:</strong> No significant trend exists (slope = 0)</p>
-                        <p><strong>H₁:</strong> Significant upward trend exists</p>
+                        <p><strong>H₀:</strong> No trend exists (slope = 0)</p>
+                        <p><strong>H₁:</strong> Upward trend exists</p>
                         <div class="result">
-                            <p><strong>Linear Regression Slope:</strong> ₹174.23/day</p>
-                            <p><strong>R² (Coefficient of Determination):</strong> 0.814</p>
-                            <p><strong>t-statistic:</strong> 43.67, p-value &lt; 0.0001</p>
-                            <p><strong>Decision:</strong> ✅ Reject H₀ - Strong upward trend confirmed</p>
+                            <p><strong>Slope:</strong> ₹174.23/day</p>
+                            <p><strong>R²:</strong> 0.814</p>
+                            <p><strong>t-stat:</strong> 43.67, p < 0.0001</p>
+                            <p><strong>Decision:</strong> ✅ Reject H₀</p>
                         </div>
                     </div>
                 </div>
 
                 <div class="hypothesis-card">
-                    <h3>Hypothesis 3: Has volatility changed over time?</h3>
+                    <h3>H3: Volatility Changes</h3>
                     <div class="hypothesis-content">
-                        <p><strong>H₀:</strong> Volatility is constant across periods</p>
-                        <p><strong>H₁:</strong> Volatility differs across periods</p>
+                        <p><strong>H₀:</strong> Constant volatility</p>
+                        <p><strong>H₁:</strong> Volatility varies over time</p>
                         <div class="result">
-                            <p><strong>Levene's Test:</strong> F-statistic = 5.234</p>
+                            <p><strong>Levene's F:</strong> 5.234</p>
                             <p><strong>p-value:</strong> 0.008</p>
-                            <p><strong>Decision:</strong> ✅ Reject H₀ - Volatility has changed</p>
+                            <p><strong>Decision:</strong> ✅ Reject H₀</p>
+                            <p>Volatility has changed</p>
                         </div>
                     </div>
                 </div>
 
                 <div class="hypothesis-card">
-                    <h3>Hypothesis 4: Gold vs USD Index Relationship</h3>
+                    <h3>H4: Gold vs USD Index</h3>
                     <div class="hypothesis-content">
-                        <p><strong>H₀:</strong> No correlation between gold and USD index</p>
+                        <p><strong>H₀:</strong> No correlation with USD</p>
                         <p><strong>H₁:</strong> Negative correlation exists</p>
                         <div class="result">
-                            <p><strong>Pearson Correlation:</strong> r = -0.421</p>
+                            <p><strong>Pearson r:</strong> -0.421</p>
                             <p><strong>p-value:</strong> 0.0002</p>
-                            <p><strong>Decision:</strong> ✅ Reject H₀ - Inverse relationship confirmed</p>
+                            <p><strong>Decision:</strong> ✅ Reject H₀</p>
+                            <p>Inverse relationship confirmed</p>
                         </div>
                     </div>
                 </div>
@@ -251,9 +292,9 @@
                         <thead>
                             <tr>
                                 <th>Variable</th>
-                                <th>Gold Price</th>
-                                <th>USD Index</th>
-                                <th>CPI Inflation</th>
+                                <th>Gold</th>
+                                <th>USD</th>
+                                <th>Inflation</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -289,38 +330,38 @@
             
             <div class="ci-grid">
                 <div class="ci-card">
-                    <h3>95% CI for Mean Price</h3>
+                    <h3>95% CI for Mean</h3>
                     <div class="ci-result">
                         <p class="ci-value">₹65,892 to ₹70,576</p>
-                        <p class="ci-interpretation">We are 95% confident the true population mean lies within this range</p>
-                        <p class="ci-margin">Margin of Error: ±₹2,342</p>
+                        <p class="ci-interpretation">95% confident true mean lies within range</p>
+                        <p class="ci-margin">Margin: ±₹2,342</p>
                     </div>
                 </div>
 
                 <div class="ci-card">
-                    <h3>90% CI for Standard Deviation</h3>
+                    <h3>90% CI for Std Dev</h3>
                     <div class="ci-result">
                         <p class="ci-value">₹11,823 to ₹13,234</p>
-                        <p class="ci-interpretation">90% confident volatility is within this range</p>
-                        <p class="ci-margin">Range Width: ₹1,411</p>
+                        <p class="ci-interpretation">90% confident volatility in range</p>
+                        <p class="ci-margin">Width: ₹1,411</p>
                     </div>
                 </div>
 
                 <div class="ci-card">
-                    <h3>99% CI for Proportion (Prices > Mean)</h3>
+                    <h3>99% CI for Proportion</h3>
                     <div class="ci-result">
                         <p class="ci-value">48.2% to 51.8%</p>
-                        <p class="ci-interpretation">99% confident that 48-52% of prices exceed the mean</p>
-                        <p class="ci-margin">Observed Proportion: 50.0%</p>
+                        <p class="ci-interpretation">Prices > mean proportion</p>
+                        <p class="ci-margin">Observed: 50.0%</p>
                     </div>
                 </div>
 
                 <div class="ci-card">
-                    <h3>95% CI for Regression Slope</h3>
+                    <h3>95% CI for Slope</h3>
                     <div class="ci-result">
-                        <p class="ci-value">₹168.45 to ₹180.01 per day</p>
-                        <p class="ci-interpretation">Daily price increase is statistically significant</p>
-                        <p class="ci-margin">Point Estimate: ₹174.23</p>
+                        <p class="ci-value">₹168.45 to ₹180.01</p>
+                        <p class="ci-interpretation">Daily increase significant</p>
+                        <p class="ci-margin">Estimate: ₹174.23</p>
                     </div>
                 </div>
             </div>
@@ -361,7 +402,6 @@
     </footer>
 
     <!-- Scripts -->
-    <script src="data/gold_prices.js"></script>
     <script src="js/statistics.js"></script>
     <script src="js/charts.js"></script>
     <script src="js/theme.js"></script>
