@@ -42,18 +42,6 @@ body {
     line-height: 1.6;
     transition: background-color 0.3s ease, color 0.3s ease;
     overflow-x: hidden;
-    position: relative;
-    z-index: 0;
-}
-
-/* ============================================
-   PREVENT ALL OVERLAPPING - CRITICAL
-   ============================================ */
-
-html, body {
-    width: 100%;
-    height: auto;
-    overflow: visible;
 }
 
 .theme-toggle {     
@@ -76,6 +64,11 @@ html, body {
     user-select: none;
 }
 
+.theme-toggle:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(255, 215, 0, 0.5);
+}
+
 .navbar {
     background: rgba(26, 26, 26, 0.98);
     border-bottom: 2px solid var(--primary-gold);
@@ -84,7 +77,6 @@ html, body {
     z-index: 999;
     backdrop-filter: blur(10px);
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-    width: 100%;
 }
 
 .nav-container {
@@ -175,9 +167,6 @@ html, body {
     padding: 2rem 1rem;
     text-align: center;
     border-bottom: 2px solid var(--primary-gold);
-    width: 100%;
-    position: relative;
-    z-index: 1;
 }
 
 .hero-title {
@@ -205,9 +194,6 @@ html, body {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 1rem;
-    width: 100%;
-    position: relative;
-    z-index: 1;
 }
 
 /* ============================================
@@ -216,11 +202,7 @@ html, body {
 
 .stats-section {
     padding: 2rem 1rem;
-    width: 100%;
     position: relative;
-    z-index: 1;
-    clear: both;
-    display: block;
 }
 
 .stats-section.alt-bg {
@@ -235,8 +217,6 @@ html, body {
     text-align: center;
     margin-bottom: 0.75rem;
     line-height: 1.3;
-    position: relative;
-    z-index: 2;
 }
 
 .section-subtitle {
@@ -257,9 +237,6 @@ html, body {
     margin-bottom: 2rem;
     border-bottom: 1px solid var(--border-color);
     padding-bottom: 0.5rem;
-    width: 100%;
-    position: relative;
-    z-index: 5;
 }
 
 .tab-btn {
@@ -283,29 +260,21 @@ html, body {
     border-color: var(--primary-gold);
 }
 
+.tab-btn:hover {
+    background: rgba(255, 215, 0, 0.15);
+}
+
 .tab-content {
     display: none;
     width: 100%;
-    position: relative;
-    z-index: 4;
-    min-height: auto;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s ease;
-    clear: both;
 }
 
 .tab-content.active {
-    display: block !important;
-    opacity: 1 !important;
-    pointer-events: auto !important;
-    width: 100% !important;
-    position: relative;
-    z-index: 4;
+    display: block;
 }
 
 /* ============================================
-   GRID LAYOUTS - NO OVERLAP
+   GRID LAYOUTS
    ============================================ */
 
 .stats-grid,
@@ -315,9 +284,6 @@ html, body {
     grid-template-columns: 1fr;
     gap: 1rem;
     margin-bottom: 1.5rem;
-    width: 100%;
-    position: relative;
-    z-index: 2;
 }
 
 .stat-card,
@@ -328,8 +294,11 @@ html, body {
     padding: 1.25rem;
     text-align: center;
     transition: all 0.3s ease;
-    position: relative;
-    z-index: 2;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.2);
 }
 
 .stat-label {
@@ -354,7 +323,7 @@ html, body {
 }
 
 /* ============================================
-   CHARTS - NO OVERLAP - CRITICAL
+   CHARTS - NO OVERLAP
    ============================================ */
 
 .chart-container {
@@ -364,35 +333,20 @@ html, body {
     padding: 1.5rem;
     margin-bottom: 2rem;
     position: relative;
-    z-index: 3;
     width: 100%;
-    min-height: 400px;
-    height: auto;
-    clear: both;
-    display: block;
-    box-sizing: border-box;
-    overflow: visible;
 }
 
 .chart-container h3 {
     color: var(--primary-gold);
     margin-bottom: 1.5rem;
-    margin-top: 0;
     font-size: 1.1rem;
-    width: 100%;
-    position: relative;
-    z-index: 3;
 }
 
 .chart-container canvas {
     max-width: 100% !important;
     width: 100% !important;
     height: 300px !important;
-    display: block !important;
-    position: relative;
-    z-index: 3;
-    margin: 0 !important;
-    padding: 0 !important;
+    display: block;
 }
 
 /* ============================================
@@ -408,21 +362,16 @@ html, body {
     border-radius: 5px;
     padding: 1rem;
     margin: 2rem 0;
-    width: 100%;
-    position: relative;
-    z-index: 2;
-    clear: both;
 }
 
 .analysis-box h4 {
     color: var(--primary-gold);
     margin-bottom: 0.75rem;
-    margin-top: 0;
     font-size: 1rem;
 }
 
 .analysis-box ul {
-    margin-left: 1rem;
+    margin-left: 1.5rem;
     margin-top: 0.5rem;
 }
 
@@ -430,6 +379,15 @@ html, body {
     margin-bottom: 0.5rem;
     color: var(--text-light);
     font-size: 0.9rem;
+}
+
+.analysis-box p {
+    margin-bottom: 0.75rem;
+    color: var(--text-light);
+}
+
+.analysis-box p strong {
+    color: var(--primary-gold);
 }
 
 /* ============================================
@@ -441,9 +399,6 @@ html, body {
     grid-template-columns: 1fr;
     gap: 1rem;
     margin-bottom: 2rem;
-    width: 100%;
-    position: relative;
-    z-index: 2;
 }
 
 .hypothesis-card {
@@ -452,15 +407,16 @@ html, body {
     border-radius: 8px;
     padding: 1.25rem;
     transition: all 0.3s ease;
-    position: relative;
-    z-index: 2;
-    width: 100%;
+}
+
+.hypothesis-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.2);
 }
 
 .hypothesis-card h3 {
     color: var(--primary-gold);
     margin-bottom: 0.75rem;
-    margin-top: 0;
     font-size: 1rem;
     line-height: 1.3;
 }
@@ -492,9 +448,6 @@ html, body {
     grid-template-columns: 1fr;
     gap: 1rem;
     margin-bottom: 2rem;
-    width: 100%;
-    position: relative;
-    z-index: 2;
 }
 
 .ci-card {
@@ -502,15 +455,11 @@ html, body {
     border: 1px solid var(--border-color);
     border-radius: 8px;
     padding: 1.25rem;
-    position: relative;
-    z-index: 2;
-    width: 100%;
 }
 
 .ci-card h3 {
     color: var(--primary-gold);
     margin-bottom: 0.75rem;
-    margin-top: 0;
     font-size: 0.95rem;
 }
 
@@ -521,11 +470,21 @@ html, body {
     border-radius: 4px;
 }
 
+.ci-result p {
+    margin: 0.3rem 0;
+}
+
 .ci-value {
     color: var(--primary-gold);
     font-size: 1.1rem;
     font-weight: bold;
     margin-bottom: 0.5rem;
+}
+
+.ci-interpretation,
+.ci-margin {
+    font-size: 0.85rem;
+    color: var(--text-light);
 }
 
 /* ============================================
@@ -535,11 +494,6 @@ html, body {
 .correlation-table {
     margin-top: 2rem;
     overflow-x: auto;
-    width: 100%;
-    box-sizing: border-box;
-    clear: both;
-    position: relative;
-    z-index: 2;
 }
 
 .correlation-table table {
@@ -553,7 +507,6 @@ html, body {
     padding: 1rem;
     text-align: center;
     border: 1px solid var(--border-color);
-    word-wrap: break-word;
 }
 
 .correlation-table th {
@@ -562,56 +515,8 @@ html, body {
     font-weight: 600;
 }
 
-/* ============================================
-   TABLES
-   ============================================ */
-
-.table-container {
-    overflow-x: auto;
-    border-radius: 8px;
-    border: 1px solid var(--border-color);
-    margin: 1.5rem 0;
-    -webkit-overflow-scrolling: touch;
-    position: relative;
-    z-index: 2;
-    width: 100%;
-}
-
-.price-table {
-    width: 100%;
-    min-width: 500px;
-    border-collapse: collapse;
-    background: rgba(0, 0, 0, 0.2);
-    font-size: 0.85rem;
-}
-
-.price-table thead {
-    background: rgba(255, 215, 0, 0.1);
-    border-bottom: 2px solid var(--primary-gold);
-    position: sticky;
-    top: 0;
-    z-index: 10;
-}
-
-.price-table th {
-    padding: 0.75rem 0.5rem;
-    text-align: left;
-    color: var(--primary-gold);
-    font-weight: 600;
-    font-size: 0.8rem;
-}
-
-.price-table td {
-    padding: 0.625rem 0.5rem;
-    border-bottom: 1px solid var(--border-color);
-}
-
-.price-table .positive {
-    color: #00ff00;
-}
-
-.price-table .negative {
-    color: #ff6b6b;
+.correlation-table tbody tr:nth-child(odd) {
+    background: rgba(255, 215, 0, 0.02);
 }
 
 /* ============================================
@@ -623,10 +528,6 @@ html, body {
     border-top: 2px solid var(--primary-gold);
     padding: 2rem 1rem;
     margin-top: 2rem;
-    width: 100%;
-    clear: both;
-    position: relative;
-    z-index: 1;
 }
 
 .footer-content {
@@ -657,6 +558,22 @@ html, body {
     transition: all 0.3s ease;
 }
 
+.footer-section a:hover {
+    color: var(--primary-gold);
+}
+
+.footer-bottom {
+    text-align: center;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.footer-bottom p {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    margin-bottom: 0.5rem;
+}
+
 /* ============================================
    RESPONSIVE - TABLET (768px+)
    ============================================ */
@@ -678,8 +595,6 @@ html, body {
         border: none;
         gap: 1.5rem;
         padding: 0;
-        z-index: auto;
-        top: auto;
     }
 
     .nav-menu li {
@@ -691,6 +606,10 @@ html, body {
         border-radius: 6px;
     }
 
+    .hero-title {
+        font-size: 2.5rem;
+    }
+
     .stats-grid,
     .survey-stats-grid {
         grid-template-columns: repeat(2, 1fr);
@@ -699,10 +618,6 @@ html, body {
     .hypothesis-grid,
     .ci-grid {
         grid-template-columns: repeat(2, 1fr);
-    }
-
-    .chart-container {
-        min-height: 450px;
     }
 
     .chart-container canvas {
@@ -732,26 +647,7 @@ html, body {
         grid-template-columns: repeat(4, 1fr);
     }
 
-    .chart-container {
-        min-height: 500px;
-    }
-
     .chart-container canvas {
         height: 420px !important;
-    }
-}
-
-/* ============================================
-   ANIMATIONS
-   ============================================ */
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
     }
 }
