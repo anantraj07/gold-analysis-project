@@ -1,6 +1,6 @@
 /* ============================================
    GOLD PRICE ANALYSIS - MAIN.JS
-   Mobile-First Optimized
+   Mobile-First Optimized - TAB FIX FOR NO OVERLAPPING
    ============================================ */
 
 // DOM Elements
@@ -38,52 +38,107 @@ navMenu?.addEventListener('click', (e) => {
     e.stopPropagation();
 });
 
-// Tab Functionality with improved mobile handling
+// ============================================
+// TAB FUNCTIONALITY - CRITICAL FIX FOR NO OVERLAPPING
+// ============================================
+
 document.querySelectorAll('.tab-btn').forEach(button => {
     button.addEventListener('click', (e) => {
-        const tabName = e.target.dataset.tab;
+        e.preventDefault();
+        e.stopPropagation();
         
-        // Remove active class from all buttons and contents
-        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+        const tabName = button.getAttribute('data-tab');
         
-        // Add active class to clicked button
-        e.target.classList.add('active');
+        console.log('Switching to tab:', tabName);
         
-        // Show corresponding tab content
+        // STEP 1: Remove active from ALL buttons
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        
+        // STEP 2: Hide ALL tab content
+        document.querySelectorAll('.tab-content').forEach(content => {
+            content.style.display = 'none';
+            content.classList.remove('active');
+            content.style.visibility = 'hidden';
+            content.style.opacity = '0';
+            content.style.pointerEvents = 'none';
+        });
+        
+        // STEP 3: Add active to clicked button
+        button.classList.add('active');
+        
+        // STEP 4: Show ONLY selected tab content
         const tabContent = document.getElementById(tabName);
         if (tabContent) {
-            tabContent.classList.add('active');
+            console.log('Showing tab content:', tabName);
             
-            // Scroll to content on mobile
+            tabContent.style.display = 'block';
+            tabContent.classList.add('active');
+            tabContent.style.visibility = 'visible';
+            tabContent.style.opacity = '1';
+            tabContent.style.pointerEvents = 'auto';
+            tabContent.style.width = '100%';
+            tabContent.style.zIndex = '4';
+            
+            // STEP 5: Scroll to content on mobile
             if (window.innerWidth < 768) {
                 setTimeout(() => {
-                    tabContent.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    const tabSection = tabContent.closest('.stats-section');
+                    if (tabSection) {
+                        tabSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
                 }, 100);
             }
-        }
-        
-        // Trigger chart redraw for proper responsive sizing
-        setTimeout(() => {
-            window.dispatchEvent(new Event('resize'));
             
-            // Force chart.js to resize
-            if (window.Chart) {
-                Object.values(window.Chart.instances).forEach(chart => {
-                    if (chart && chart.resize) {
-                        chart.resize();
-                    }
-                });
-            }
-        }, 150);
+            // STEP 6: Force chart resize
+            setTimeout(() => {
+                console.log('Resizing charts');
+                window.dispatchEvent(new Event('resize'));
+                
+                // Redraw all charts
+                if (window.chartManager) {
+                    Object.values(window.chartManager.charts).forEach(chart => {
+                        if (chart && typeof chart.resize === 'function') {
+                            try {
+                                chart.resize();
+                            } catch(err) {
+                                console.log('Chart resize error:', err);
+                            }
+                        }
+                    });
+                }
+            }, 200);
+        } else {
+            console.warn('Tab content not found:', tabName);
+        }
     });
 });
 
 // Set first tab as active on page load
 window.addEventListener('load', () => {
-    const firstTab = document.querySelector('.tab-btn');
-    if (firstTab && !document.querySelector('.tab-btn.active')) {
-        firstTab.click();
+    console.log('Page loaded - initializing tabs');
+    
+    const firstBtn = document.querySelector('.tab-btn');
+    const firstContent = document.querySelector('.tab-content');
+    
+    if (firstBtn && firstContent) {
+        // Make sure all tabs are hidden first
+        document.querySelectorAll('.tab-content').forEach(content => {
+            content.style.display = 'none';
+            content.classList.remove('active');
+        });
+        
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        
+        // Activate first tab
+        firstBtn.classList.add('active');
+        firstContent.style.display = 'block';
+        firstContent.classList.add('active');
+        
+        console.log('First tab activated');
     }
 });
 
@@ -95,7 +150,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             e.preventDefault();
             const target = document.querySelector(href);
             if (target) {
-                const offset = 80; // Account for fixed navbar
+                const offset = 80;
                 const targetPosition = target.getBoundingClientRect().top + window.pageYOffset - offset;
                 window.scrollTo({
                     top: targetPosition,
@@ -119,7 +174,6 @@ function updateActiveLink() {
     });
 }
 
-// Run on page load and when URL changes
 window.addEventListener('load', updateActiveLink);
 window.addEventListener('popstate', updateActiveLink);
 
@@ -128,11 +182,14 @@ let resizeTimeout;
 window.addEventListener('resize', () => {
     clearTimeout(resizeTimeout);
     resizeTimeout = setTimeout(() => {
-        // Update all Chart.js instances
-        if (window.Chart) {
-            Object.values(window.Chart.instances).forEach(chart => {
-                if (chart && chart.resize) {
-                    chart.resize();
+        if (window.chartManager) {
+            Object.values(window.chartManager.charts).forEach(chart => {
+                if (chart && typeof chart.resize === 'function') {
+                    try {
+                        chart.resize();
+                    } catch(err) {
+                        console.log('Chart resize error on resize event:', err);
+                    }
                 }
             });
         }
@@ -156,7 +213,6 @@ function handleSwipe() {
     const swipeThreshold = 50;
     const diff = touchStartY - touchEndY;
     
-    // Could add swipe gestures for tabs here if needed
     if (Math.abs(diff) > swipeThreshold) {
         // Swipe detected
     }
@@ -164,7 +220,6 @@ function handleSwipe() {
 
 // Utility Functions
 const utils = {
-    // Format currency
     formatCurrency: (value) => {
         return new Intl.NumberFormat('en-IN', {
             style: 'currency',
@@ -174,7 +229,6 @@ const utils = {
         }).format(value);
     },
 
-    // Format date
     formatDate: (date) => {
         return new Intl.DateTimeFormat('en-IN', {
             year: 'numeric',
@@ -183,7 +237,6 @@ const utils = {
         }).format(new Date(date));
     },
 
-    // Format large numbers
     formatNumber: (num) => {
         if (num >= 10000000) {
             return (num / 10000000).toFixed(2) + ' Cr';
@@ -195,12 +248,10 @@ const utils = {
         return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
     },
 
-    // Calculate percentage change
     percentageChange: (oldValue, newValue) => {
         return (((newValue - oldValue) / oldValue) * 100).toFixed(2);
     },
 
-    // Debounce function for performance
     debounce: (func, wait) => {
         let timeout;
         return function executedFunction(...args) {
@@ -213,12 +264,10 @@ const utils = {
         };
     },
 
-    // Check if mobile device
     isMobile: () => {
         return window.innerWidth < 768;
     },
 
-    // Check if tablet
     isTablet: () => {
         return window.innerWidth >= 768 && window.innerWidth < 1024;
     }
@@ -235,7 +284,6 @@ const performanceMonitor = {
     }
 };
 
-// Run performance monitoring on load
 window.addEventListener('load', () => {
     performanceMonitor.logPageLoad();
 });
@@ -267,6 +315,8 @@ console.log('%c💰 Gold Price Analysis - Statistical Methods I',
     'color: #FFD700; font-size: 16px; font-weight: bold; text-shadow: 2px 2px 4px rgba(0,0,0,0.5)');
 console.log('%cMobile-Optimized Version • For Academic Purposes Only', 
     'color: #FFA500; font-size: 12px; font-style: italic');
+console.log('%cTab System: All overlapping issues fixed!', 
+    'color: #00ff00; font-size: 12px; font-weight: bold');
 
 // Accessibility improvements
 document.addEventListener('keydown', (e) => {
