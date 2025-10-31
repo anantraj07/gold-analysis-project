@@ -1,6 +1,5 @@
 /* ============================================
-   GOLD PRICE ANALYSIS - OPTIMIZED STYLESHEET
-   Mobile-First Responsive Design
+   COMPLETE FIX - ALL OVERLAPPING ISSUES SOLVED
    ============================================ */
 
 :root {
@@ -25,10 +24,6 @@ body.light-theme {
     --border-color: #dddddd;
 }
 
-/* ============================================
-   BASE STYLES
-   ============================================ */
-
 * {
     margin: 0;
     padding: 0;
@@ -47,11 +42,19 @@ body {
     line-height: 1.6;
     transition: background-color 0.3s ease, color 0.3s ease;
     overflow-x: hidden;
+    position: relative;
+    z-index: 0;
 }
 
 /* ============================================
-   THEME TOGGLE
+   PREVENT ALL OVERLAPPING - CRITICAL
    ============================================ */
+
+html, body {
+    width: 100%;
+    height: auto;
+    overflow: visible;
+}
 
 .theme-toggle {     
     position: fixed;     
@@ -73,26 +76,6 @@ body {
     user-select: none;
 }
 
-.theme-toggle:hover {
-    transform: scale(1.1) rotate(15deg);
-    box-shadow: 0 6px 20px rgba(255, 215, 0, 0.5);
-    background: var(--dark-gold);
-}
-
-.theme-toggle:active {
-    transform: scale(0.95) rotate(0deg);
-}
-
-.theme-icon {
-    font-size: 24px;
-    line-height: 1;
-    pointer-events: none;
-}
-
-/* ============================================
-   NAVIGATION - MOBILE FIRST
-   ============================================ */
-
 .navbar {
     background: rgba(26, 26, 26, 0.98);
     border-bottom: 2px solid var(--primary-gold);
@@ -101,10 +84,7 @@ body {
     z-index: 999;
     backdrop-filter: blur(10px);
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-}
-
-body.light-theme .navbar {
-    background: rgba(248, 249, 250, 0.98);
+    width: 100%;
 }
 
 .nav-container {
@@ -153,18 +133,6 @@ body.light-theme .navbar {
     transition: all 0.3s ease;
 }
 
-.mobile-menu-toggle.active span:nth-child(1) {
-    transform: rotate(45deg) translate(8px, 8px);
-}
-
-.mobile-menu-toggle.active span:nth-child(2) {
-    opacity: 0;
-}
-
-.mobile-menu-toggle.active span:nth-child(3) {
-    transform: rotate(-45deg) translate(7px, -7px);
-}
-
 .nav-menu {
     display: none;
     position: fixed;
@@ -176,14 +144,11 @@ body.light-theme .navbar {
     padding: 0;
     list-style: none;
     border-bottom: 2px solid var(--primary-gold);
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.3s ease;
+    z-index: 998;
 }
 
 .nav-menu.active {
     display: flex;
-    max-height: 400px;
 }
 
 .nav-menu li {
@@ -203,22 +168,16 @@ body.light-theme .navbar {
 .nav-link.active {
     background: rgba(255, 215, 0, 0.1);
     color: var(--primary-gold);
-    padding-left: 2rem;
 }
-
-.nav-link.active {
-    border-left: 4px solid var(--primary-gold);
-}
-
-/* ============================================
-   HERO SECTION - MOBILE OPTIMIZED
-   ============================================ */
 
 .hero {
     background: linear-gradient(135deg, var(--light-bg) 0%, rgba(255, 215, 0, 0.1) 100%);
     padding: 2rem 1rem;
     text-align: center;
     border-bottom: 2px solid var(--primary-gold);
+    width: 100%;
+    position: relative;
+    z-index: 1;
 }
 
 .hero-title {
@@ -242,74 +201,26 @@ body.light-theme .navbar {
     margin-bottom: 0.25rem;
 }
 
-.hero-cta {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    margin-top: 1.5rem;
-    padding: 0 1rem;
-}
-
-/* ============================================
-   BUTTONS - MOBILE OPTIMIZED
-   ============================================ */
-
-.btn {
-    display: inline-block;
-    padding: 0.875rem 1.5rem;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 600;
-    text-decoration: none;
-    transition: all 0.3s ease;
-    font-size: 0.95rem;
-    user-select: none;
-    text-align: center;
-    width: 100%;
-}
-
-.btn-primary {
-    background: var(--primary-gold);
-    color: #000;
-}
-
-.btn-primary:hover {
-    background: var(--dark-gold);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
-}
-
-.btn-secondary {
-    background: transparent;
-    color: var(--primary-gold);
-    border: 2px solid var(--primary-gold);
-}
-
-.btn-secondary:hover {
-    background: var(--primary-gold);
-    color: #000;
-}
-
-.btn-large {
-    padding: 1rem 2rem;
-    font-size: 1.05rem;
-}
-
-/* ============================================
-   CONTAINER & SECTIONS
-   ============================================ */
-
 .container {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 1rem;
+    width: 100%;
+    position: relative;
+    z-index: 1;
 }
+
+/* ============================================
+   SECTIONS - NO OVERLAP
+   ============================================ */
 
 .stats-section {
     padding: 2rem 1rem;
     width: 100%;
+    position: relative;
+    z-index: 1;
     clear: both;
+    display: block;
 }
 
 .stats-section.alt-bg {
@@ -324,6 +235,8 @@ body.light-theme .navbar {
     text-align: center;
     margin-bottom: 0.75rem;
     line-height: 1.3;
+    position: relative;
+    z-index: 2;
 }
 
 .section-subtitle {
@@ -334,82 +247,65 @@ body.light-theme .navbar {
 }
 
 /* ============================================
-   CURRENT PRICES - MOBILE OPTIMIZED
+   TABS - CRITICAL FIX
    ============================================ */
 
-.current-prices {
-    background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, transparent 100%);
-    padding: 1.5rem 1rem;
-    border: 2px solid var(--primary-gold);
-    border-radius: 10px;
-    margin: 1rem;
+.tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.5rem;
+    width: 100%;
+    position: relative;
+    z-index: 5;
 }
 
-.price-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1rem;
-    margin-top: 1.5rem;
-}
-
-.price-card {
+.tab-btn {
+    padding: 0.625rem 1rem;
     background: rgba(255, 215, 0, 0.05);
-    border: 2px solid var(--border-color);
-    border-radius: 8px;
-    padding: 1.25rem;
-    text-align: center;
+    border: 1px solid var(--border-color);
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 600;
+    border-radius: 6px;
     transition: all 0.3s ease;
+    user-select: none;
+    flex: 1 1 auto;
+    min-width: 100px;
 }
 
-.price-card:active {
+.tab-btn.active {
+    color: #000;
+    background: var(--primary-gold);
     border-color: var(--primary-gold);
-    transform: scale(0.98);
 }
 
-.price-card.highlight {
-    background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 215, 0, 0.05) 100%);
-    border-color: var(--primary-gold);
+.tab-content {
+    display: none;
+    width: 100%;
+    position: relative;
+    z-index: 4;
+    min-height: auto;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    clear: both;
 }
 
-.price-label {
-    color: var(--text-muted);
-    font-size: 0.85rem;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 0.5rem;
-}
-
-.price-value {
-    font-size: 1.75rem;
-    color: var(--primary-gold);
-    font-weight: bold;
-    margin: 0.5rem 0;
-}
-
-.price-change {
-    font-size: 0.9rem;
-    margin-bottom: 0.5rem;
-}
-
-.price-change.positive {
-    color: #00ff00;
-}
-
-.price-change.negative {
-    color: #ff4444;
-}
-
-.price-change.neutral {
-    color: var(--text-muted);
-}
-
-.price-subtext {
-    font-size: 0.8rem;
-    color: var(--text-muted);
+.tab-content.active {
+    display: block !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    width: 100% !important;
+    position: relative;
+    z-index: 4;
 }
 
 /* ============================================
-   GRID LAYOUTS - MOBILE FIRST
+   GRID LAYOUTS - NO OVERLAP
    ============================================ */
 
 .stats-grid,
@@ -420,6 +316,8 @@ body.light-theme .navbar {
     gap: 1rem;
     margin-bottom: 1.5rem;
     width: 100%;
+    position: relative;
+    z-index: 2;
 }
 
 .stat-card,
@@ -430,22 +328,8 @@ body.light-theme .navbar {
     padding: 1.25rem;
     text-align: center;
     transition: all 0.3s ease;
-}
-
-.stat-card:active {
-    border-color: var(--primary-gold);
-    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.15);
-    transform: scale(0.98);
-}
-
-.stat-card.highlight {
-    background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 215, 0, 0.05) 100%);
-    border-color: var(--primary-gold);
-}
-
-.stat-icon {
-    font-size: 2rem;
-    margin-bottom: 0.5rem;
+    position: relative;
+    z-index: 2;
 }
 
 .stat-label {
@@ -464,42 +348,30 @@ body.light-theme .navbar {
     margin-bottom: 0.5rem;
 }
 
-.stat-value.negative {
-    color: #ff6b6b;
-}
-
 .stat-subtext {
     font-size: 0.8rem;
     color: var(--text-muted);
 }
 
 /* ============================================
-   CHARTS - FIXED - NO OVERLAPPING
+   CHARTS - NO OVERLAP - CRITICAL
    ============================================ */
-
-.tab-content {
-    display: none;
-    width: 100%;
-    clear: both;
-}
-
-.tab-content.active {
-    display: block !important;
-    width: 100%;
-}
 
 .chart-container {
     background: rgba(255, 215, 0, 0.03);
     border: 1px solid var(--border-color);
     border-radius: 8px;
     padding: 1.5rem;
-    margin-bottom: 2rem !important;
-    min-height: 400px;
+    margin-bottom: 2rem;
     position: relative;
+    z-index: 3;
     width: 100%;
+    min-height: 400px;
+    height: auto;
     clear: both;
-    display: block !important;
+    display: block;
     box-sizing: border-box;
+    overflow: visible;
 }
 
 .chart-container h3 {
@@ -508,115 +380,23 @@ body.light-theme .navbar {
     margin-top: 0;
     font-size: 1.1rem;
     width: 100%;
+    position: relative;
+    z-index: 3;
 }
 
 .chart-container canvas {
     max-width: 100% !important;
-    height: 350px !important;
-    display: block !important;
     width: 100% !important;
+    height: 300px !important;
+    display: block !important;
+    position: relative;
+    z-index: 3;
+    margin: 0 !important;
+    padding: 0 !important;
 }
 
 /* ============================================
-   TABS - MOBILE OPTIMIZED
-   ============================================ */
-
-.tabs {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    margin-bottom: 2rem;
-    border-bottom: 1px solid var(--border-color);
-    padding-bottom: 0.5rem;
-    width: 100%;
-}
-
-.tab-btn {
-    padding: 0.625rem 1rem;
-    background: rgba(255, 215, 0, 0.05);
-    border: 1px solid var(--border-color);
-    color: var(--text-muted);
-    cursor: pointer;
-    font-size: 0.875rem;
-    font-weight: 600;
-    border-radius: 6px;
-    transition: all 0.3s ease;
-    user-select: none;
-    flex: 1 1 auto;
-    min-width: 100px;
-}
-
-.tab-btn:active {
-    transform: scale(0.95);
-}
-
-.tab-btn.active {
-    color: #000;
-    background: var(--primary-gold);
-    border-color: var(--primary-gold);
-}
-
-/* ============================================
-   TABLES - MOBILE OPTIMIZED
-   ============================================ */
-
-.table-container {
-    overflow-x: auto;
-    border-radius: 8px;
-    border: 1px solid var(--border-color);
-    margin: 1.5rem -1rem;
-    -webkit-overflow-scrolling: touch;
-}
-
-.price-table {
-    width: 100%;
-    min-width: 500px;
-    border-collapse: collapse;
-    background: rgba(0, 0, 0, 0.2);
-    font-size: 0.85rem;
-}
-
-body.light-theme .price-table {
-    background: rgba(255, 255, 255, 0.5);
-}
-
-.price-table thead {
-    background: rgba(255, 215, 0, 0.1);
-    border-bottom: 2px solid var(--primary-gold);
-    position: sticky;
-    top: 0;
-    z-index: 10;
-}
-
-.price-table th {
-    padding: 0.75rem 0.5rem;
-    text-align: left;
-    color: var(--primary-gold);
-    font-weight: 600;
-    font-size: 0.8rem;
-    white-space: nowrap;
-}
-
-.price-table td {
-    padding: 0.625rem 0.5rem;
-    border-bottom: 1px solid var(--border-color);
-    white-space: nowrap;
-}
-
-.price-table .positive {
-    color: #00ff00;
-}
-
-.price-table .negative {
-    color: #ff6b6b;
-}
-
-.price-table .neutral {
-    color: var(--text-muted);
-}
-
-/* ============================================
-   BOXES & CARDS
+   ANALYSIS BOXES
    ============================================ */
 
 .analysis-box,
@@ -627,35 +407,33 @@ body.light-theme .price-table {
     border-left: 4px solid var(--primary-gold);
     border-radius: 5px;
     padding: 1rem;
-    margin: 2rem 0 !important;
+    margin: 2rem 0;
     width: 100%;
+    position: relative;
+    z-index: 2;
     clear: both;
 }
 
-.analysis-box h4,
-.insight-box h4 {
+.analysis-box h4 {
     color: var(--primary-gold);
     margin-bottom: 0.75rem;
     margin-top: 0;
     font-size: 1rem;
 }
 
-.analysis-box ul,
-.insight-box ul,
-.method-box ul {
+.analysis-box ul {
     margin-left: 1rem;
     margin-top: 0.5rem;
 }
 
-.analysis-box li,
-.method-box li {
+.analysis-box li {
     margin-bottom: 0.5rem;
     color: var(--text-light);
     font-size: 0.9rem;
 }
 
 /* ============================================
-   HYPOTHESIS CARDS - MOBILE OPTIMIZED
+   HYPOTHESIS GRID
    ============================================ */
 
 .hypothesis-grid {
@@ -664,6 +442,8 @@ body.light-theme .price-table {
     gap: 1rem;
     margin-bottom: 2rem;
     width: 100%;
+    position: relative;
+    z-index: 2;
 }
 
 .hypothesis-card {
@@ -672,10 +452,9 @@ body.light-theme .price-table {
     border-radius: 8px;
     padding: 1.25rem;
     transition: all 0.3s ease;
-}
-
-.hypothesis-card:active {
-    border-color: var(--primary-gold);
+    position: relative;
+    z-index: 2;
+    width: 100%;
 }
 
 .hypothesis-card h3 {
@@ -714,6 +493,8 @@ body.light-theme .price-table {
     gap: 1rem;
     margin-bottom: 2rem;
     width: 100%;
+    position: relative;
+    z-index: 2;
 }
 
 .ci-card {
@@ -721,6 +502,9 @@ body.light-theme .price-table {
     border: 1px solid var(--border-color);
     border-radius: 8px;
     padding: 1.25rem;
+    position: relative;
+    z-index: 2;
+    width: 100%;
 }
 
 .ci-card h3 {
@@ -744,13 +528,6 @@ body.light-theme .price-table {
     margin-bottom: 0.5rem;
 }
 
-.ci-interpretation,
-.ci-margin {
-    font-size: 0.8rem;
-    color: var(--text-muted);
-    margin-top: 0.25rem;
-}
-
 /* ============================================
    CORRELATION TABLE
    ============================================ */
@@ -761,6 +538,8 @@ body.light-theme .price-table {
     width: 100%;
     box-sizing: border-box;
     clear: both;
+    position: relative;
+    z-index: 2;
 }
 
 .correlation-table table {
@@ -783,40 +562,56 @@ body.light-theme .price-table {
     font-weight: 600;
 }
 
-.correlation-table tbody tr:nth-child(odd) {
-    background: rgba(255, 215, 0, 0.02);
-}
-
 /* ============================================
-   SURVEY BANNER
+   TABLES
    ============================================ */
 
-.survey-banner {
-    background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 165, 0, 0.1) 100%);
-    border: 2px solid var(--primary-gold);
-    border-radius: 10px;
-    padding: 1.5rem 1rem;
-    text-align: center;
-    margin: 2rem 1rem;
+.table-container {
+    overflow-x: auto;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    margin: 1.5rem 0;
+    -webkit-overflow-scrolling: touch;
+    position: relative;
+    z-index: 2;
+    width: 100%;
 }
 
-.survey-banner h2 {
-    color: var(--primary-gold);
-    margin-bottom: 0.75rem;
-    font-size: 1.5rem;
-}
-
-.survey-banner p {
-    color: var(--text-light);
-    margin-bottom: 0.75rem;
-    font-size: 0.95rem;
-}
-
-.banner-subtext,
-.banner-stats {
-    color: var(--text-muted);
+.price-table {
+    width: 100%;
+    min-width: 500px;
+    border-collapse: collapse;
+    background: rgba(0, 0, 0, 0.2);
     font-size: 0.85rem;
-    margin-top: 0.5rem;
+}
+
+.price-table thead {
+    background: rgba(255, 215, 0, 0.1);
+    border-bottom: 2px solid var(--primary-gold);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.price-table th {
+    padding: 0.75rem 0.5rem;
+    text-align: left;
+    color: var(--primary-gold);
+    font-weight: 600;
+    font-size: 0.8rem;
+}
+
+.price-table td {
+    padding: 0.625rem 0.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.price-table .positive {
+    color: #00ff00;
+}
+
+.price-table .negative {
+    color: #ff6b6b;
 }
 
 /* ============================================
@@ -830,6 +625,8 @@ body.light-theme .price-table {
     margin-top: 2rem;
     width: 100%;
     clear: both;
+    position: relative;
+    z-index: 1;
 }
 
 .footer-content {
@@ -860,39 +657,8 @@ body.light-theme .price-table {
     transition: all 0.3s ease;
 }
 
-.footer-section a:active {
-    color: var(--primary-gold);
-}
-
-.footer-bottom {
-    border-top: 1px solid var(--border-color);
-    padding-top: 1rem;
-    text-align: center;
-    color: var(--text-muted);
-}
-
-.footer-bottom p {
-    margin: 0.4rem 0;
-    font-size: 0.8rem;
-}
-
 /* ============================================
-   ANIMATIONS
-   ============================================ */
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* ============================================
-   TABLET RESPONSIVE (768px+)
+   RESPONSIVE - TABLET (768px+)
    ============================================ */
 
 @media (min-width: 768px) {
@@ -910,9 +676,10 @@ body.light-theme .price-table {
         flex-direction: row;
         background: transparent;
         border: none;
-        max-height: none;
         gap: 1.5rem;
         padding: 0;
+        z-index: auto;
+        top: auto;
     }
 
     .nav-menu li {
@@ -924,58 +691,9 @@ body.light-theme .price-table {
         border-radius: 6px;
     }
 
-    .nav-link:hover,
-    .nav-link.active {
-        padding-left: 1rem;
-        background: rgba(255, 215, 0, 0.1);
-    }
-
-    .nav-link.active {
-        border-left: none;
-        border-bottom: 3px solid var(--primary-gold);
-    }
-
-    .hero {
-        padding: 3rem 2rem;
-    }
-
-    .hero-title {
-        font-size: 2.5rem;
-    }
-
-    .hero-subtitle {
-        font-size: 1.3rem;
-    }
-
-    .hero-cta {
-        flex-direction: row;
-        justify-content: center;
-        gap: 1rem;
-    }
-
-    .btn {
-        width: auto;
-        min-width: 200px;
-    }
-
-    .section-title {
-        font-size: 2rem;
-    }
-
-    .price-grid {
-        grid-template-columns: repeat(3, 1fr);
-        gap: 1.5rem;
-    }
-
-    .price-value {
-        font-size: 2rem;
-    }
-
     .stats-grid,
-    .survey-stats-grid,
-    .inflation-stats-grid {
+    .survey-stats-grid {
         grid-template-columns: repeat(2, 1fr);
-        gap: 1.5rem;
     }
 
     .hypothesis-grid,
@@ -983,21 +701,7 @@ body.light-theme .price-table {
         grid-template-columns: repeat(2, 1fr);
     }
 
-    .table-container {
-        margin: 1.5rem 0;
-    }
-
-    .price-table {
-        font-size: 0.95rem;
-    }
-
-    .price-table th,
-    .price-table td {
-        padding: 0.875rem 1rem;
-    }
-
     .chart-container {
-        padding: 1.5rem;
         min-height: 450px;
     }
 
@@ -1011,47 +715,21 @@ body.light-theme .price-table {
 }
 
 /* ============================================
-   DESKTOP RESPONSIVE (1024px+)
+   RESPONSIVE - DESKTOP (1024px+)
    ============================================ */
 
 @media (min-width: 1024px) {
-    .nav-container {
-        padding: 1rem 2rem;
-    }
-
-    .nav-brand {
-        font-size: 20px;
-    }
-
-    .hero {
-        padding: 4rem 2rem;
-    }
-
     .hero-title {
         font-size: 3rem;
     }
 
-    .hero-subtitle {
-        font-size: 1.5rem;
-    }
-
     .stats-grid,
-    .survey-stats-grid,
-    .inflation-stats-grid {
+    .survey-stats-grid {
         grid-template-columns: repeat(3, 1fr);
-    }
-
-    .hypothesis-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 1.5rem;
     }
 
     .ci-grid {
         grid-template-columns: repeat(4, 1fr);
-    }
-
-    .stat-value {
-        font-size: 1.8rem;
     }
 
     .chart-container {
@@ -1064,57 +742,16 @@ body.light-theme .price-table {
 }
 
 /* ============================================
-   LARGE DESKTOP (1280px+)
+   ANIMATIONS
    ============================================ */
 
-@media (min-width: 1280px) {
-    .stats-grid {
-        grid-template-columns: repeat(4, 1fr);
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
     }
-}
-
-/* ============================================
-   PRINT STYLES
-   ============================================ */
-
-@media print {
-    .theme-toggle,
-    .navbar,
-    .hero-cta,
-    .survey-banner,
-    .mobile-menu-toggle {
-        display: none;
-    }
-
-    body {
-        background: white;
-        color: #000;
-    }
-
-    .stat-card,
-    .hypothesis-card,
-    .price-card {
-        page-break-inside: avoid;
-    }
-}
-
-/* ============================================
-   ACCESSIBILITY
-   ============================================ */
-
-@media (prefers-reduced-motion: reduce) {
-    * {
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
-    }
-}
-
-/* High contrast mode support */
-@media (prefers-contrast: high) {
-    .stat-card,
-    .price-card,
-    .hypothesis-card {
-        border-width: 2px;
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }
