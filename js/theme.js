@@ -1,6 +1,6 @@
 /* ============================================
    GOLD PRICE ANALYSIS - THEME.JS (FIXED)
-   Theme Toggle Functionality with Bug Fixes
+   Theme Toggle with Proper Navigation Support
    ============================================ */
 
 class ThemeManager {
@@ -8,35 +8,47 @@ class ThemeManager {
         this.THEME_KEY = 'goldAnalysisTheme';
         this.DARK_THEME = 'dark';
         this.LIGHT_THEME = 'light';
-        this.themeToggle = document.getElementById('themeToggle');
+        this.themeToggle = null;
         this.init();
     }
 
     init() {
+        // Wait for DOM to be ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => this.setup());
+        } else {
+            this.setup();
+        }
+    }
+
+    setup() {
+        this.themeToggle = document.getElementById('themeToggle');
+        
         // Load saved theme or default to dark
         const savedTheme = this.getSavedTheme();
-        this.applyTheme(savedTheme);
+        this.applyTheme(savedTheme, false);
         
-        // Add click listener - FIX: Ensure it's properly bound
+        // Add click listener
         if (this.themeToggle) {
             this.themeToggle.addEventListener('click', () => this.toggleTheme());
-            console.log('Theme toggle initialized ✅');
+            console.log('✅ Theme toggle initialized');
         } else {
-            console.warn('Theme toggle button not found!');
+            console.warn('⚠️ Theme toggle button not found! Make sure element with id="themeToggle" exists');
         }
 
         // Listen for system theme changes
         if (window.matchMedia) {
             window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
                 if (!this.hasUserPreference()) {
-                    this.applyTheme(e.matches ? this.DARK_THEME : this.LIGHT_THEME);
+                    this.applyTheme(e.matches ? this.DARK_THEME : this.LIGHT_THEME, true);
                 }
             });
         }
+
+        console.log('🎨 ThemeManager initialized');
     }
 
     getSavedTheme() {
-        // Try to get from localStorage
         try {
             const saved = localStorage.getItem(this.THEME_KEY);
             if (saved) return saved;
@@ -60,26 +72,24 @@ class ThemeManager {
         }
     }
 
-    applyTheme(theme) {
+    applyTheme(theme, updateCharts = true) {
         const isDark = theme === this.DARK_THEME;
         const body = document.body;
 
-        // FIX: Apply to body instead of documentElement for better compatibility
+        // Apply theme class
         if (isDark) {
             body.classList.remove('light-theme');
+            body.classList.add('dark-theme');
         } else {
+            body.classList.remove('dark-theme');
             body.classList.add('light-theme');
         }
 
-        // Update toggle button icon
-        if (this.themeToggle) {
-            const iconElement = this.themeToggle.querySelector('.theme-icon');
-            if (iconElement) {
-                iconElement.textContent = isDark ? '☀️' : '🌙';
-            }
-            this.themeToggle.setAttribute('title', isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode');
-            this.themeToggle.setAttribute('aria-label', isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode');
-        }
+        // Update toggle button
+        this.updateToggleButton(isDark);
+
+        // Update CSS variables
+        this.updateCSSVariables(isDark);
 
         // Save preference
         try {
@@ -88,10 +98,31 @@ class ThemeManager {
             console.warn('Could not save theme preference:', e);
         }
 
-        // Update CSS custom properties
-        this.updateCSSVariables(isDark);
+        // Update charts if needed
+        if (updateCharts && window.chartManager) {
+            setTimeout(() => {
+                window.chartManager.updateChartsTheme();
+            }, 100);
+        }
 
         console.log(`Theme applied: ${theme}`);
+    }
+
+    updateToggleButton(isDark) {
+        if (!this.themeToggle) {
+            this.themeToggle = document.getElementById('themeToggle');
+        }
+
+        if (this.themeToggle) {
+            const iconElement = this.themeToggle.querySelector('.theme-icon');
+            if (iconElement) {
+                iconElement.textContent = isDark ? '☀️' : '🌙';
+            }
+            
+            const title = isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode';
+            this.themeToggle.setAttribute('title', title);
+            this.themeToggle.setAttribute('aria-label', title);
+        }
     }
 
     updateCSSVariables(isDark) {
@@ -105,6 +136,9 @@ class ThemeManager {
             root.style.setProperty('--accent-cyan', '#00ffff');
             root.style.setProperty('--accent-orange', '#FFA500');
             root.style.setProperty('--border-color', '#333333');
+            root.style.setProperty('--primary-gold', '#FFD700');
+            root.style.setProperty('--dark-gold', '#DAA520');
+            root.style.setProperty('--hover-bg', '#2a2a2a');
         } else {
             root.style.setProperty('--dark-bg', '#ffffff');
             root.style.setProperty('--light-bg', '#f8f9fa');
@@ -113,6 +147,9 @@ class ThemeManager {
             root.style.setProperty('--accent-cyan', '#0066cc');
             root.style.setProperty('--accent-orange', '#cc6600');
             root.style.setProperty('--border-color', '#dddddd');
+            root.style.setProperty('--primary-gold', '#FFD700');
+            root.style.setProperty('--dark-gold', '#DAA520');
+            root.style.setProperty('--hover-bg', '#e9ecef');
         }
     }
 
@@ -120,22 +157,16 @@ class ThemeManager {
         const currentTheme = this.getCurrentTheme();
         const newTheme = currentTheme === this.DARK_THEME ? this.LIGHT_THEME : this.DARK_THEME;
         
-        console.log(`Toggling theme from ${currentTheme} to ${newTheme}`);
+        console.log(`🔄 Toggling theme: ${currentTheme} → ${newTheme}`);
         
-        this.applyTheme(newTheme);
+        this.applyTheme(newTheme, true);
 
-        // Trigger chart redraw if charts exist
-        if (window.chartManager) {
-            setTimeout(() => {
-                console.log('Updating charts for new theme...');
-                window.chartManager.updateChartsTheme();
-                window.dispatchEvent(new Event('resize'));
-            }, 100);
-        }
-
-        // Dispatch custom event
+        // Dispatch custom event for other components
         window.dispatchEvent(new CustomEvent('themeChanged', { 
-            detail: { theme: newTheme } 
+            detail: { 
+                theme: newTheme,
+                isDark: newTheme === this.DARK_THEME
+            } 
         }));
     }
 
@@ -145,9 +176,13 @@ class ThemeManager {
             : this.DARK_THEME;
     }
 
-    // Get current color scheme
+    isDarkMode() {
+        return this.getCurrentTheme() === this.DARK_THEME;
+    }
+
+    // Get current color scheme for dynamic use
     getColors() {
-        const isDark = this.getCurrentTheme() === this.DARK_THEME;
+        const isDark = this.isDarkMode();
         return {
             primary: '#FFD700',
             darkGold: '#DAA520',
@@ -158,6 +193,7 @@ class ThemeManager {
             accentCyan: isDark ? '#00ffff' : '#0066cc',
             accentOrange: isDark ? '#FFA500' : '#cc6600',
             borderColor: isDark ? '#333333' : '#dddddd',
+            hoverBg: isDark ? '#2a2a2a' : '#e9ecef',
             green: '#00ff00',
             red: '#ff6b6b',
             isDark
@@ -165,13 +201,20 @@ class ThemeManager {
     }
 }
 
-// Initialize theme manager when DOM is ready
+// Initialize theme manager
+let themeManager;
+
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
-        window.themeManager = new ThemeManager();
-        console.log('ThemeManager initialized on DOMContentLoaded');
+        themeManager = new ThemeManager();
+        window.themeManager = themeManager;
     });
 } else {
-    window.themeManager = new ThemeManager();
-    console.log('ThemeManager initialized immediately');
+    themeManager = new ThemeManager();
+    window.themeManager = themeManager;
+}
+
+// Export for use in other scripts
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = ThemeManager;
 }
