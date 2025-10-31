@@ -568,13 +568,530 @@ class ChartManager {
         });
         this.charts = {};
     }
+
+    // SURVEY PAGE CHARTS
+    createSurveyCharts() {
+        this.createAgeChart('ageChart');
+        this.createGenderChart('genderChart');
+        this.createOccupationChart('occupationChart');
+        this.createIncomeChart('incomeChart');
+        this.createHedgeChart('hedgeChart');
+        this.createInterestChart('interestChart');
+        this.createPurchaseChart('purchaseChart');
+        this.createFormChart('formChart');
+        this.createRiskChart('riskChart');
+        this.createSentimentChart('sentimentChart');
+        this.createTimelineChart('timelineChart');
+        this.createSourceChart('sourceChart');
+    }
+
+    createAgeChart(canvasId) {
+        const ctx = document.getElementById(canvasId);
+        if (!ctx) return;
+
+        const colors = this.getDefaultColors();
+
+        if (this.charts[canvasId]) {
+            this.charts[canvasId].destroy();
+        }
+
+        this.charts[canvasId] = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['18-25 years', '26-35 years', '36-50 years', '50+ years'],
+                datasets: [{
+                    data: [60, 20, 13.3, 6.7],
+                    backgroundColor: [
+                        'rgba(255, 215, 0, 0.8)',
+                        'rgba(255, 165, 0, 0.8)',
+                        'rgba(0, 255, 255, 0.8)',
+                        'rgba(255, 68, 68, 0.8)'
+                    ],
+                    borderColor: colors.primary,
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                ...this.getDefaultOptions(),
+                plugins: {
+                    ...this.getDefaultOptions().plugins,
+                    legend: {
+                        display: true,
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+    }
+
+    createGenderChart(canvasId) {
+        const ctx = document.getElementById(canvasId);
+        if (!ctx) return;
+
+        const colors = this.getDefaultColors();
+
+        if (this.charts[canvasId]) {
+            this.charts[canvasId].destroy();
+        }
+
+        this.charts[canvasId] = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ['Male', 'Female'],
+                datasets: [{
+                    data: [60, 40],
+                    backgroundColor: [
+                        'rgba(0, 255, 255, 0.8)',
+                        'rgba(255, 165, 0, 0.8)'
+                    ],
+                    borderColor: colors.primary,
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                ...this.getDefaultOptions(),
+                plugins: {
+                    ...this.getDefaultOptions().plugins,
+                    legend: {
+                        display: true,
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+    }
+
+    createOccupationChart(canvasId) {
+        const ctx = document.getElementById(canvasId);
+        if (!ctx) return;
+
+        const colors = this.getDefaultColors();
+
+        if (this.charts[canvasId]) {
+            this.charts[canvasId].destroy();
+        }
+
+        this.charts[canvasId] = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Students', 'Employed', 'Self-Employed'],
+                datasets: [{
+                    label: 'Percentage',
+                    data: [40, 46.7, 13.3],
+                    backgroundColor: 'rgba(255, 215, 0, 0.7)',
+                    borderColor: colors.primary,
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                ...this.getDefaultOptions(),
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        ticks: {
+                            color: colors.text,
+                            callback: function(value) { return value + '%'; }
+                        }
+                    },
+                    x: {
+                        ticks: { color: colors.text }
+                    }
+                }
+            }
+        });
+    }
+
+    createIncomeChart(canvasId) {
+        const ctx = document.getElementById(canvasId);
+        if (!ctx) return;
+
+        const colors = this.getDefaultColors();
+
+        if (this.charts[canvasId]) {
+            this.charts[canvasId].destroy();
+        }
+
+        this.charts[canvasId] = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['<₹50K', '₹50K-₹1L', '₹1L-₹2.5L', '>₹2.5L'],
+                datasets: [{
+                    label: 'Percentage',
+                    data: [26.7, 33.3, 26.7, 13.3],
+                    backgroundColor: [
+                        'rgba(255, 68, 68, 0.7)',
+                        'rgba(255, 165, 0, 0.7)',
+                        'rgba(255, 215, 0, 0.7)',
+                        'rgba(0, 255, 0, 0.7)'
+                    ],
+                    borderColor: colors.primary,
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                ...this.getDefaultOptions(),
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        ticks: {
+                            color: colors.text,
+                            callback: function(value) { return value + '%'; }
+                        }
+                    },
+                    x: {
+                        ticks: { color: colors.text }
+                    }
+                }
+            }
+        });
+    }
+
+    createHedgeChart(canvasId) {
+        const ctx = document.getElementById(canvasId);
+        if (!ctx) return;
+
+        const colors = this.getDefaultColors();
+
+        if (this.charts[canvasId]) {
+            this.charts[canvasId].destroy();
+        }
+
+        this.charts[canvasId] = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Agree (60%)', 'Neutral (27%)', 'Disagree (13%)'],
+                datasets: [{
+                    data: [60, 27, 13],
+                    backgroundColor: [
+                        'rgba(0, 255, 0, 0.8)',
+                        'rgba(255, 165, 0, 0.8)',
+                        'rgba(255, 68, 68, 0.8)'
+                    ],
+                    borderColor: colors.primary,
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                ...this.getDefaultOptions(),
+                plugins: {
+                    ...this.getDefaultOptions().plugins,
+                    legend: {
+                        display: true,
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+    }
+
+    createInterestChart(canvasId) {
+        const ctx = document.getElementById(canvasId);
+        if (!ctx) return;
+
+        const colors = this.getDefaultColors();
+
+        if (this.charts[canvasId]) {
+            this.charts[canvasId].destroy();
+        }
+
+        this.charts[canvasId] = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ['High (47%)', 'Moderate (33%)', 'Low (20%)'],
+                datasets: [{
+                    data: [47, 33, 20],
+                    backgroundColor: [
+                        'rgba(0, 255, 0, 0.8)',
+                        'rgba(255, 215, 0, 0.8)',
+                        'rgba(255, 68, 68, 0.8)'
+                    ],
+                    borderColor: colors.primary,
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                ...this.getDefaultOptions(),
+                plugins: {
+                    ...this.getDefaultOptions().plugins,
+                    legend: {
+                        display: true,
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+    }
+
+    createPurchaseChart(canvasId) {
+        const ctx = document.getElementById(canvasId);
+        if (!ctx) return;
+
+        const colors = this.getDefaultColors();
+
+        if (this.charts[canvasId]) {
+            this.charts[canvasId].destroy();
+        }
+
+        this.charts[canvasId] = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Yes', 'Maybe', 'No'],
+                datasets: [{
+                    label: 'Percentage',
+                    data: [40, 33, 27],
+                    backgroundColor: [
+                        'rgba(0, 255, 0, 0.7)',
+                        'rgba(255, 165, 0, 0.7)',
+                        'rgba(255, 68, 68, 0.7)'
+                    ],
+                    borderColor: colors.primary,
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                ...this.getDefaultOptions(),
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        ticks: {
+                            color: colors.text,
+                            callback: function(value) { return value + '%'; }
+                        }
+                    },
+                    x: {
+                        ticks: { color: colors.text }
+                    }
+                }
+            }
+        });
+    }
+
+    createFormChart(canvasId) {
+        const ctx = document.getElementById(canvasId);
+        if (!ctx) return;
+
+        const colors = this.getDefaultColors();
+
+        if (this.charts[canvasId]) {
+            this.charts[canvasId].destroy();
+        }
+
+        this.charts[canvasId] = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Physical Gold (53%)', 'Gold ETFs (27%)', 'Gold Schemes (20%)'],
+                datasets: [{
+                    data: [53, 27, 20],
+                    backgroundColor: [
+                        'rgba(255, 215, 0, 0.8)',
+                        'rgba(0, 255, 255, 0.8)',
+                        'rgba(255, 165, 0, 0.8)'
+                    ],
+                    borderColor: colors.primary,
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                ...this.getDefaultOptions(),
+                plugins: {
+                    ...this.getDefaultOptions().plugins,
+                    legend: {
+                        display: true,
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+    }
+
+    createRiskChart(canvasId) {
+        const ctx = document.getElementById(canvasId);
+        if (!ctx) return;
+
+        const colors = this.getDefaultColors();
+
+        if (this.charts[canvasId]) {
+            this.charts[canvasId].destroy();
+        }
+
+        this.charts[canvasId] = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ['Low Risk (47%)', 'Moderate (40%)', 'High Risk (13%)'],
+                datasets: [{
+                    data: [47, 40, 13],
+                    backgroundColor: [
+                        'rgba(0, 255, 0, 0.8)',
+                        'rgba(255, 215, 0, 0.8)',
+                        'rgba(255, 68, 68, 0.8)'
+                    ],
+                    borderColor: colors.primary,
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                ...this.getDefaultOptions(),
+                plugins: {
+                    ...this.getDefaultOptions().plugins,
+                    legend: {
+                        display: true,
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+    }
+
+    createSentimentChart(canvasId) {
+        const ctx = document.getElementById(canvasId);
+        if (!ctx) return;
+
+        const colors = this.getDefaultColors();
+
+        if (this.charts[canvasId]) {
+            this.charts[canvasId].destroy();
+        }
+
+        this.charts[canvasId] = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Bullish', 'Neutral', 'Bearish'],
+                datasets: [{
+                    label: 'Percentage',
+                    data: [67, 20, 13],
+                    backgroundColor: [
+                        'rgba(0, 255, 0, 0.7)',
+                        'rgba(255, 165, 0, 0.7)',
+                        'rgba(255, 68, 68, 0.7)'
+                    ],
+                    borderColor: colors.primary,
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                ...this.getDefaultOptions(),
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        ticks: {
+                            color: colors.text,
+                            callback: function(value) { return value + '%'; }
+                        }
+                    },
+                    x: {
+                        ticks: { color: colors.text }
+                    }
+                }
+            }
+        });
+    }
+
+    createTimelineChart(canvasId) {
+        const ctx = document.getElementById(canvasId);
+        if (!ctx) return;
+
+        const colors = this.getDefaultColors();
+
+        if (this.charts[canvasId]) {
+            this.charts[canvasId].destroy();
+        }
+
+        this.charts[canvasId] = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Short-term <1yr (33%)', 'Medium 1-3yr (40%)', 'Long-term 3+yr (27%)'],
+                datasets: [{
+                    data: [33, 40, 27],
+                    backgroundColor: [
+                        'rgba(255, 68, 68, 0.8)',
+                        'rgba(255, 215, 0, 0.8)',
+                        'rgba(0, 255, 0, 0.8)'
+                    ],
+                    borderColor: colors.primary,
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                ...this.getDefaultOptions(),
+                plugins: {
+                    ...this.getDefaultOptions().plugins,
+                    legend: {
+                        display: true,
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+    }
+
+    createSourceChart(canvasId) {
+        const ctx = document.getElementById(canvasId);
+        if (!ctx) return;
+
+        const colors = this.getDefaultColors();
+
+        if (this.charts[canvasId]) {
+            this.charts[canvasId].destroy();
+        }
+
+        this.charts[canvasId] = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Financial News', 'Expert Analysis', 'Online Communities', 'Social Media'],
+                datasets: [{
+                    label: 'Trust Level (%)',
+                    data: [40, 33, 20, 7],
+                    backgroundColor: [
+                        'rgba(0, 255, 0, 0.7)',
+                        'rgba(255, 215, 0, 0.7)',
+                        'rgba(255, 165, 0, 0.7)',
+                        'rgba(255, 68, 68, 0.7)'
+                    ],
+                    borderColor: colors.primary,
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                ...this.getDefaultOptions(),
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 50,
+                        ticks: {
+                            color: colors.text,
+                            callback: function(value) { return value + '%'; }
+                        }
+                    },
+                    x: {
+                        ticks: { 
+                            color: colors.text,
+                            font: { size: 10 }
+                        }
+                    }
+                }
+            }
+        });
+    }
 }
 
 const chartManager = new ChartManager();
 
 window.addEventListener('load', () => {
     console.log('Initializing charts...');
-    initializeAllCharts();
+    
+    // Check which page we're on and initialize appropriate charts
+    if (document.getElementById('histogramChart')) {
+        // Statistics page
+        initializeAllCharts();
+    } else if (document.getElementById('ageChart')) {
+        // Survey page
+        console.log('Initializing survey charts...');
+        chartManager.createSurveyCharts();
+    }
 });
 
 function initializeAllCharts() {
