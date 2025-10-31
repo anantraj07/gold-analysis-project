@@ -3,6 +3,37 @@
    All Charts Now Load Properly
    ============================================ */
 
+class StatisticsCalculator {
+    constructor(data) {
+        this.data = data;
+        this.values = data.map(d => parseFloat(d.Gold_Price_INR));
+    }
+
+    mean() {
+        return this.values.reduce((a, b) => a + b, 0) / this.values.length;
+    }
+
+    median() {
+        const sorted = [...this.values].sort((a, b) => a - b);
+        const mid = Math.floor(sorted.length / 2);
+        return sorted.length % 2 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
+    }
+
+    min() {
+        return Math.min(...this.values);
+    }
+
+    max() {
+        return Math.max(...this.values);
+    }
+
+    standardDeviation() {
+        const mean = this.mean();
+        const variance = this.values.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / this.values.length;
+        return Math.sqrt(variance);
+    }
+}
+
 class ChartManager {
     constructor() {
         this.charts = {};
@@ -43,8 +74,7 @@ class ChartManager {
                     bodyColor: colors.text,
                     borderColor: colors.primary,
                     borderWidth: 1,
-                    padding: 10,
-                    displayColors: true
+                    padding: 10
                 }
             },
             scales: {
@@ -140,7 +170,6 @@ class ChartManager {
         const ctx = document.getElementById(canvasId);
         if (!ctx) return;
 
-        // Sample every 5th point for performance
         const sampleRate = 5;
         const sampledData = data.filter((_, i) => i % sampleRate === 0);
 
@@ -368,7 +397,7 @@ class ChartManager {
                         fill: true
                     },
                     {
-                        label: 'Gold Price (₹)',
+                        label: 'Gold Price (₹ in thousands)',
                         data: inflationData.map(d => d.goldPrice / 1000),
                         type: 'line',
                         borderColor: colors.primary,
@@ -541,22 +570,18 @@ class ChartManager {
     }
 }
 
-// Initialize chart manager
 const chartManager = new ChartManager();
 
-// Initialize charts on page load
 window.addEventListener('load', () => {
     console.log('Initializing charts...');
     initializeAllCharts();
 });
 
 function initializeAllCharts() {
-    // Get or generate data
     let goldPrices = window.goldPrices || chartManager.generateGoldPriceData();
     
     console.log('Data points:', goldPrices.length);
     
-    // Initialize all charts
     if (document.getElementById('histogramChart')) chartManager.createHistogram('histogramChart', goldPrices);
     if (document.getElementById('trendChart')) chartManager.createTrendChart('trendChart', goldPrices);
     if (document.getElementById('volatilityChart')) chartManager.createVolatilityChart('volatilityChart', goldPrices);
@@ -569,5 +594,4 @@ function initializeAllCharts() {
     console.log('Charts initialized');
 }
 
-// Expose globally
 window.chartManager = chartManager;
