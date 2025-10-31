@@ -1,5 +1,6 @@
 /* ============================================
    GOLD PRICE ANALYSIS - MAIN.JS
+   Mobile-First Optimized
    ============================================ */
 
 // DOM Elements
@@ -9,7 +10,8 @@ const navLinks = document.querySelectorAll('.nav-link');
 
 // Mobile Menu Toggle
 if (mobileMenuToggle) {
-    mobileMenuToggle.addEventListener('click', () => {
+    mobileMenuToggle.addEventListener('click', (e) => {
+        e.stopPropagation();
         navMenu.classList.toggle('active');
         mobileMenuToggle.classList.toggle('active');
     });
@@ -26,11 +28,17 @@ if (mobileMenuToggle) {
 // Close menu when clicking outside
 document.addEventListener('click', (e) => {
     if (!e.target.closest('.nav-container')) {
-        navMenu.classList.remove('active');
+        navMenu?.classList.remove('active');
+        mobileMenuToggle?.classList.remove('active');
     }
 });
 
-// Tab Functionality
+// Prevent menu close when clicking inside menu
+navMenu?.addEventListener('click', (e) => {
+    e.stopPropagation();
+});
+
+// Tab Functionality with improved mobile handling
 document.querySelectorAll('.tab-btn').forEach(button => {
     button.addEventListener('click', (e) => {
         const tabName = e.target.dataset.tab;
@@ -39,33 +47,42 @@ document.querySelectorAll('.tab-btn').forEach(button => {
         document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
         document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
         
-        // Handle special tab for trends
-        if (tabName === 'trends') {
-            const trendContent = document.getElementById('trend-content');
-            if (trendContent) {
-                trendContent.classList.add('active');
-            }
-        } else {
-            const tabContent = document.getElementById(tabName);
-            if (tabContent) {
-                tabContent.classList.add('active');
-            }
-        }
-        
         // Add active class to clicked button
         e.target.classList.add('active');
         
-        // Trigger chart redraw if needed
+        // Show corresponding tab content
+        const tabContent = document.getElementById(tabName);
+        if (tabContent) {
+            tabContent.classList.add('active');
+            
+            // Scroll to content on mobile
+            if (window.innerWidth < 768) {
+                setTimeout(() => {
+                    tabContent.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }, 100);
+            }
+        }
+        
+        // Trigger chart redraw for proper responsive sizing
         setTimeout(() => {
             window.dispatchEvent(new Event('resize'));
-        }, 100);
+            
+            // Force chart.js to resize
+            if (window.Chart) {
+                Object.values(window.Chart.instances).forEach(chart => {
+                    if (chart && chart.resize) {
+                        chart.resize();
+                    }
+                });
+            }
+        }, 150);
     });
 });
 
 // Set first tab as active on page load
 window.addEventListener('load', () => {
     const firstTab = document.querySelector('.tab-btn');
-    if (firstTab) {
+    if (firstTab && !document.querySelector('.tab-btn.active')) {
         firstTab.click();
     }
 });
@@ -73,10 +90,18 @@ window.addEventListener('load', () => {
 // Smooth Scrolling
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        const href = this.getAttribute('href');
+        if (href !== '#') {
+            e.preventDefault();
+            const target = document.querySelector(href);
+            if (target) {
+                const offset = 80; // Account for fixed navbar
+                const targetPosition = target.getBoundingClientRect().top + window.pageYOffset - offset;
+                window.scrollTo({
+                    top: targetPosition,
+                    behavior: 'smooth'
+                });
+            }
         }
     });
 });
@@ -87,16 +112,55 @@ function updateActiveLink() {
     
     navLinks.forEach(link => {
         const href = link.getAttribute('href');
+        link.classList.remove('active');
         if (href === currentPage || (currentPage === '' && href === 'index.html')) {
             link.classList.add('active');
-        } else {
-            link.classList.remove('active');
         }
     });
 }
 
-// Run on page load
+// Run on page load and when URL changes
 window.addEventListener('load', updateActiveLink);
+window.addEventListener('popstate', updateActiveLink);
+
+// Responsive Chart Handling
+let resizeTimeout;
+window.addEventListener('resize', () => {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(() => {
+        // Update all Chart.js instances
+        if (window.Chart) {
+            Object.values(window.Chart.instances).forEach(chart => {
+                if (chart && chart.resize) {
+                    chart.resize();
+                }
+            });
+        }
+    }, 250);
+});
+
+// Touch event handling for better mobile experience
+let touchStartY = 0;
+let touchEndY = 0;
+
+document.addEventListener('touchstart', (e) => {
+    touchStartY = e.changedTouches[0].screenY;
+}, { passive: true });
+
+document.addEventListener('touchend', (e) => {
+    touchEndY = e.changedTouches[0].screenY;
+    handleSwipe();
+}, { passive: true });
+
+function handleSwipe() {
+    const swipeThreshold = 50;
+    const diff = touchStartY - touchEndY;
+    
+    // Could add swipe gestures for tabs here if needed
+    if (Math.abs(diff) > swipeThreshold) {
+        // Swipe detected
+    }
+}
 
 // Utility Functions
 const utils = {
@@ -119,25 +183,24 @@ const utils = {
         }).format(new Date(date));
     },
 
-    // Parse CSV data
-    parseCSV: (csv) => {
-        const lines = csv.trim().split('\n');
-        const headers = lines[0].split(',');
-        const data = [];
-        
-        for (let i = 1; i < lines.length; i++) {
-            const obj = {};
-            const currentLine = lines[i].split(',');
-            
-            for (let j = 0; j < headers.length; j++) {
-                obj[headers[j].trim()] = currentLine[j].trim();
-            }
-            data.push(obj);
+    // Format large numbers
+    formatNumber: (num) => {
+        if (num >= 10000000) {
+            return (num / 10000000).toFixed(2) + ' Cr';
+        } else if (num >= 100000) {
+            return (num / 100000).toFixed(2) + ' L';
+        } else if (num >= 1000) {
+            return (num / 1000).toFixed(2) + 'K';
         }
-        return data;
+        return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
     },
 
-    // Debounce function
+    // Calculate percentage change
+    percentageChange: (oldValue, newValue) => {
+        return (((newValue - oldValue) / oldValue) * 100).toFixed(2);
+    },
+
+    // Debounce function for performance
     debounce: (func, wait) => {
         let timeout;
         return function executedFunction(...args) {
@@ -150,22 +213,111 @@ const utils = {
         };
     },
 
-    // Calculate percentage change
-    percentageChange: (oldValue, newValue) => {
-        return (((newValue - oldValue) / oldValue) * 100).toFixed(2);
+    // Check if mobile device
+    isMobile: () => {
+        return window.innerWidth < 768;
     },
 
-    // Format number with commas
-    formatNumber: (num) => {
-        return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    // Check if tablet
+    isTablet: () => {
+        return window.innerWidth >= 768 && window.innerWidth < 1024;
     }
 };
 
-// Export utilities
+// Performance monitoring
+const performanceMonitor = {
+    logPageLoad: () => {
+        if (window.performance) {
+            const perfData = window.performance.timing;
+            const pageLoadTime = perfData.loadEventEnd - perfData.navigationStart;
+            console.log(`Page load time: ${pageLoadTime}ms`);
+        }
+    }
+};
+
+// Run performance monitoring on load
+window.addEventListener('load', () => {
+    performanceMonitor.logPageLoad();
+});
+
+// Viewport height fix for mobile browsers
+function setViewportHeight() {
+    const vh = window.innerHeight * 0.01;
+    document.documentElement.style.setProperty('--vh', `${vh}px`);
+}
+
+setViewportHeight();
+window.addEventListener('resize', utils.debounce(setViewportHeight, 200));
+
+// Prevent zoom on double tap for iOS
+let lastTouchEnd = 0;
+document.addEventListener('touchend', (e) => {
+    const now = Date.now();
+    if (now - lastTouchEnd <= 300) {
+        e.preventDefault();
+    }
+    lastTouchEnd = now;
+}, { passive: false });
+
+// Export utilities globally
 window.goldUtils = utils;
 
-// Console message
+// Console messages
 console.log('%c💰 Gold Price Analysis - Statistical Methods I', 
     'color: #FFD700; font-size: 16px; font-weight: bold; text-shadow: 2px 2px 4px rgba(0,0,0,0.5)');
-console.log('%cFor Academic Purposes Only • Not Financial Advice', 
+console.log('%cMobile-Optimized Version • For Academic Purposes Only', 
     'color: #FFA500; font-size: 12px; font-style: italic');
+
+// Accessibility improvements
+document.addEventListener('keydown', (e) => {
+    // ESC key closes mobile menu
+    if (e.key === 'Escape' && navMenu?.classList.contains('active')) {
+        navMenu.classList.remove('active');
+        mobileMenuToggle?.classList.remove('active');
+    }
+    
+    // Tab key navigation improvement
+    if (e.key === 'Tab') {
+        const focusableElements = document.querySelectorAll(
+            'button, a, input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        );
+        if (focusableElements.length === 0) return;
+        
+        const firstElement = focusableElements[0];
+        const lastElement = focusableElements[focusableElements.length - 1];
+        
+        if (e.shiftKey && document.activeElement === firstElement) {
+            e.preventDefault();
+            lastElement.focus();
+        } else if (!e.shiftKey && document.activeElement === lastElement) {
+            e.preventDefault();
+            firstElement.focus();
+        }
+    }
+});
+
+// Online/Offline status indicator
+window.addEventListener('online', () => {
+    console.log('Connection restored');
+});
+
+window.addEventListener('offline', () => {
+    console.log('Connection lost');
+});
+
+// Error handling for images
+document.querySelectorAll('img').forEach(img => {
+    img.addEventListener('error', function() {
+        this.style.display = 'none';
+        console.warn(`Failed to load image: ${this.src}`);
+    });
+});
+
+// Print optimization
+window.addEventListener('beforeprint', () => {
+    document.body.classList.add('printing');
+});
+
+window.addEventListener('afterprint', () => {
+    document.body.classList.remove('printing');
+});
