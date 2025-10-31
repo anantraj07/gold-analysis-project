@@ -7,83 +7,6 @@
     <meta name="description" content="Detailed statistical analysis including descriptive statistics, hypothesis testing, and correlation analysis">
     <link rel="stylesheet" href="css/styles.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
-    <style>
-        .chart-container {
-            position: relative;
-            width: 100%;
-            height: 400px;
-            margin-bottom: 2rem;
-            background: rgba(255, 215, 0, 0.03);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 1.5rem;
-        }
-
-        @media (max-width: 768px) {
-            .chart-container {
-                height: 300px;
-            }
-        }
-
-        .chart-container h3 {
-            color: var(--primary-gold);
-            margin-bottom: 1rem;
-            font-size: 1.1rem;
-        }
-
-        .chart-container canvas {
-            max-height: 350px;
-        }
-
-        .analysis-box {
-            background: rgba(255, 215, 0, 0.03);
-            border-left: 4px solid var(--primary-gold);
-            padding: 1.5rem;
-            margin: 1rem 0;
-            border-radius: 5px;
-        }
-
-        .analysis-box h4 {
-            color: var(--primary-gold);
-            margin-bottom: 0.5rem;
-        }
-
-        .analysis-box ul {
-            margin-left: 1.5rem;
-        }
-
-        .analysis-box li {
-            margin-bottom: 0.5rem;
-            color: var(--text-light);
-        }
-
-        .correlation-table {
-            margin-top: 1.5rem;
-            overflow-x: auto;
-        }
-
-        .correlation-table table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .correlation-table th,
-        .correlation-table td {
-            padding: 0.75rem;
-            text-align: center;
-            border: 1px solid var(--border-color);
-        }
-
-        .correlation-table th {
-            background: rgba(255, 215, 0, 0.1);
-            color: var(--primary-gold);
-            font-weight: 600;
-        }
-
-        .correlation-table tbody tr:nth-child(odd) {
-            background: rgba(255, 215, 0, 0.02);
-        }
-    </style>
 </head>
 <body>
     <!-- Theme Toggle Button -->
@@ -222,11 +145,12 @@
                 <div class="chart-container">
                     <h3>🔔 Normal Distribution Analysis</h3>
                     <canvas id="distributionChart"></canvas>
-                    <div class="analysis-box">
-                        <h4>Normality Test Results:</h4>
-                        <p><strong>Shapiro-Wilk Test:</strong> p-value = 0.087 (Data approximately normal)</p>
-                        <p><strong>Interpretation:</strong> Gold prices follow a near-normal distribution with slight positive skew.</p>
-                    </div>
+                </div>
+
+                <div class="analysis-box">
+                    <h4>Normality Test Results:</h4>
+                    <p><strong>Shapiro-Wilk Test:</strong> p-value = 0.087 (Data approximately normal)</p>
+                    <p><strong>Interpretation:</strong> Gold prices follow a near-normal distribution with slight positive skew.</p>
                 </div>
 
                 <div class="chart-container">
@@ -468,53 +392,8 @@
     </footer>
 
     <!-- Scripts -->
-    <script src="js/statistics.js"></script>
     <script src="js/charts.js"></script>
     <script src="js/theme.js"></script>
     <script src="js/main.js"></script>
-    
-    <!-- Tab switching script -->
-    <script>
-        document.querySelectorAll('.tab-btn').forEach(button => {
-            button.addEventListener('click', function() {
-                const tabName = this.getAttribute('data-tab');
-                
-                // Hide all tabs
-                document.querySelectorAll('.tab-content').forEach(tab => {
-                    tab.classList.remove('active');
-                });
-                
-                // Remove active from all buttons
-                document.querySelectorAll('.tab-btn').forEach(btn => {
-                    btn.classList.remove('active');
-                });
-                
-                // Show selected tab
-                const selectedTab = document.getElementById(tabName);
-                if (selectedTab) {
-                    selectedTab.classList.add('active');
-                    this.classList.add('active');
-                    
-                    // Redraw charts
-                    setTimeout(() => {
-                        window.dispatchEvent(new Event('resize'));
-                        if (window.chartManager) {
-                            Object.values(window.chartManager.charts).forEach(chart => {
-                                if (chart && chart.resize) chart.resize();
-                            });
-                        }
-                    }, 100);
-                }
-            });
-        });
-
-        // Set first tab active on load
-        window.addEventListener('load', () => {
-            const firstBtn = document.querySelector('.tab-btn');
-            if (firstBtn && !firstBtn.classList.contains('active')) {
-                firstBtn.click();
-            }
-        });
-    </script>
 </body>
 </html>
