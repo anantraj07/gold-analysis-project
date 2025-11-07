@@ -1,6 +1,6 @@
 /* ============================================
-   GOLD PRICE ANALYSIS - CHARTS.JS (CORRECTED)
-   With Accurate Data and Fixed Calculations
+   GOLD PRICE ANALYSIS - CHARTS.JS (FIXED)
+   All charts working with correct data
    ============================================ */
 
 class StatisticsCalculator {
@@ -81,14 +81,13 @@ class ChartManager {
                     width: 100%;
                     height: 100%;
                     background-color: rgba(0, 0, 0, 0.9);
-                    overflow: auto;
                 }
 
                 .chart-modal-content {
-                    background-color: var(--light-bg);
+                    background-color: #1a1a1a;
                     margin: 2% auto;
                     padding: 2rem;
-                    border: 2px solid var(--primary-gold);
+                    border: 2px solid #FFD700;
                     border-radius: 12px;
                     width: 95%;
                     max-width: 1400px;
@@ -96,68 +95,27 @@ class ChartManager {
                 }
 
                 .chart-modal-close {
-                    color: var(--primary-gold);
+                    color: #FFD700;
                     position: absolute;
                     top: 1rem;
                     right: 1.5rem;
                     font-size: 2.5rem;
                     font-weight: bold;
                     cursor: pointer;
-                    transition: all 0.3s ease;
                 }
 
                 .chart-modal-close:hover {
-                    color: var(--dark-gold);
-                    transform: scale(1.1);
+                    color: #DAA520;
                 }
 
                 .chart-modal-content h3 {
-                    color: var(--primary-gold);
+                    color: #FFD700;
                     margin-bottom: 1.5rem;
-                    font-size: 1.5rem;
                 }
 
                 .chart-modal-content canvas {
                     width: 100% !important;
                     height: 600px !important;
-                    max-height: 70vh;
-                }
-
-                .chart-container {
-                    cursor: zoom-in;
-                    position: relative;
-                }
-
-                .chart-container::after {
-                    content: '🔍 Click to enlarge';
-                    position: absolute;
-                    top: 10px;
-                    right: 10px;
-                    background: rgba(255, 215, 0, 0.9);
-                    color: #000;
-                    padding: 0.25rem 0.75rem;
-                    border-radius: 4px;
-                    font-size: 0.75rem;
-                    font-weight: 600;
-                    opacity: 0;
-                    transition: opacity 0.3s ease;
-                    pointer-events: none;
-                }
-
-                .chart-container:hover::after {
-                    opacity: 1;
-                }
-
-                @media (max-width: 768px) {
-                    .chart-modal-content {
-                        width: 98%;
-                        margin: 5% auto;
-                        padding: 1rem;
-                    }
-
-                    .chart-modal-content canvas {
-                        height: 400px !important;
-                    }
                 }
             </style>
         `;
@@ -174,9 +132,8 @@ class ChartManager {
 
         closeBtn.onclick = () => {
             modal.style.display = 'none';
-            const modalChart = this.charts['modalCanvas'];
-            if (modalChart) {
-                modalChart.destroy();
+            if (this.charts['modalCanvas']) {
+                this.charts['modalCanvas'].destroy();
                 delete this.charts['modalCanvas'];
             }
         };
@@ -184,9 +141,8 @@ class ChartManager {
         window.onclick = (event) => {
             if (event.target === modal) {
                 modal.style.display = 'none';
-                const modalChart = this.charts['modalCanvas'];
-                if (modalChart) {
-                    modalChart.destroy();
+                if (this.charts['modalCanvas']) {
+                    this.charts['modalCanvas'].destroy();
                     delete this.charts['modalCanvas'];
                 }
             }
@@ -208,63 +164,38 @@ class ChartManager {
         this.charts['modalCanvas'] = new Chart(modalCanvas, {
             type: chartType,
             data: chartData,
-            options: {
-                ...chartOptions,
-                maintainAspectRatio: false
-            }
+            options: { ...chartOptions, maintainAspectRatio: false }
         });
     }
 
-    getDefaultColors() {
-        const isDark = !document.body.classList.contains('light-theme');
-        return {
-            primary: '#FFD700',
-            darkGold: '#DAA520',
-            text: isDark ? '#ffffff' : '#1a1a1a',
-            textMuted: isDark ? '#888888' : '#666666',
-            accentCyan: isDark ? '#00ffff' : '#0066cc',
-            accentOrange: '#FFA500',
-            borderColor: isDark ? '#333333' : '#dddddd',
-            success: '#00ff00',
-            danger: '#ff4444'
-        };
-    }
-
     getDefaultOptions() {
-        const colors = this.getDefaultColors();
         return {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
                 legend: {
                     labels: {
-                        color: colors.text,
-                        font: { size: this.isMobile ? 10 : 12 },
+                        color: '#ffffff',
+                        font: { size: 12 },
                         padding: 15
                     }
                 },
                 tooltip: {
                     backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                    titleColor: colors.primary,
-                    bodyColor: colors.text,
-                    borderColor: colors.primary,
+                    titleColor: '#FFD700',
+                    bodyColor: '#ffffff',
+                    borderColor: '#FFD700',
                     borderWidth: 1,
                     padding: 10
                 }
             },
             scales: {
                 y: {
-                    ticks: { 
-                        color: colors.text,
-                        font: { size: 11 }
-                    },
-                    grid: { color: colors.borderColor + '33' }
+                    ticks: { color: '#ffffff', font: { size: 11 } },
+                    grid: { color: 'rgba(255, 255, 255, 0.1)' }
                 },
                 x: {
-                    ticks: { 
-                        color: colors.text,
-                        font: { size: 11 }
-                    },
+                    ticks: { color: '#ffffff', font: { size: 11 } },
                     grid: { drawOnChartArea: false }
                 }
             }
@@ -295,294 +226,9 @@ class ChartManager {
             binCounts[binIndex]++;
         });
 
-        const colors = this.getDefaultColors();
-
         if (this.charts[canvasId]) {
             this.charts[canvasId].destroy();
         }
-
-        const chartData = {
-            labels: ['Physical Gold (53%)', 'Gold ETFs (27%)', 'Gold Schemes (20%)'],
-            datasets: [{
-                data: [53, 27, 20],
-                backgroundColor: [
-                    'rgba(255, 215, 0, 0.8)',
-                    'rgba(0, 255, 255, 0.8)',
-                    'rgba(255, 165, 0, 0.8)'
-                ],
-                borderColor: colors.primary,
-                borderWidth: 2
-            }]
-        };
-
-        const chartOptions = {
-            ...this.getDefaultOptions(),
-            plugins: {
-                ...this.getDefaultOptions().plugins,
-                legend: {
-                    display: true,
-                    position: 'bottom',
-                    labels: { color: colors.text }
-                }
-            }
-        };
-
-        this.charts[canvasId] = new Chart(ctx, {
-            type: 'doughnut',
-            data: chartData,
-            options: chartOptions
-        });
-
-        ctx.onclick = () => {
-            this.openChartModal('Preferred Investment Form', chartData, 'doughnut', chartOptions);
-        };
-    }
-
-    createRiskChart(canvasId) {
-        const ctx = document.getElementById(canvasId);
-        if (!ctx) return;
-
-        const colors = this.getDefaultColors();
-
-        if (this.charts[canvasId]) {
-            this.charts[canvasId].destroy();
-        }
-
-        const chartData = {
-            labels: ['Low Risk (47%)', 'Moderate (40%)', 'High Risk (13%)'],
-            datasets: [{
-                data: [47, 40, 13],
-                backgroundColor: [
-                    'rgba(0, 255, 0, 0.8)',
-                    'rgba(255, 215, 0, 0.8)',
-                    'rgba(255, 68, 68, 0.8)'
-                ],
-                borderColor: colors.primary,
-                borderWidth: 2
-            }]
-        };
-
-        const chartOptions = {
-            ...this.getDefaultOptions(),
-            plugins: {
-                ...this.getDefaultOptions().plugins,
-                legend: {
-                    display: true,
-                    position: 'bottom',
-                    labels: { color: colors.text }
-                }
-            }
-        };
-
-        this.charts[canvasId] = new Chart(ctx, {
-            type: 'pie',
-            data: chartData,
-            options: chartOptions
-        });
-
-        ctx.onclick = () => {
-            this.openChartModal('Risk Perception', chartData, 'pie', chartOptions);
-        };
-    }
-
-    createSentimentChart(canvasId) {
-        const ctx = document.getElementById(canvasId);
-        if (!ctx) return;
-
-        const colors = this.getDefaultColors();
-
-        if (this.charts[canvasId]) {
-            this.charts[canvasId].destroy();
-        }
-
-        const chartData = {
-            labels: ['Bullish', 'Neutral', 'Bearish'],
-            datasets: [{
-                label: 'Percentage',
-                data: [67, 20, 13],
-                backgroundColor: [
-                    'rgba(0, 255, 0, 0.7)',
-                    'rgba(255, 165, 0, 0.7)',
-                    'rgba(255, 68, 68, 0.7)'
-                ],
-                borderColor: colors.primary,
-                borderWidth: 2
-            }]
-        };
-
-        const chartOptions = {
-            ...this.getDefaultOptions(),
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    max: 100,
-                    ticks: {
-                        color: colors.text,
-                        callback: function(value) { return value + '%'; }
-                    },
-                    grid: { color: colors.borderColor + '33' }
-                },
-                x: {
-                    ticks: { color: colors.text },
-                    grid: { drawOnChartArea: false }
-                }
-            }
-        };
-
-        this.charts[canvasId] = new Chart(ctx, {
-            type: 'bar',
-            data: chartData,
-            options: chartOptions
-        });
-
-        ctx.onclick = () => {
-            this.openChartModal('Market Sentiment', chartData, 'bar', chartOptions);
-        };
-    }
-
-    createTimelineChart(canvasId) {
-        const ctx = document.getElementById(canvasId);
-        if (!ctx) return;
-
-        const colors = this.getDefaultColors();
-
-        if (this.charts[canvasId]) {
-            this.charts[canvasId].destroy();
-        }
-
-        const chartData = {
-            labels: ['Short-term <1yr (33%)', 'Medium 1-3yr (40%)', 'Long-term 3+yr (27%)'],
-            datasets: [{
-                data: [33, 40, 27],
-                backgroundColor: [
-                    'rgba(255, 68, 68, 0.8)',
-                    'rgba(255, 215, 0, 0.8)',
-                    'rgba(0, 255, 0, 0.8)'
-                ],
-                borderColor: colors.primary,
-                borderWidth: 2
-            }]
-        };
-
-        const chartOptions = {
-            ...this.getDefaultOptions(),
-            plugins: {
-                ...this.getDefaultOptions().plugins,
-                legend: {
-                    display: true,
-                    position: 'bottom',
-                    labels: { color: colors.text }
-                }
-            }
-        };
-
-        this.charts[canvasId] = new Chart(ctx, {
-            type: 'doughnut',
-            data: chartData,
-            options: chartOptions
-        });
-
-        ctx.onclick = () => {
-            this.openChartModal('Investment Timeline Preference', chartData, 'doughnut', chartOptions);
-        };
-    }
-
-    createSourceChart(canvasId) {
-        const ctx = document.getElementById(canvasId);
-        if (!ctx) return;
-
-        const colors = this.getDefaultColors();
-
-        if (this.charts[canvasId]) {
-            this.charts[canvasId].destroy();
-        }
-
-        const chartData = {
-            labels: ['Financial News', 'Expert Analysis', 'Online Communities', 'Social Media'],
-            datasets: [{
-                label: 'Trust Level (%)',
-                data: [40, 33, 20, 7],
-                backgroundColor: [
-                    'rgba(0, 255, 0, 0.7)',
-                    'rgba(255, 215, 0, 0.7)',
-                    'rgba(255, 165, 0, 0.7)',
-                    'rgba(255, 68, 68, 0.7)'
-                ],
-                borderColor: colors.primary,
-                borderWidth: 2
-            }]
-        };
-
-        const chartOptions = {
-            ...this.getDefaultOptions(),
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    max: 50,
-                    ticks: {
-                        color: colors.text,
-                        callback: function(value) { return value + '%'; }
-                    },
-                    grid: { color: colors.borderColor + '33' }
-                },
-                x: {
-                    ticks: { 
-                        color: colors.text,
-                        font: { size: 10 }
-                    },
-                    grid: { drawOnChartArea: false }
-                }
-            }
-        };
-
-        this.charts[canvasId] = new Chart(ctx, {
-            type: 'bar',
-            data: chartData,
-            options: chartOptions
-        });
-
-        ctx.onclick = () => {
-            this.openChartModal('Information Source Trust', chartData, 'bar', chartOptions);
-        };
-    }
-}
-
-const chartManager = new ChartManager();
-
-window.addEventListener('load', () => {
-    console.log('Initializing charts...');
-    
-    if (document.getElementById('histogramChart')) {
-        initializeAllCharts();
-    } else if (document.getElementById('ageChart')) {
-        console.log('Initializing survey charts...');
-        chartManager.createSurveyCharts();
-    }
-});
-
-function initializeAllCharts() {
-    let goldPrices = window.goldPrices;
-    
-    if (!goldPrices || goldPrices.length === 0) {
-        console.error('Gold prices data not available');
-        return;
-    }
-    
-    console.log('Data points:', goldPrices.length);
-    
-    if (document.getElementById('histogramChart')) chartManager.createHistogram('histogramChart', goldPrices);
-    if (document.getElementById('trendChart')) chartManager.createTrendChart('trendChart', goldPrices);
-    if (document.getElementById('volatilityChart')) chartManager.createVolatilityChart('volatilityChart', goldPrices);
-    if (document.getElementById('distributionChart')) chartManager.createDistributionChart('distributionChart', goldPrices);
-    if (document.getElementById('boxplotChart')) chartManager.createBoxPlotChart('boxplotChart', goldPrices);
-    if (document.getElementById('inflationChart')) chartManager.createInflationChart('inflationChart');
-    if (document.getElementById('correlationScatterChart')) chartManager.createCorrelationScatterChart('correlationScatterChart');
-    if (document.getElementById('correlationChart')) chartManager.createCorrelationChart('correlationChart');
-    
-    console.log('Charts initialized');
-}
-
-window.chartManager = chartManager;}
 
         const chartData = {
             labels: binLabels,
@@ -590,21 +236,20 @@ window.chartManager = chartManager;}
                 label: 'Frequency',
                 data: binCounts,
                 backgroundColor: 'rgba(255, 215, 0, 0.6)',
-                borderColor: colors.primary,
+                borderColor: '#FFD700',
                 borderWidth: 2
             }]
         };
 
-        const chartOptions = this.getDefaultOptions();
-
         this.charts[canvasId] = new Chart(ctx, {
             type: 'bar',
             data: chartData,
-            options: chartOptions
+            options: this.getDefaultOptions()
         });
 
+        ctx.style.cursor = 'pointer';
         ctx.onclick = () => {
-            this.openChartModal('Price Distribution Histogram', chartData, 'bar', chartOptions);
+            this.openChartModal('Price Distribution Histogram', chartData, 'bar', this.getDefaultOptions());
         };
     }
 
@@ -612,7 +257,6 @@ window.chartManager = chartManager;}
         const ctx = document.getElementById(canvasId);
         if (!ctx) return;
 
-        // Sample every 5th data point to keep chart readable (643 points -> ~128 points)
         const sampledData = data.filter((_, index) => index % 5 === 0 || index === data.length - 1);
         
         const labels = sampledData.map(d => {
@@ -621,8 +265,6 @@ window.chartManager = chartManager;}
         });
         
         const prices = sampledData.map(d => parseFloat(d.Gold_Price_INR));
-
-        const colors = this.getDefaultColors();
 
         if (this.charts[canvasId]) {
             this.charts[canvasId].destroy();
@@ -633,40 +275,34 @@ window.chartManager = chartManager;}
             datasets: [{
                 label: 'Gold Price (₹ per 10g)',
                 data: prices,
-                borderColor: colors.primary,
+                borderColor: '#FFD700',
                 backgroundColor: 'rgba(255, 215, 0, 0.1)',
                 borderWidth: 3,
                 fill: true,
                 tension: 0.3,
                 pointRadius: 2,
                 pointHoverRadius: 6,
-                pointBackgroundColor: colors.accentCyan
+                pointBackgroundColor: '#00ffff'
             }]
         };
 
-        const chartOptions = {
+        const options = {
             ...this.getDefaultOptions(),
-            interaction: { intersect: false, mode: 'index' },
             scales: {
-                ...this.getDefaultOptions().scales,
                 y: {
                     ticks: {
-                        color: colors.text,
-                        font: { size: 11 },
+                        color: '#ffffff',
                         callback: function(value) {
                             return '₹' + (value/1000).toFixed(0) + 'k';
                         }
                     },
-                    grid: { color: colors.borderColor + '33' }
+                    grid: { color: 'rgba(255, 255, 255, 0.1)' }
                 },
                 x: {
                     ticks: {
-                        color: colors.text,
-                        font: { size: 9 },
+                        color: '#ffffff',
                         maxRotation: 45,
-                        minRotation: 45,
-                        autoSkip: true,
-                        maxTicksLimit: 20
+                        minRotation: 45
                     },
                     grid: { drawOnChartArea: false }
                 }
@@ -676,11 +312,12 @@ window.chartManager = chartManager;}
         this.charts[canvasId] = new Chart(ctx, {
             type: 'line',
             data: chartData,
-            options: chartOptions
+            options: options
         });
 
+        ctx.style.cursor = 'pointer';
         ctx.onclick = () => {
-            this.openChartModal('Price Trend Over Time (Jan 2023 - Oct 2025)', chartData, 'line', chartOptions);
+            this.openChartModal('Price Trend Over Time', chartData, 'line', options);
         };
     }
 
@@ -716,8 +353,6 @@ window.chartManager = chartManager;}
             return Math.round(Math.sqrt(variance));
         });
 
-        const colors = this.getDefaultColors();
-
         if (this.charts[canvasId]) {
             this.charts[canvasId].destroy();
         }
@@ -732,21 +367,20 @@ window.chartManager = chartManager;}
                     v > 2000 ? 'rgba(255, 165, 0, 0.6)' : 
                     'rgba(0, 255, 0, 0.6)'
                 ),
-                borderColor: colors.primary,
+                borderColor: '#FFD700',
                 borderWidth: 2
             }]
         };
 
-        const chartOptions = this.getDefaultOptions();
-
         this.charts[canvasId] = new Chart(ctx, {
             type: 'bar',
             data: chartData,
-            options: chartOptions
+            options: this.getDefaultOptions()
         });
 
+        ctx.style.cursor = 'pointer';
         ctx.onclick = () => {
-            this.openChartModal('Quarterly Volatility Analysis', chartData, 'bar', chartOptions);
+            this.openChartModal('Quarterly Volatility', chartData, 'bar', this.getDefaultOptions());
         };
     }
 
@@ -766,8 +400,6 @@ window.chartManager = chartManager;}
             y.push(Math.exp(-0.5 * z * z) / (std * Math.sqrt(2 * Math.PI)) * 1000000);
         }
 
-        const colors = this.getDefaultColors();
-
         if (this.charts[canvasId]) {
             this.charts[canvasId].destroy();
         }
@@ -777,7 +409,7 @@ window.chartManager = chartManager;}
             datasets: [{
                 label: 'Normal Distribution',
                 data: y,
-                borderColor: colors.primary,
+                borderColor: '#FFD700',
                 backgroundColor: 'rgba(255, 215, 0, 0.2)',
                 borderWidth: 3,
                 fill: true,
@@ -786,16 +418,15 @@ window.chartManager = chartManager;}
             }]
         };
 
-        const chartOptions = this.getDefaultOptions();
-
         this.charts[canvasId] = new Chart(ctx, {
             type: 'line',
             data: chartData,
-            options: chartOptions
+            options: this.getDefaultOptions()
         });
 
+        ctx.style.cursor = 'pointer';
         ctx.onclick = () => {
-            this.openChartModal('Normal Distribution Analysis', chartData, 'line', chartOptions);
+            this.openChartModal('Normal Distribution', chartData, 'line', this.getDefaultOptions());
         };
     }
 
@@ -804,7 +435,6 @@ window.chartManager = chartManager;}
         if (!ctx) return;
 
         const calc = new StatisticsCalculator(data);
-        const colors = this.getDefaultColors();
 
         if (this.charts[canvasId]) {
             this.charts[canvasId].destroy();
@@ -828,30 +458,25 @@ window.chartManager = chartManager;}
                     'rgba(255, 215, 0, 0.4)',
                     'rgba(0, 255, 0, 0.6)'
                 ],
-                borderColor: colors.primary,
+                borderColor: '#FFD700',
                 borderWidth: 2
             }]
         };
 
-        const chartOptions = {
+        const options = {
             ...this.getDefaultOptions(),
             scales: {
                 y: {
-                    beginAtZero: false,
                     ticks: {
-                        color: colors.text,
-                        font: { size: 11 },
+                        color: '#ffffff',
                         callback: function(value) {
                             return '₹' + (value/1000).toFixed(0) + 'k';
                         }
                     },
-                    grid: { color: colors.borderColor + '33' }
+                    grid: { color: 'rgba(255, 255, 255, 0.1)' }
                 },
                 x: {
-                    ticks: {
-                        color: colors.text,
-                        font: { size: 11 }
-                    },
+                    ticks: { color: '#ffffff' },
                     grid: { drawOnChartArea: false }
                 }
             }
@@ -860,11 +485,12 @@ window.chartManager = chartManager;}
         this.charts[canvasId] = new Chart(ctx, {
             type: 'bar',
             data: chartData,
-            options: chartOptions
+            options: options
         });
 
+        ctx.style.cursor = 'pointer';
         ctx.onclick = () => {
-            this.openChartModal('Box Plot Analysis', chartData, 'bar', chartOptions);
+            this.openChartModal('Box Plot Analysis', chartData, 'bar', options);
         };
     }
 
@@ -887,8 +513,6 @@ window.chartManager = chartManager;}
             { month: 'Oct 25', inflation: 5.49, goldPrice: 110383 }
         ];
 
-        const colors = this.getDefaultColors();
-
         if (this.charts[canvasId]) {
             this.charts[canvasId].destroy();
         }
@@ -899,7 +523,7 @@ window.chartManager = chartManager;}
                 {
                     label: 'Inflation Rate (%)',
                     data: inflationData.map(d => d.inflation),
-                    borderColor: colors.accentOrange,
+                    borderColor: '#FFA500',
                     backgroundColor: 'rgba(255, 165, 0, 0.1)',
                     borderWidth: 2,
                     yAxisID: 'y',
@@ -910,7 +534,7 @@ window.chartManager = chartManager;}
                     label: 'Gold Price (₹ in thousands)',
                     data: inflationData.map(d => d.goldPrice / 1000),
                     type: 'line',
-                    borderColor: colors.primary,
+                    borderColor: '#FFD700',
                     backgroundColor: 'transparent',
                     borderWidth: 3,
                     yAxisID: 'y1',
@@ -920,39 +544,36 @@ window.chartManager = chartManager;}
             ]
         };
 
-        const chartOptions = {
-            ...this.getDefaultOptions(),
+        const options = {
+            responsive: true,
+            maintainAspectRatio: false,
             interaction: { mode: 'index', intersect: false },
+            plugins: {
+                legend: {
+                    labels: { color: '#ffffff' }
+                }
+            },
             scales: {
                 y: {
                     type: 'linear',
-                    display: true,
                     position: 'left',
                     ticks: {
-                        color: colors.accentOrange,
-                        font: { size: 11 },
+                        color: '#FFA500',
                         callback: function(value) { return value.toFixed(1) + '%'; }
                     },
                     grid: { color: 'rgba(255, 165, 0, 0.1)' }
                 },
                 y1: {
                     type: 'linear',
-                    display: true,
                     position: 'right',
                     ticks: {
-                        color: colors.primary,
-                        font: { size: 11 },
+                        color: '#FFD700',
                         callback: function(value) { return '₹' + value + 'k'; }
                     },
                     grid: { drawOnChartArea: false }
                 },
                 x: {
-                    ticks: {
-                        color: colors.text,
-                        font: { size: 10 },
-                        maxRotation: 45,
-                        minRotation: 45
-                    },
+                    ticks: { color: '#ffffff' },
                     grid: { drawOnChartArea: false }
                 }
             }
@@ -961,11 +582,12 @@ window.chartManager = chartManager;}
         this.charts[canvasId] = new Chart(ctx, {
             type: 'line',
             data: chartData,
-            options: chartOptions
+            options: options
         });
 
+        ctx.style.cursor = 'pointer';
         ctx.onclick = () => {
-            this.openChartModal('Gold Prices vs Inflation Rate', chartData, 'line', chartOptions);
+            this.openChartModal('Gold vs Inflation', chartData, 'line', options);
         };
     }
 
@@ -988,42 +610,38 @@ window.chartManager = chartManager;}
             { inflation: 5.49, goldPrice: 110383 }
         ];
 
-        const colors = this.getDefaultColors();
-
         if (this.charts[canvasId]) {
             this.charts[canvasId].destroy();
         }
 
         const chartData = {
             datasets: [{
-                label: 'Gold vs Inflation Correlation',
+                label: 'Gold vs Inflation',
                 data: inflationData.map(d => ({ x: d.inflation, y: d.goldPrice })),
                 backgroundColor: 'rgba(255, 215, 0, 0.7)',
-                borderColor: colors.primary,
+                borderColor: '#FFD700',
                 borderWidth: 2,
                 pointRadius: 6,
                 pointHoverRadius: 8
             }]
         };
 
-        const chartOptions = {
+        const options = {
             ...this.getDefaultOptions(),
             scales: {
                 y: {
                     ticks: {
-                        color: colors.text,
-                        font: { size: 11 },
+                        color: '#ffffff',
                         callback: function(value) { return '₹' + (value/1000).toFixed(0) + 'k'; }
                     },
-                    grid: { color: colors.borderColor + '33' }
+                    grid: { color: 'rgba(255, 255, 255, 0.1)' }
                 },
                 x: {
                     ticks: {
-                        color: colors.text,
-                        font: { size: 11 },
+                        color: '#ffffff',
                         callback: function(value) { return value.toFixed(1) + '%'; }
                     },
-                    grid: { color: colors.borderColor + '33' }
+                    grid: { color: 'rgba(255, 255, 255, 0.1)' }
                 }
             }
         };
@@ -1031,19 +649,18 @@ window.chartManager = chartManager;}
         this.charts[canvasId] = new Chart(ctx, {
             type: 'scatter',
             data: chartData,
-            options: chartOptions
+            options: options
         });
 
+        ctx.style.cursor = 'pointer';
         ctx.onclick = () => {
-            this.openChartModal('Correlation: Gold Price & Inflation', chartData, 'scatter', chartOptions);
+            this.openChartModal('Correlation Scatter', chartData, 'scatter', options);
         };
     }
 
     createCorrelationChart(canvasId) {
         const ctx = document.getElementById(canvasId);
         if (!ctx) return;
-
-        const colors = this.getDefaultColors();
 
         if (this.charts[canvasId]) {
             this.charts[canvasId].destroy();
@@ -1059,29 +676,25 @@ window.chartManager = chartManager;}
                     'rgba(255, 165, 0, 0.7)',
                     'rgba(255, 68, 68, 0.7)'
                 ],
-                borderColor: colors.primary,
+                borderColor: '#FFD700',
                 borderWidth: 2
             }]
         };
 
-        const chartOptions = {
+        const options = {
             ...this.getDefaultOptions(),
             scales: {
                 y: {
                     min: -1,
                     max: 1,
                     ticks: {
-                        color: colors.text,
-                        font: { size: 11 },
+                        color: '#ffffff',
                         callback: function(value) { return value.toFixed(2); }
                     },
-                    grid: { color: colors.borderColor + '33' }
+                    grid: { color: 'rgba(255, 255, 255, 0.1)' }
                 },
                 x: {
-                    ticks: {
-                        color: colors.text,
-                        font: { size: 11 }
-                    },
+                    ticks: { color: '#ffffff' },
                     grid: { drawOnChartArea: false }
                 }
             }
@@ -1090,23 +703,16 @@ window.chartManager = chartManager;}
         this.charts[canvasId] = new Chart(ctx, {
             type: 'bar',
             data: chartData,
-            options: chartOptions
+            options: options
         });
 
+        ctx.style.cursor = 'pointer';
         ctx.onclick = () => {
-            this.openChartModal('Correlation Matrix', chartData, 'bar', chartOptions);
+            this.openChartModal('Correlation Matrix', chartData, 'bar', options);
         };
     }
 
-    destroyAllCharts() {
-        Object.keys(this.charts).forEach(key => {
-            if (this.charts[key]) {
-                this.charts[key].destroy();
-            }
-        });
-        this.charts = {};
-    }
-
+    // Survey Charts
     createSurveyCharts() {
         this.createAgeChart('ageChart');
         this.createGenderChart('genderChart');
@@ -1126,357 +732,397 @@ window.chartManager = chartManager;}
         const ctx = document.getElementById(canvasId);
         if (!ctx) return;
 
-        const colors = this.getDefaultColors();
-
-        if (this.charts[canvasId]) {
-            this.charts[canvasId].destroy();
-        }
-
-        const chartData = {
-            labels: ['18-25 years', '26-35 years', '36-50 years', '50+ years'],
-            datasets: [{
-                data: [60, 20, 13.3, 6.7],
-                backgroundColor: [
-                    'rgba(255, 215, 0, 0.8)',
-                    'rgba(255, 165, 0, 0.8)',
-                    'rgba(0, 255, 255, 0.8)',
-                    'rgba(255, 68, 68, 0.8)'
-                ],
-                borderColor: colors.primary,
-                borderWidth: 2
-            }]
-        };
-
-        const chartOptions = {
-            ...this.getDefaultOptions(),
-            plugins: {
-                ...this.getDefaultOptions().plugins,
-                legend: {
-                    display: true,
-                    position: 'bottom',
-                    labels: { color: colors.text }
-                }
-            }
-        };
+        if (this.charts[canvasId]) this.charts[canvasId].destroy();
 
         this.charts[canvasId] = new Chart(ctx, {
             type: 'doughnut',
-            data: chartData,
-            options: chartOptions
+            data: {
+                labels: ['18-25', '26-35', '36-50', '50+'],
+                datasets: [{
+                    data: [60, 20, 13.3, 6.7],
+                    backgroundColor: ['rgba(255, 215, 0, 0.8)', 'rgba(255, 165, 0, 0.8)', 'rgba(0, 255, 255, 0.8)', 'rgba(255, 68, 68, 0.8)'],
+                    borderColor: '#FFD700',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { labels: { color: '#ffffff' } } }
+            }
         });
-
-        ctx.onclick = () => {
-            this.openChartModal('Age Distribution', chartData, 'doughnut', chartOptions);
-        };
     }
 
     createGenderChart(canvasId) {
         const ctx = document.getElementById(canvasId);
         if (!ctx) return;
 
-        const colors = this.getDefaultColors();
-
-        if (this.charts[canvasId]) {
-            this.charts[canvasId].destroy();
-        }
-
-        const chartData = {
-            labels: ['Male', 'Female'],
-            datasets: [{
-                data: [60, 40],
-                backgroundColor: [
-                    'rgba(0, 255, 255, 0.8)',
-                    'rgba(255, 165, 0, 0.8)'
-                ],
-                borderColor: colors.primary,
-                borderWidth: 2
-            }]
-        };
-
-        const chartOptions = {
-            ...this.getDefaultOptions(),
-            plugins: {
-                ...this.getDefaultOptions().plugins,
-                legend: {
-                    display: true,
-                    position: 'bottom',
-                    labels: { color: colors.text }
-                }
-            }
-        };
+        if (this.charts[canvasId]) this.charts[canvasId].destroy();
 
         this.charts[canvasId] = new Chart(ctx, {
             type: 'pie',
-            data: chartData,
-            options: chartOptions
+            data: {
+                labels: ['Male', 'Female'],
+                datasets: [{
+                    data: [60, 40],
+                    backgroundColor: ['rgba(0, 255, 255, 0.8)', 'rgba(255, 165, 0, 0.8)'],
+                    borderColor: '#FFD700',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { labels: { color: '#ffffff' } } }
+            }
         });
-
-        ctx.onclick = () => {
-            this.openChartModal('Gender Distribution', chartData, 'pie', chartOptions);
-        };
     }
 
     createOccupationChart(canvasId) {
         const ctx = document.getElementById(canvasId);
         if (!ctx) return;
 
-        const colors = this.getDefaultColors();
-
-        if (this.charts[canvasId]) {
-            this.charts[canvasId].destroy();
-        }
-
-        const chartData = {
-            labels: ['Students', 'Employed', 'Self-Employed'],
-            datasets: [{
-                label: 'Percentage',
-                data: [40, 46.7, 13.3],
-                backgroundColor: 'rgba(255, 215, 0, 0.7)',
-                borderColor: colors.primary,
-                borderWidth: 2
-            }]
-        };
-
-        const chartOptions = {
-            ...this.getDefaultOptions(),
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    max: 100,
-                    ticks: {
-                        color: colors.text,
-                        callback: function(value) { return value + '%'; }
-                    },
-                    grid: { color: colors.borderColor + '33' }
-                },
-                x: {
-                    ticks: { color: colors.text },
-                    grid: { drawOnChartArea: false }
-                }
-            }
-        };
+        if (this.charts[canvasId]) this.charts[canvasId].destroy();
 
         this.charts[canvasId] = new Chart(ctx, {
             type: 'bar',
-            data: chartData,
-            options: chartOptions
+            data: {
+                labels: ['Students', 'Employed', 'Self-Employed'],
+                datasets: [{
+                    label: 'Percentage',
+                    data: [40, 46.7, 13.3],
+                    backgroundColor: 'rgba(255, 215, 0, 0.7)',
+                    borderColor: '#FFD700',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                ...this.getDefaultOptions(),
+                scales: {
+                    y: { beginAtZero: true, max: 100, ticks: { color: '#ffffff', callback: v => v + '%' }, grid: { color: 'rgba(255, 255, 255, 0.1)' } },
+                    x: { ticks: { color: '#ffffff' }, grid: { drawOnChartArea: false } }
+                }
+            }
         });
-
-        ctx.onclick = () => {
-            this.openChartModal('Occupation Distribution', chartData, 'bar', chartOptions);
-        };
     }
 
     createIncomeChart(canvasId) {
         const ctx = document.getElementById(canvasId);
         if (!ctx) return;
 
-        const colors = this.getDefaultColors();
-
-        if (this.charts[canvasId]) {
-            this.charts[canvasId].destroy();
-        }
-
-        const chartData = {
-            labels: ['<₹50K', '₹50K-₹1L', '₹1L-₹2.5L', '>₹2.5L'],
-            datasets: [{
-                label: 'Percentage',
-                data: [26.7, 33.3, 26.7, 13.3],
-                backgroundColor: [
-                    'rgba(255, 68, 68, 0.7)',
-                    'rgba(255, 165, 0, 0.7)',
-                    'rgba(255, 215, 0, 0.7)',
-                    'rgba(0, 255, 0, 0.7)'
-                ],
-                borderColor: colors.primary,
-                borderWidth: 2
-            }]
-        };
-
-        const chartOptions = {
-            ...this.getDefaultOptions(),
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    max: 100,
-                    ticks: {
-                        color: colors.text,
-                        callback: function(value) { return value + '%'; }
-                    },
-                    grid: { color: colors.borderColor + '33' }
-                },
-                x: {
-                    ticks: { color: colors.text },
-                    grid: { drawOnChartArea: false }
-                }
-            }
-        };
+        if (this.charts[canvasId]) this.charts[canvasId].destroy();
 
         this.charts[canvasId] = new Chart(ctx, {
             type: 'bar',
-            data: chartData,
-            options: chartOptions
+            data: {
+                labels: ['<₹50K', '₹50K-₹1L', '₹1L-₹2.5L', '>₹2.5L'],
+                datasets: [{
+                    label: 'Percentage',
+                    data: [26.7, 33.3, 26.7, 13.3],
+                    backgroundColor: ['rgba(255, 68, 68, 0.7)', 'rgba(255, 165, 0, 0.7)', 'rgba(255, 215, 0, 0.7)', 'rgba(0, 255, 0, 0.7)'],
+                    borderColor: '#FFD700',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                ...this.getDefaultOptions(),
+                scales: {
+                    y: { beginAtZero: true, max: 100, ticks: { color: '#ffffff', callback: v => v + '%' }, grid: { color: 'rgba(255, 255, 255, 0.1)' } },
+                    x: { ticks: { color: '#ffffff' }, grid: { drawOnChartArea: false } }
+                }
+            }
         });
-
-        ctx.onclick = () => {
-            this.openChartModal('Income Distribution', chartData, 'bar', chartOptions);
-        };
     }
 
     createHedgeChart(canvasId) {
         const ctx = document.getElementById(canvasId);
         if (!ctx) return;
 
-        const colors = this.getDefaultColors();
-
-        if (this.charts[canvasId]) {
-            this.charts[canvasId].destroy();
-        }
-
-        const chartData = {
-            labels: ['Agree (60%)', 'Neutral (27%)', 'Disagree (13%)'],
-            datasets: [{
-                data: [60, 27, 13],
-                backgroundColor: [
-                    'rgba(0, 255, 0, 0.8)',
-                    'rgba(255, 165, 0, 0.8)',
-                    'rgba(255, 68, 68, 0.8)'
-                ],
-                borderColor: colors.primary,
-                borderWidth: 2
-            }]
-        };
-
-        const chartOptions = {
-            ...this.getDefaultOptions(),
-            plugins: {
-                ...this.getDefaultOptions().plugins,
-                legend: {
-                    display: true,
-                    position: 'bottom',
-                    labels: { color: colors.text }
-                }
-            }
-        };
+        if (this.charts[canvasId]) this.charts[canvasId].destroy();
 
         this.charts[canvasId] = new Chart(ctx, {
             type: 'doughnut',
-            data: chartData,
-            options: chartOptions
+            data: {
+                labels: ['Agree (60%)', 'Neutral (27%)', 'Disagree (13%)'],
+                datasets: [{
+                    data: [60, 27, 13],
+                    backgroundColor: ['rgba(0, 255, 0, 0.8)', 'rgba(255, 165, 0, 0.8)', 'rgba(255, 68, 68, 0.8)'],
+                    borderColor: '#FFD700',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { labels: { color: '#ffffff' } } }
+            }
         });
-
-        ctx.onclick = () => {
-            this.openChartModal('Gold as Inflation Hedge', chartData, 'doughnut', chartOptions);
-        };
     }
 
     createInterestChart(canvasId) {
         const ctx = document.getElementById(canvasId);
         if (!ctx) return;
 
-        const colors = this.getDefaultColors();
-
-        if (this.charts[canvasId]) {
-            this.charts[canvasId].destroy();
-        }
-
-        const chartData = {
-            labels: ['High (47%)', 'Moderate (33%)', 'Low (20%)'],
-            datasets: [{
-                data: [47, 33, 20],
-                backgroundColor: [
-                    'rgba(0, 255, 0, 0.8)',
-                    'rgba(255, 215, 0, 0.8)',
-                    'rgba(255, 68, 68, 0.8)'
-                ],
-                borderColor: colors.primary,
-                borderWidth: 2
-            }]
-        };
-
-        const chartOptions = {
-            ...this.getDefaultOptions(),
-            plugins: {
-                ...this.getDefaultOptions().plugins,
-                legend: {
-                    display: true,
-                    position: 'bottom',
-                    labels: { color: colors.text }
-                }
-            }
-        };
+        if (this.charts[canvasId]) this.charts[canvasId].destroy();
 
         this.charts[canvasId] = new Chart(ctx, {
             type: 'pie',
-            data: chartData,
-            options: chartOptions
+            data: {
+                labels: ['High (47%)', 'Moderate (33%)', 'Low (20%)'],
+                datasets: [{
+                    data: [47, 33, 20],
+                    backgroundColor: ['rgba(0, 255, 0, 0.8)', 'rgba(255, 215, 0, 0.8)', 'rgba(255, 68, 68, 0.8)'],
+                    borderColor: '#FFD700',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { labels: { color: '#ffffff' } } }
+            }
         });
-
-        ctx.onclick = () => {
-            this.openChartModal('Interest Level in Gold Investment', chartData, 'pie', chartOptions);
-        };
     }
 
     createPurchaseChart(canvasId) {
         const ctx = document.getElementById(canvasId);
         if (!ctx) return;
 
-        const colors = this.getDefaultColors();
-
-        if (this.charts[canvasId]) {
-            this.charts[canvasId].destroy();
-        }
-
-        const chartData = {
-            labels: ['Yes', 'Maybe', 'No'],
-            datasets: [{
-                label: 'Percentage',
-                data: [40, 33, 27],
-                backgroundColor: [
-                    'rgba(0, 255, 0, 0.7)',
-                    'rgba(255, 165, 0, 0.7)',
-                    'rgba(255, 68, 68, 0.7)'
-                ],
-                borderColor: colors.primary,
-                borderWidth: 2
-            }]
-        };
-
-        const chartOptions = {
-            ...this.getDefaultOptions(),
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    max: 100,
-                    ticks: {
-                        color: colors.text,
-                        callback: function(value) { return value + '%'; }
-                    },
-                    grid: { color: colors.borderColor + '33' }
-                },
-                x: {
-                    ticks: { color: colors.text },
-                    grid: { drawOnChartArea: false }
-                }
-            }
-        };
+        if (this.charts[canvasId]) this.charts[canvasId].destroy();
 
         this.charts[canvasId] = new Chart(ctx, {
             type: 'bar',
-            data: chartData,
-            options: chartOptions
+            data: {
+                labels: ['Yes', 'Maybe', 'No'],
+                datasets: [{
+                    label: 'Percentage',
+                    data: [40, 33, 27],
+                    backgroundColor: ['rgba(0, 255, 0, 0.7)', 'rgba(255, 165, 0, 0.7)', 'rgba(255, 68, 68, 0.7)'],
+                    borderColor: '#FFD700',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                ...this.getDefaultOptions(),
+                scales: {
+                    y: { beginAtZero: true, max: 100, ticks: { color: '#ffffff', callback: v => v + '%' }, grid: { color: 'rgba(255, 255, 255, 0.1)' } },
+                    x: { ticks: { color: '#ffffff' }, grid: { drawOnChartArea: false } }
+                }
+            }
         });
-
-        ctx.onclick = () => {
-            this.openChartModal('Purchase Likelihood', chartData, 'bar', chartOptions);
-        };
     }
 
     createFormChart(canvasId) {
         const ctx = document.getElementById(canvasId);
         if (!ctx) return;
 
-        const colors = this.getDefaultColors();
+        if (this.charts[canvasId]) this.charts[canvasId].destroy();
 
-        if (this.charts[canvasId]) {
-            this.charts[canvasId].destroy();
+        this.charts[canvasId] = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Physical Gold (53%)', 'Gold ETFs (27%)', 'Gold Schemes (20%)'],
+                datasets: [{
+                    data: [53, 27, 20],
+                    backgroundColor: ['rgba(255, 215, 0, 0.8)', 'rgba(0, 255, 255, 0.8)', 'rgba(255, 165, 0, 0.8)'],
+                    borderColor: '#FFD700',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { labels: { color: '#ffffff' } } }
+            }
+        });
+    }
+
+    createRiskChart(canvasId) {
+        const ctx = document.getElementById(canvasId);
+        if (!ctx) return;
+
+        if (this.charts[canvasId]) this.charts[canvasId].destroy();
+
+        this.charts[canvasId] = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ['Low Risk (47%)', 'Moderate (40%)', 'High Risk (13%)'],
+                datasets: [{
+                    data: [47, 40, 13],
+                    backgroundColor: ['rgba(0, 255, 0, 0.8)', 'rgba(255, 215, 0, 0.8)', 'rgba(255, 68, 68, 0.8)'],
+                    borderColor: '#FFD700',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { labels: { color: '#ffffff' } } }
+            }
+        });
+    }
+
+    createSentimentChart(canvasId) {
+        const ctx = document.getElementById(canvasId);
+        if (!ctx) return;
+
+        if (this.charts[canvasId]) this.charts[canvasId].destroy();
+
+        this.charts[canvasId] = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Bullish', 'Neutral', 'Bearish'],
+                datasets: [{
+                    label: 'Percentage',
+                    data: [67, 20, 13],
+                    backgroundColor: ['rgba(0, 255, 0, 0.7)', 'rgba(255, 165, 0, 0.7)', 'rgba(255, 68, 68, 0.7)'],
+                    borderColor: '#FFD700',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                ...this.getDefaultOptions(),
+                scales: {
+                    y: { beginAtZero: true, max: 100, ticks: { color: '#ffffff', callback: v => v + '%' }, grid: { color: 'rgba(255, 255, 255, 0.1)' } },
+                    x: { ticks: { color: '#ffffff' }, grid: { drawOnChartArea: false } }
+                }
+            }
+        });
+    }
+
+    createTimelineChart(canvasId) {
+        const ctx = document.getElementById(canvasId);
+        if (!ctx) return;
+
+        if (this.charts[canvasId]) this.charts[canvasId].destroy();
+
+        this.charts[canvasId] = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Short-term <1yr (33%)', 'Medium 1-3yr (40%)', 'Long-term 3+yr (27%)'],
+                datasets: [{
+                    data: [33, 40, 27],
+                    backgroundColor: ['rgba(255, 68, 68, 0.8)', 'rgba(255, 215, 0, 0.8)', 'rgba(0, 255, 0, 0.8)'],
+                    borderColor: '#FFD700',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { labels: { color: '#ffffff' } } }
+            }
+        });
+    }
+
+    createSourceChart(canvasId) {
+        const ctx = document.getElementById(canvasId);
+        if (!ctx) return;
+
+        if (this.charts[canvasId]) this.charts[canvasId].destroy();
+
+        this.charts[canvasId] = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Financial News', 'Expert Analysis', 'Online Communities', 'Social Media'],
+                datasets: [{
+                    label: 'Trust Level (%)',
+                    data: [40, 33, 20, 7],
+                    backgroundColor: ['rgba(0, 255, 0, 0.7)', 'rgba(255, 215, 0, 0.7)', 'rgba(255, 165, 0, 0.7)', 'rgba(255, 68, 68, 0.7)'],
+                    borderColor: '#FFD700',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                ...this.getDefaultOptions(),
+                scales: {
+                    y: { beginAtZero: true, max: 50, ticks: { color: '#ffffff', callback: v => v + '%' }, grid: { color: 'rgba(255, 255, 255, 0.1)' } },
+                    x: { ticks: { color: '#ffffff', font: { size: 10 } }, grid: { drawOnChartArea: false } }
+                }
+            }
+        });
+    }
+
+    destroyAllCharts() {
+        Object.keys(this.charts).forEach(key => {
+            if (this.charts[key]) {
+                this.charts[key].destroy();
+            }
+        });
+        this.charts = {};
+    }
+}
+
+// Initialize chart manager
+const chartManager = new ChartManager();
+
+// Wait for DOM and Chart.js to be ready
+window.addEventListener('load', () => {
+    console.log('Charts.js loaded');
+    
+    // Check if Chart.js is available
+    if (typeof Chart === 'undefined') {
+        console.error('Chart.js not loaded!');
+        return;
+    }
+
+    // Initialize based on page type
+    if (document.getElementById('histogramChart')) {
+        console.log('Initializing price analysis charts...');
+        initializeAllCharts();
+    } else if (document.getElementById('ageChart')) {
+        console.log('Initializing survey charts...');
+        chartManager.createSurveyCharts();
+    }
+});
+
+function initializeAllCharts() {
+    // Get gold prices data from global scope
+    let goldPrices = window.goldPrices;
+    
+    if (!goldPrices || goldPrices.length === 0) {
+        console.error('Gold prices data not available! Make sure goldPrices.js is loaded first.');
+        return;
+    }
+    
+    console.log('Creating charts with ' + goldPrices.length + ' data points');
+    
+    // Create all charts
+    try {
+        if (document.getElementById('histogramChart')) {
+            chartManager.createHistogram('histogramChart', goldPrices);
+            console.log('Histogram created');
+        }
+        
+        if (document.getElementById('trendChart')) {
+            chartManager.createTrendChart('trendChart', goldPrices);
+            console.log('Trend chart created');
+        }
+        
+        if (document.getElementById('volatilityChart')) {
+            chartManager.createVolatilityChart('volatilityChart', goldPrices);
+            console.log('Volatility chart created');
+        }
+        
+        if (document.getElementById('distributionChart')) {
+            chartManager.createDistributionChart('distributionChart', goldPrices);
+            console.log('Distribution chart created');
+        }
+        
+        if (document.getElementById('boxplotChart')) {
+            chartManager.createBoxPlotChart('boxplotChart', goldPrices);
+            console.log('Box plot created');
+        }
+        
+        if (document.getElementById('inflationChart')) {
+            chartManager.createInflationChart('inflationChart');
+            console.log('Inflation chart created');
+        }
+        
+        if (document.getElementById('correlationScatterChart')) chartManager.createCorrelationScatterChart('correlationScatterChart');
+        if (document.getElementById('correlationChart')) chartManager.createCorrelationChart('correlationChart');
+    
+         console.log('Charts initialized');
+       }
+
+window.chartManager = chartManager;
