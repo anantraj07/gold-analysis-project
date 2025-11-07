@@ -1,6 +1,6 @@
 /* ============================================
    GOLD PRICE ANALYSIS - CHARTS.JS (COMPLETE)
-   Working with correct data
+   With Price Analysis, Survey, and Statistics Charts
    ============================================ */
 
 class StatisticsCalculator {
@@ -33,6 +33,21 @@ class StatisticsCalculator {
         return Math.sqrt(variance);
     }
 
+    variance() {
+        const mean = this.mean();
+        return this.values.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / this.values.length;
+    }
+
+    coefficientOfVariation() {
+        const mean = this.mean();
+        if (mean === 0) return 0;
+        return (this.standardDeviation() / mean) * 100;
+    }
+
+    range() {
+        return this.max() - this.min();
+    }
+
     quartile(q) {
         const sorted = [...this.values].sort((a, b) => a - b);
         const pos = (q / 4) * (sorted.length - 1);
@@ -45,7 +60,47 @@ class StatisticsCalculator {
     }
 
     Q1() { return this.quartile(1); }
+    Q2() { return this.quartile(2); }
     Q3() { return this.quartile(3); }
+
+    IQR() {
+        return this.Q3() - this.Q1();
+    }
+
+    skewness() {
+        const avg = this.mean();
+        const std = this.standardDeviation();
+        const n = this.values.length;
+        
+        if (std === 0) return 0;
+        
+        const m3 = this.values.reduce((sum, val) => sum + Math.pow(val - avg, 3), 0) / n;
+        return m3 / Math.pow(std, 3);
+    }
+
+    kurtosis() {
+        const avg = this.mean();
+        const std = this.standardDeviation();
+        const n = this.values.length;
+        
+        if (std === 0) return 0;
+        
+        const m4 = this.values.reduce((sum, val) => sum + Math.pow(val - avg, 4), 0) / n;
+        return (m4 / Math.pow(std, 4)) - 3;
+    }
+
+    percentile(p) {
+        const sorted = [...this.values].sort((a, b) => a - b);
+        const index = (p / 100) * (sorted.length - 1);
+        const lower = Math.floor(index);
+        const upper = lower + 1;
+        const weight = index % 1;
+
+        if (lower < 0) return sorted[0];
+        if (upper >= sorted.length) return sorted[sorted.length - 1];
+
+        return sorted[lower] * (1 - weight) + sorted[upper] * weight;
+    }
 }
 
 class ChartManager {
@@ -115,6 +170,7 @@ class ChartManager {
                     color: #FFD700;
                     margin-bottom: 1.5rem;
                     font-size: 1.5rem;
+                    text-align: center;
                 }
 
                 .chart-modal-content canvas {
@@ -142,6 +198,7 @@ class ChartManager {
                     opacity: 0;
                     transition: opacity 0.3s ease;
                     pointer-events: none;
+                    z-index: 100;
                 }
 
                 .chart-container:hover::after {
@@ -249,6 +306,7 @@ class ChartManager {
         };
     }
 
+    // ===== PRICE ANALYSIS CHARTS =====
     createHistogram(canvasId, data) {
         const ctx = document.getElementById(canvasId);
         if (!ctx) return;
@@ -383,7 +441,7 @@ class ChartManager {
         });
 
         ctx.onclick = () => {
-            this.openChartModal('Price Trend Over Time (Jan 2023 - Oct 2025)', chartData, 'line', chartOptions);
+            this.openChartModal('Price Trend Over Time', chartData, 'line', chartOptions);
         };
     }
 
@@ -790,6 +848,291 @@ class ChartManager {
         };
     }
 
+    // ===== STATISTICS CHARTS =====
+    createSummaryStatsChart(canvasId, data) {
+        const ctx = document.getElementById(canvasId);
+        if (!ctx) return;
+
+        const calc = new StatisticsCalculator(data);
+
+        if (this.charts[canvasId]) this.charts[canvasId].destroy();
+
+        const statsLabels = ['Mean', 'Median', 'Std Dev', 'Min', 'Q1', 'Q2', 'Q3', 'Max'];
+        
+        const statsValues = [
+            calc.mean() / 1000, calc.median() / 1000, calc.standardDeviation() / 1000,
+            calc.min() / 1000, calc.Q1() / 1000, calc.Q2() / 1000,
+            calc.Q3() / 1000, calc.max() / 1000
+        ];
+
+        const chartData = {
+            labels: statsLabels,
+            datasets: [{
+                label: 'Value (₹ thousands)',
+                data: statsValues,
+                backgroundColor: [
+                    'rgba(255, 215, 0, 0.7)',
+                    'rgba(0, 255, 255, 0.7)',
+                    'rgba(255, 165, 0, 0.7)',
+                    'rgba(255, 68, 68, 0.7)',
+                    'rgba(0, 255, 0, 0.7)',
+                    'rgba(100, 200, 255, 0.7)',
+                    'rgba(200, 100, 255, 0.7)',
+                    'rgba(255, 100, 200, 0.7)'
+                ],
+                borderColor: '#FFD700',
+                borderWidth: 2
+            }]
+        };
+
+        const options = this.getDefaultOptions();
+
+        this.charts[canvasId] = new Chart(ctx, {
+            type: 'bar',
+            data: chartData,
+            options: options
+        });
+
+        ctx.onclick = () => {
+            this.openChartModal('Summary Statistics', chartData, 'bar', options);
+        };
+    }
+
+    createDispersionChart(canvasId, data) {
+        const ctx = document.getElementById(canvasId);
+        if (!ctx) return;
+
+        const calc = new StatisticsCalculator(data);
+
+        if (this.charts[canvasId]) this.charts[canvasId].destroy();
+
+        const chartData = {
+            labels: ['Variance', 'Std Dev', 'Range', 'IQR', 'CV (%)'],
+            datasets: [{
+                label: 'Dispersion Metrics',
+                data: [
+                    calc.variance() / 1000000,
+                    calc.standardDeviation() / 1000,
+                    calc.range() / 1000,
+                    calc.IQR() / 1000,
+                    calc.coefficientOfVariation()
+                ],
+                backgroundColor: [
+                    'rgba(255, 68, 68, 0.7)',
+                    'rgba(255, 165, 0, 0.7)',
+                    'rgba(255, 215, 0, 0.7)',
+                    'rgba(0, 255, 0, 0.7)',
+                    'rgba(0, 255, 255, 0.7)'
+                ],
+                borderColor: '#FFD700',
+                borderWidth: 2
+            }]
+        };
+
+        const options = {
+            ...this.getDefaultOptions(),
+            scales: {
+                r: {
+                    grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                    ticks: { color: '#ffffff' }
+                }
+            }
+        };
+
+        this.charts[canvasId] = new Chart(ctx, {
+            type: 'radar',
+            data: chartData,
+            options: options
+        });
+
+        ctx.onclick = () => {
+            this.openChartModal('Dispersion Analysis', chartData, 'radar', options);
+        };
+    }
+
+    createPercentileChart(canvasId, data) {
+        const ctx = document.getElementById(canvasId);
+        if (!ctx) return;
+
+        const calc = new StatisticsCalculator(data);
+
+        if (this.charts[canvasId]) this.charts[canvasId].destroy();
+
+        const percentiles = [5, 10, 25, 50, 75, 90, 95];
+        const values = percentiles.map(p => calc.percentile(p) / 1000);
+
+        const chartData = {
+            labels: percentiles.map(p => `P${p}`),
+            datasets: [{
+                label: 'Price (₹ thousands)',
+                data: values,
+                borderColor: '#FFD700',
+                backgroundColor: 'rgba(255, 215, 0, 0.2)',
+                borderWidth: 3,
+                fill: true,
+                tension: 0.4,
+                pointRadius: 5,
+                pointBackgroundColor: '#00ffff',
+                pointBorderColor: '#FFD700',
+                pointBorderWidth: 2
+            }]
+        };
+
+        const options = this.getDefaultOptions();
+
+        this.charts[canvasId] = new Chart(ctx, {
+            type: 'line',
+            data: chartData,
+            options: options
+        });
+
+        ctx.onclick = () => {
+            this.openChartModal('Percentile Distribution', chartData, 'line', options);
+        };
+    }
+
+    createShapeMetricsChart(canvasId, data) {
+        const ctx = document.getElementById(canvasId);
+        if (!ctx) return;
+
+        const calc = new StatisticsCalculator(data);
+
+        if (this.charts[canvasId]) this.charts[canvasId].destroy();
+
+        const skewness = parseFloat(calc.skewness());
+        const kurtosis = parseFloat(calc.kurtosis());
+
+        const chartData = {
+            labels: ['Skewness', 'Kurtosis'],
+            datasets: [{
+                label: 'Distribution Shape',
+                data: [skewness, kurtosis],
+                backgroundColor: [
+                    skewness > 0 ? 'rgba(0, 255, 0, 0.7)' : 'rgba(255, 68, 68, 0.7)',
+                    kurtosis > 0 ? 'rgba(255, 215, 0, 0.7)' : 'rgba(0, 255, 255, 0.7)'
+                ],
+                borderColor: '#FFD700',
+                borderWidth: 2
+            }]
+        };
+
+        const options = {
+            ...this.getDefaultOptions(),
+            scales: {
+                y: {
+                    ticks: {
+                        color: '#ffffff',
+                        callback: function(value) { return value.toFixed(2); }
+                    },
+                    grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                }
+            }
+        };
+
+        this.charts[canvasId] = new Chart(ctx, {
+            type: 'bar',
+            data: chartData,
+            options: options
+        });
+
+        ctx.onclick = () => {
+            this.openChartModal('Distribution Shape Metrics', chartData, 'bar', options);
+        };
+    }
+
+    createQuartileChart(canvasId, data) {
+        const ctx = document.getElementById(canvasId);
+        if (!ctx) return;
+
+        const calc = new StatisticsCalculator(data);
+
+        if (this.charts[canvasId]) this.charts[canvasId].destroy();
+
+        const chartData = {
+            labels: ['Q1', 'Q2\n(Median)', 'Q3'],
+            datasets: [{
+                label: 'Quartile Values (₹)',
+                data: [calc.Q1(), calc.Q2(), calc.Q3()],
+                backgroundColor: [
+                    'rgba(255, 215, 0, 0.4)',
+                    'rgba(255, 215, 0, 0.7)',
+                    'rgba(255, 215, 0, 0.4)'
+                ],
+                borderColor: '#FFD700',
+                borderWidth: 3
+            }]
+        };
+
+        const options = {
+            ...this.getDefaultOptions(),
+            scales: {
+                y: {
+                    ticks: {
+                        color: '#ffffff',
+                        callback: function(value) { return '₹' + (value/1000).toFixed(0) + 'k'; }
+                    },
+                    grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                }
+            }
+        };
+
+        this.charts[canvasId] = new Chart(ctx, {
+            type: 'bar',
+            data: chartData,
+            options: options
+        });
+
+        ctx.onclick = () => {
+            this.openChartModal('Quartile Analysis', chartData, 'bar', options);
+        };
+    }
+
+    createDistributionCurveChart(canvasId, data) {
+        const ctx = document.getElementById(canvasId);
+        if (!ctx) return;
+
+        const calc = new StatisticsCalculator(data);
+        const mean = calc.mean();
+        const std = calc.standardDeviation();
+
+        if (this.charts[canvasId]) this.charts[canvasId].destroy();
+
+        const x = [];
+        const y = [];
+        for (let i = mean - 4 * std; i <= mean + 4 * std; i += std / 8) {
+            x.push(i);
+            const z = (i - mean) / std;
+            y.push(Math.exp(-0.5 * z * z) / (std * Math.sqrt(2 * Math.PI)) * 1000000);
+        }
+
+        const chartData = {
+            labels: x.map(v => `₹${Math.round(v/1000)}k`),
+            datasets: [{
+                label: 'Normal Distribution Curve',
+                data: y,
+                borderColor: '#FFD700',
+                backgroundColor: 'rgba(255, 215, 0, 0.15)',
+                borderWidth: 3,
+                fill: true,
+                tension: 0.4,
+                pointRadius: 0
+            }]
+        };
+
+        const options = this.getDefaultOptions();
+
+        this.charts[canvasId] = new Chart(ctx, {
+            type: 'line',
+            data: chartData,
+            options: options
+        });
+
+        ctx.onclick = () => {
+            this.openChartModal('Distribution Curve', chartData, 'line', options);
+        };
+    }
+
+    // ===== SURVEY CHARTS =====
     createSurveyCharts() {
         this.createAgeChart('ageChart');
         this.createGenderChart('genderChart');
@@ -828,6 +1171,10 @@ class ChartManager {
                 plugins: { legend: { labels: { color: '#ffffff' } } }
             }
         });
+
+        ctx.onclick = () => {
+            this.openChartModal('Age Distribution', this.charts[canvasId].data, 'doughnut', this.getDefaultOptions());
+        };
     }
 
     createGenderChart(canvasId) {
@@ -853,6 +1200,10 @@ class ChartManager {
                 plugins: { legend: { labels: { color: '#ffffff' } } }
             }
         });
+
+        ctx.onclick = () => {
+            this.openChartModal('Gender Distribution', this.charts[canvasId].data, 'pie', this.getDefaultOptions());
+        };
     }
 
     createOccupationChart(canvasId) {
@@ -881,6 +1232,10 @@ class ChartManager {
                 }
             }
         });
+
+        ctx.onclick = () => {
+            this.openChartModal('Occupation Distribution', this.charts[canvasId].data, 'bar', this.getDefaultOptions());
+        };
     }
 
     createIncomeChart(canvasId) {
@@ -909,6 +1264,10 @@ class ChartManager {
                 }
             }
         });
+
+        ctx.onclick = () => {
+            this.openChartModal('Income Distribution', this.charts[canvasId].data, 'bar', this.getDefaultOptions());
+        };
     }
 
     createHedgeChart(canvasId) {
@@ -934,6 +1293,10 @@ class ChartManager {
                 plugins: { legend: { labels: { color: '#ffffff' } } }
             }
         });
+
+        ctx.onclick = () => {
+            this.openChartModal('Gold as Inflation Hedge', this.charts[canvasId].data, 'doughnut', this.getDefaultOptions());
+        };
     }
 
     createInterestChart(canvasId) {
@@ -959,6 +1322,10 @@ class ChartManager {
                 plugins: { legend: { labels: { color: '#ffffff' } } }
             }
         });
+
+        ctx.onclick = () => {
+            this.openChartModal('Interest Level in Gold Investment', this.charts[canvasId].data, 'pie', this.getDefaultOptions());
+        };
     }
 
     createPurchaseChart(canvasId) {
@@ -987,6 +1354,10 @@ class ChartManager {
                 }
             }
         });
+
+        ctx.onclick = () => {
+            this.openChartModal('Purchase Likelihood', this.charts[canvasId].data, 'bar', this.getDefaultOptions());
+        };
     }
 
     createFormChart(canvasId) {
@@ -1012,6 +1383,10 @@ class ChartManager {
                 plugins: { legend: { labels: { color: '#ffffff' } } }
             }
         });
+
+        ctx.onclick = () => {
+            this.openChartModal('Preferred Investment Form', this.charts[canvasId].data, 'doughnut', this.getDefaultOptions());
+        };
     }
 
     createRiskChart(canvasId) {
@@ -1037,6 +1412,10 @@ class ChartManager {
                 plugins: { legend: { labels: { color: '#ffffff' } } }
             }
         });
+
+        ctx.onclick = () => {
+            this.openChartModal('Risk Perception', this.charts[canvasId].data, 'pie', this.getDefaultOptions());
+        };
     }
 
     createSentimentChart(canvasId) {
@@ -1065,6 +1444,10 @@ class ChartManager {
                 }
             }
         });
+
+        ctx.onclick = () => {
+            this.openChartModal('Market Sentiment', this.charts[canvasId].data, 'bar', this.getDefaultOptions());
+        };
     }
 
     createTimelineChart(canvasId) {
@@ -1090,6 +1473,10 @@ class ChartManager {
                 plugins: { legend: { labels: { color: '#ffffff' } } }
             }
         });
+
+        ctx.onclick = () => {
+            this.openChartModal('Investment Timeline Preference', this.charts[canvasId].data, 'doughnut', this.getDefaultOptions());
+        };
     }
 
     createSourceChart(canvasId) {
@@ -1118,6 +1505,10 @@ class ChartManager {
                 }
             }
         });
+
+        ctx.onclick = () => {
+            this.openChartModal('Information Source Trust', this.charts[canvasId].data, 'bar', this.getDefaultOptions());
+        };
     }
 
     destroyAllCharts() {
@@ -1133,18 +1524,26 @@ class ChartManager {
 const chartManager = new ChartManager();
 
 window.addEventListener('load', () => {
-    console.log('Initializing charts...');
+    console.log('✓ Initializing charts...');
     
     if (document.getElementById('histogramChart')) {
         initializeAllCharts();
+    } else if (document.getElementById('summaryStatsChart')) {
+        console.log('✓ Statistics page detected');
+        initializeStatisticsCharts();
     } else if (document.getElementById('ageChart')) {
-        console.log('Initializing survey charts...');
+        console.log('✓ Survey page detected');
         chartManager.createSurveyCharts();
     }
 });
 
 function initializeAllCharts() {
-    let goldPrices = window.goldPrices || chartManager.generateGoldPriceData();
+    let goldPrices = window.goldPrices;
+    
+    if (!goldPrices || goldPrices.length === 0) {
+        console.error('✗ Gold prices data not available!');
+        return;
+    }
     
     console.log('Data points:', goldPrices.length);
     
@@ -1157,7 +1556,29 @@ function initializeAllCharts() {
     if (document.getElementById('correlationScatterChart')) chartManager.createCorrelationScatterChart('correlationScatterChart');
     if (document.getElementById('correlationChart')) chartManager.createCorrelationChart('correlationChart');
     
-    console.log('Charts initialized');
+    console.log('✓ Price analysis charts initialized');
 }
 
-window.chartManager = chartManager
+function initializeStatisticsCharts() {
+    let goldPrices = window.goldPrices;
+    
+    if (!goldPrices || goldPrices.length === 0) {
+        console.error('✗ Gold prices data not available!');
+        return;
+    }
+    
+    console.log('Creating statistics charts with', goldPrices.length, 'data points');
+    
+    if (document.getElementById('summaryStatsChart')) chartManager.createSummaryStatsChart('summaryStatsChart', goldPrices);
+    if (document.getElementById('dispersionChart')) chartManager.createDispersionChart('dispersionChart', goldPrices);
+    if (document.getElementById('percentileChart')) chartManager.createPercentileChart('percentileChart', goldPrices);
+    if (document.getElementById('shapeMetricsChart')) chartManager.createShapeMetricsChart('shapeMetricsChart', goldPrices);
+    if (document.getElementById('quartileChart')) chartManager.createQuartileChart('quartileChart', goldPrices);
+    if (document.getElementById('distributionCurveChart')) chartManager.createDistributionCurveChart('distributionCurveChart', goldPrices);
+    
+    console.log('✓ Statistics charts initialized');
+}
+
+window.chartManager = chartManager;
+window.initializeCharts = initializeAllCharts;
+window.initializeStatisticsCharts = initializeStatisticsCharts;
