@@ -1,51 +1,27 @@
 /* ============================================
-   GOLD PRICE ANALYSIS - CHARTS.JS (FIXED)
+   GOLD PRICE ANALYSIS - CHARTS.JS (INTEGRATED)
+   Works with statistics.js, theme.js, and main.js
    All charts working with correct data
    ============================================ */
 
-class StatisticsCalculator {
-    constructor(data) {
-        this.data = data;
-        this.values = data.map(d => parseFloat(d.Gold_Price_INR));
+// Load Chart.js dynamically if not already loaded
+function loadChartJS(callback) {
+    if (typeof Chart !== 'undefined') {
+        callback();
+        return;
     }
-
-    mean() {
-        return this.values.reduce((a, b) => a + b, 0) / this.values.length;
-    }
-
-    median() {
-        const sorted = [...this.values].sort((a, b) => a - b);
-        const mid = Math.floor(sorted.length / 2);
-        return sorted.length % 2 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
-    }
-
-    min() {
-        return Math.min(...this.values);
-    }
-
-    max() {
-        return Math.max(...this.values);
-    }
-
-    standardDeviation() {
-        const mean = this.mean();
-        const variance = this.values.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / this.values.length;
-        return Math.sqrt(variance);
-    }
-
-    quartile(q) {
-        const sorted = [...this.values].sort((a, b) => a - b);
-        const pos = (q / 4) * (sorted.length - 1);
-        const base = Math.floor(pos);
-        const rest = pos - base;
-        if (base + 1 < sorted.length) {
-            return sorted[base] + rest * (sorted[base + 1] - sorted[base]);
-        }
-        return sorted[base];
-    }
-
-    Q1() { return this.quartile(1); }
-    Q3() { return this.quartile(3); }
+    
+    console.log('Loading Chart.js...');
+    const script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js';
+    script.onload = () => {
+        console.log('✓ Chart.js loaded successfully');
+        callback();
+    };
+    script.onerror = () => {
+        console.error('✗ Failed to load Chart.js from CDN');
+    };
+    document.head.appendChild(script);
 }
 
 class ChartManager {
@@ -102,6 +78,7 @@ class ChartManager {
                     font-size: 2.5rem;
                     font-weight: bold;
                     cursor: pointer;
+                    transition: color 0.3s;
                 }
 
                 .chart-modal-close:hover {
@@ -111,11 +88,24 @@ class ChartManager {
                 .chart-modal-content h3 {
                     color: #FFD700;
                     margin-bottom: 1.5rem;
+                    text-align: center;
                 }
 
                 .chart-modal-content canvas {
                     width: 100% !important;
                     height: 600px !important;
+                }
+
+                @media (max-width: 768px) {
+                    .chart-modal-content {
+                        width: 98%;
+                        padding: 1rem;
+                        margin: 5% auto;
+                    }
+                    
+                    .chart-modal-content canvas {
+                        height: 400px !important;
+                    }
                 }
             </style>
         `;
@@ -130,13 +120,15 @@ class ChartManager {
         const modal = document.getElementById('chartModal');
         const closeBtn = document.querySelector('.chart-modal-close');
 
-        closeBtn.onclick = () => {
-            modal.style.display = 'none';
-            if (this.charts['modalCanvas']) {
-                this.charts['modalCanvas'].destroy();
-                delete this.charts['modalCanvas'];
-            }
-        };
+        if (closeBtn) {
+            closeBtn.onclick = () => {
+                modal.style.display = 'none';
+                if (this.charts['modalCanvas']) {
+                    this.charts['modalCanvas'].destroy();
+                    delete this.charts['modalCanvas'];
+                }
+            };
+        }
 
         window.onclick = (event) => {
             if (event.target === modal) {
@@ -153,6 +145,11 @@ class ChartManager {
         const modal = document.getElementById('chartModal');
         const modalCanvas = document.getElementById('modalCanvas');
         const modalTitle = document.getElementById('modalChartTitle');
+
+        if (!modal || !modalCanvas || !modalTitle) {
+            console.error('Modal elements not found');
+            return;
+        }
 
         modalTitle.textContent = chartTitle;
         modal.style.display = 'block';
@@ -204,9 +201,24 @@ class ChartManager {
 
     createHistogram(canvasId, data) {
         const ctx = document.getElementById(canvasId);
-        if (!ctx) return;
+        if (!ctx) {
+            console.error(`Canvas ${canvasId} not found`);
+            return;
+        }
 
-        const calc = new StatisticsCalculator(data);
+        // Use StatisticsCalculator if available, otherwise fallback
+        let calc;
+        if (typeof window.StatisticsCalculator !== 'undefined') {
+            calc = new window.StatisticsCalculator(data);
+        } else {
+            // Fallback calculation
+            const values = data.map(d => parseFloat(d.Gold_Price_INR));
+            calc = {
+                min: () => Math.min(...values),
+                max: () => Math.max(...values)
+            };
+        }
+
         const bins = 15;
         const min = calc.min();
         const max = calc.max();
@@ -255,7 +267,10 @@ class ChartManager {
 
     createTrendChart(canvasId, data) {
         const ctx = document.getElementById(canvasId);
-        if (!ctx) return;
+        if (!ctx) {
+            console.error(`Canvas ${canvasId} not found`);
+            return;
+        }
 
         const sampledData = data.filter((_, index) => index % 5 === 0 || index === data.length - 1);
         
@@ -323,7 +338,10 @@ class ChartManager {
 
     createVolatilityChart(canvasId, data) {
         const ctx = document.getElementById(canvasId);
-        if (!ctx) return;
+        if (!ctx) {
+            console.error(`Canvas ${canvasId} not found`);
+            return;
+        }
 
         const quarterlyData = {};
         
@@ -386,9 +404,25 @@ class ChartManager {
 
     createDistributionChart(canvasId, data) {
         const ctx = document.getElementById(canvasId);
-        if (!ctx) return;
+        if (!ctx) {
+            console.error(`Canvas ${canvasId} not found`);
+            return;
+        }
 
-        const calc = new StatisticsCalculator(data);
+        // Use StatisticsCalculator if available
+        let calc;
+        if (typeof window.StatisticsCalculator !== 'undefined') {
+            calc = new window.StatisticsCalculator(data);
+        } else {
+            const values = data.map(d => parseFloat(d.Gold_Price_INR));
+            const mean = values.reduce((a, b) => a + b, 0) / values.length;
+            const variance = values.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / values.length;
+            calc = {
+                mean: () => mean,
+                standardDeviation: () => Math.sqrt(variance)
+            };
+        }
+
         const mean = calc.mean();
         const std = calc.standardDeviation();
         
@@ -432,9 +466,25 @@ class ChartManager {
 
     createBoxPlotChart(canvasId, data) {
         const ctx = document.getElementById(canvasId);
-        if (!ctx) return;
+        if (!ctx) {
+            console.error(`Canvas ${canvasId} not found`);
+            return;
+        }
 
-        const calc = new StatisticsCalculator(data);
+        // Use StatisticsCalculator if available
+        let calc;
+        if (typeof window.StatisticsCalculator !== 'undefined') {
+            calc = new window.StatisticsCalculator(data);
+        } else {
+            const values = data.map(d => parseFloat(d.Gold_Price_INR)).sort((a, b) => a - b);
+            calc = {
+                min: () => values[0],
+                max: () => values[values.length - 1],
+                Q1: () => values[Math.floor(values.length * 0.25)],
+                median: () => values[Math.floor(values.length * 0.5)],
+                Q3: () => values[Math.floor(values.length * 0.75)]
+            };
+        }
 
         if (this.charts[canvasId]) {
             this.charts[canvasId].destroy();
@@ -496,7 +546,10 @@ class ChartManager {
 
     createInflationChart(canvasId) {
         const ctx = document.getElementById(canvasId);
-        if (!ctx) return;
+        if (!ctx) {
+            console.error(`Canvas ${canvasId} not found`);
+            return;
+        }
 
         const inflationData = [
             { month: 'Jan 23', inflation: 6.52, goldPrice: 50485 },
@@ -551,6 +604,13 @@ class ChartManager {
             plugins: {
                 legend: {
                     labels: { color: '#ffffff' }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    titleColor: '#FFD700',
+                    bodyColor: '#ffffff',
+                    borderColor: '#FFD700',
+                    borderWidth: 1
                 }
             },
             scales: {
@@ -593,7 +653,10 @@ class ChartManager {
 
     createCorrelationScatterChart(canvasId) {
         const ctx = document.getElementById(canvasId);
-        if (!ctx) return;
+        if (!ctx) {
+            console.error(`Canvas ${canvasId} not found`);
+            return;
+        }
 
         const inflationData = [
             { inflation: 6.52, goldPrice: 50485 },
@@ -660,7 +723,10 @@ class ChartManager {
 
     createCorrelationChart(canvasId) {
         const ctx = document.getElementById(canvasId);
-        if (!ctx) return;
+        if (!ctx) {
+            console.error(`Canvas ${canvasId} not found`);
+            return;
+        }
 
         if (this.charts[canvasId]) {
             this.charts[canvasId].destroy();
@@ -714,6 +780,7 @@ class ChartManager {
 
     // Survey Charts
     createSurveyCharts() {
+        console.log('Creating survey charts...');
         this.createAgeChart('ageChart');
         this.createGenderChart('genderChart');
         this.createOccupationChart('occupationChart');
@@ -726,6 +793,7 @@ class ChartManager {
         this.createSentimentChart('sentimentChart');
         this.createTimelineChart('timelineChart');
         this.createSourceChart('sourceChart');
+        console.log('✓ Survey charts created');
     }
 
     createAgeChart(canvasId) {
@@ -748,7 +816,14 @@ class ChartManager {
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: { legend: { labels: { color: '#ffffff' } } }
+                plugins: { 
+                    legend: { labels: { color: '#ffffff' } },
+                    tooltip: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        titleColor: '#FFD700',
+                        bodyColor: '#ffffff'
+                    }
+                }
             }
         });
     }
@@ -773,7 +848,14 @@ class ChartManager {
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: { legend: { labels: { color: '#ffffff' } } }
+                plugins: { 
+                    legend: { labels: { color: '#ffffff' } },
+                    tooltip: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        titleColor: '#FFD700',
+                        bodyColor: '#ffffff'
+                    }
+                }
             }
         });
     }
@@ -854,7 +936,14 @@ class ChartManager {
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: { legend: { labels: { color: '#ffffff' } } }
+                plugins: { 
+                    legend: { labels: { color: '#ffffff' } },
+                    tooltip: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        titleColor: '#FFD700',
+                        bodyColor: '#ffffff'
+                    }
+                }
             }
         });
     }
@@ -879,7 +968,14 @@ class ChartManager {
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: { legend: { labels: { color: '#ffffff' } } }
+                plugins: { 
+                    legend: { labels: { color: '#ffffff' } },
+                    tooltip: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        titleColor: '#FFD700',
+                        bodyColor: '#ffffff'
+                    }
+                }
             }
         });
     }
@@ -932,7 +1028,14 @@ class ChartManager {
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: { legend: { labels: { color: '#ffffff' } } }
+                plugins: { 
+                    legend: { labels: { color: '#ffffff' } },
+                    tooltip: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        titleColor: '#FFD700',
+                        bodyColor: '#ffffff'
+                    }
+                }
             }
         });
     }
@@ -957,7 +1060,14 @@ class ChartManager {
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: { legend: { labels: { color: '#ffffff' } } }
+                plugins: { 
+                    legend: { labels: { color: '#ffffff' } },
+                    tooltip: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        titleColor: '#FFD700',
+                        bodyColor: '#ffffff'
+                    }
+                }
             }
         });
     }
@@ -1010,7 +1120,14 @@ class ChartManager {
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: { legend: { labels: { color: '#ffffff' } } }
+                plugins: { 
+                    legend: { labels: { color: '#ffffff' } },
+                    tooltip: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        titleColor: '#FFD700',
+                        bodyColor: '#ffffff'
+                    }
+                }
             }
         });
     }
@@ -1054,34 +1171,15 @@ class ChartManager {
 }
 
 // Initialize chart manager
-const chartManager = new ChartManager();
+let chartManager = null;
 
-// Wait for DOM and Chart.js to be ready
-window.addEventListener('load', () => {
-    console.log('Charts.js loaded');
-    
-    // Check if Chart.js is available
-    if (typeof Chart === 'undefined') {
-        console.error('Chart.js not loaded!');
-        return;
-    }
-
-    // Initialize based on page type
-    if (document.getElementById('histogramChart')) {
-        console.log('Initializing price analysis charts...');
-        initializeAllCharts();
-    } else if (document.getElementById('ageChart')) {
-        console.log('Initializing survey charts...');
-        chartManager.createSurveyCharts();
-    }
-});
-
+// Initialize all price analysis charts
 function initializeAllCharts() {
     // Get gold prices data from global scope
     let goldPrices = window.goldPrices;
     
     if (!goldPrices || goldPrices.length === 0) {
-        console.error('Gold prices data not available! Make sure goldPrices.js is loaded first.');
+        console.error('✗ Gold prices data not available! Make sure goldPrices.js is loaded first.');
         return;
     }
     
@@ -1091,38 +1189,110 @@ function initializeAllCharts() {
     try {
         if (document.getElementById('histogramChart')) {
             chartManager.createHistogram('histogramChart', goldPrices);
-            console.log('Histogram created');
+            console.log('✓ Histogram created');
         }
         
         if (document.getElementById('trendChart')) {
             chartManager.createTrendChart('trendChart', goldPrices);
-            console.log('Trend chart created');
+            console.log('✓ Trend chart created');
         }
         
         if (document.getElementById('volatilityChart')) {
             chartManager.createVolatilityChart('volatilityChart', goldPrices);
-            console.log('Volatility chart created');
+            console.log('✓ Volatility chart created');
         }
         
         if (document.getElementById('distributionChart')) {
             chartManager.createDistributionChart('distributionChart', goldPrices);
-            console.log('Distribution chart created');
+            console.log('✓ Distribution chart created');
         }
         
         if (document.getElementById('boxplotChart')) {
             chartManager.createBoxPlotChart('boxplotChart', goldPrices);
-            console.log('Box plot created');
+            console.log('✓ Box plot created');
         }
         
         if (document.getElementById('inflationChart')) {
             chartManager.createInflationChart('inflationChart');
-            console.log('Inflation chart created');
+            console.log('✓ Inflation chart created');
         }
         
-        if (document.getElementById('correlationScatterChart')) chartManager.createCorrelationScatterChart('correlationScatterChart');
-        if (document.getElementById('correlationChart')) chartManager.createCorrelationChart('correlationChart');
+        if (document.getElementById('correlationScatterChart')) {
+            chartManager.createCorrelationScatterChart('correlationScatterChart');
+            console.log('✓ Correlation scatter created');
+        }
+        
+        if (document.getElementById('correlationChart')) {
+            chartManager.createCorrelationChart('correlationChart');
+            console.log('✓ Correlation chart created');
+        }
     
-         console.log('Charts initialized');
-       }
+        console.log('✓✓✓ All charts initialized successfully!');
+    } catch (error) {
+        console.error('✗ Error creating charts:', error);
+    }
+}
 
+// Wait for DOM and Chart.js to be ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => loadChartJS(initCharts));
+} else {
+    loadChartJS(initCharts);
+}
+
+function initCharts() {
+    console.log('═══════════════════════════════════════');
+    console.log('  GOLD PRICE ANALYSIS - INITIALIZING');
+    console.log('═══════════════════════════════════════');
+    
+    // Check if Chart.js is available
+    if (typeof Chart === 'undefined') {
+        console.error('✗ Chart.js not loaded! Please check your internet connection.');
+        return;
+    }
+    console.log('✓ Chart.js loaded');
+
+    // Check if StatisticsCalculator is available
+    if (typeof window.StatisticsCalculator !== 'undefined') {
+        console.log('✓ Statistics.js loaded');
+    } else {
+        console.warn('⚠ Statistics.js not loaded - using fallback calculations');
+    }
+
+    // Initialize chart manager
+    chartManager = new ChartManager();
+    console.log('✓ Chart Manager initialized');
+    
+    // Small delay to ensure DOM is fully ready
+    setTimeout(() => {
+        // Initialize based on page type
+        if (document.getElementById('histogramChart')) {
+            console.log('✓ Price analysis page detected');
+            initializeAllCharts();
+        } else if (document.getElementById('ageChart')) {
+            console.log('✓ Survey page detected');
+            chartManager.createSurveyCharts();
+        } else {
+            console.warn('⚠ No chart containers found - check canvas IDs in HTML');
+        }
+        
+        console.log('═══════════════════════════════════════');
+    }, 100);
+}
+
+// Make chartManager available globally for external access
 window.chartManager = chartManager;
+
+// Expose initialization function globally
+window.initializeCharts = function() {
+    if (chartManager) {
+        console.log('Reinitializing charts...');
+        chartManager.destroyAllCharts();
+        initCharts();
+    } else {
+        console.log('First time initialization...');
+        loadChartJS(initCharts);
+    }
+};
+
+console.log('✓ Charts.js loaded - waiting for DOM...');
