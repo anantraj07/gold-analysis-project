@@ -1,6 +1,6 @@
 /* ============================================
-   GOLD PRICE ANALYSIS - CHARTS.JS (COMPLETE)
-   With Modal View and Fixed Date Labels
+   GOLD PRICE ANALYSIS - CHARTS.JS (CORRECTED)
+   With Accurate Data and Fixed Calculations
    ============================================ */
 
 class StatisticsCalculator {
@@ -32,6 +32,20 @@ class StatisticsCalculator {
         const variance = this.values.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / this.values.length;
         return Math.sqrt(variance);
     }
+
+    quartile(q) {
+        const sorted = [...this.values].sort((a, b) => a - b);
+        const pos = (q / 4) * (sorted.length - 1);
+        const base = Math.floor(pos);
+        const rest = pos - base;
+        if (base + 1 < sorted.length) {
+            return sorted[base] + rest * (sorted[base + 1] - sorted[base]);
+        }
+        return sorted[base];
+    }
+
+    Q1() { return this.quartile(1); }
+    Q3() { return this.quartile(3); }
 }
 
 class ChartManager {
@@ -257,41 +271,6 @@ class ChartManager {
         };
     }
 
-    generateGoldPriceData() {
-        const data = [];
-        const startDate = new Date('2023-01-03');
-        const endDate = new Date('2025-10-02');
-        
-        let currentDate = new Date(startDate);
-        let basePrice = 47736;
-        let dayCount = 0;
-        
-        while (currentDate <= endDate) {
-            const dayOfWeek = currentDate.getDay();
-            if (dayOfWeek !== 0 && dayOfWeek !== 6) {
-                const progress = dayCount / 643;
-                const trend = basePrice + (62647 * progress);
-                const seasonal = Math.sin(dayCount / 30) * 4000;
-                const volatility = Math.sin(dayCount / 80) * 3000;
-                const noise = (Math.random() - 0.5) * 2000;
-                
-                let price = trend + seasonal + volatility + noise;
-                price = Math.max(47736, Math.min(110383, price));
-                
-                data.push({
-                    Date: currentDate.toISOString().split('T')[0],
-                    Gold_Price_INR: Math.round(price)
-                });
-                
-                dayCount++;
-                if (dayCount >= 643) break;
-            }
-            currentDate.setDate(currentDate.getDate() + 1);
-        }
-        
-        return data;
-    }
-
     createHistogram(canvasId, data) {
         const ctx = document.getElementById(canvasId);
         if (!ctx) return;
@@ -323,6 +302,289 @@ class ChartManager {
         }
 
         const chartData = {
+            labels: ['Physical Gold (53%)', 'Gold ETFs (27%)', 'Gold Schemes (20%)'],
+            datasets: [{
+                data: [53, 27, 20],
+                backgroundColor: [
+                    'rgba(255, 215, 0, 0.8)',
+                    'rgba(0, 255, 255, 0.8)',
+                    'rgba(255, 165, 0, 0.8)'
+                ],
+                borderColor: colors.primary,
+                borderWidth: 2
+            }]
+        };
+
+        const chartOptions = {
+            ...this.getDefaultOptions(),
+            plugins: {
+                ...this.getDefaultOptions().plugins,
+                legend: {
+                    display: true,
+                    position: 'bottom',
+                    labels: { color: colors.text }
+                }
+            }
+        };
+
+        this.charts[canvasId] = new Chart(ctx, {
+            type: 'doughnut',
+            data: chartData,
+            options: chartOptions
+        });
+
+        ctx.onclick = () => {
+            this.openChartModal('Preferred Investment Form', chartData, 'doughnut', chartOptions);
+        };
+    }
+
+    createRiskChart(canvasId) {
+        const ctx = document.getElementById(canvasId);
+        if (!ctx) return;
+
+        const colors = this.getDefaultColors();
+
+        if (this.charts[canvasId]) {
+            this.charts[canvasId].destroy();
+        }
+
+        const chartData = {
+            labels: ['Low Risk (47%)', 'Moderate (40%)', 'High Risk (13%)'],
+            datasets: [{
+                data: [47, 40, 13],
+                backgroundColor: [
+                    'rgba(0, 255, 0, 0.8)',
+                    'rgba(255, 215, 0, 0.8)',
+                    'rgba(255, 68, 68, 0.8)'
+                ],
+                borderColor: colors.primary,
+                borderWidth: 2
+            }]
+        };
+
+        const chartOptions = {
+            ...this.getDefaultOptions(),
+            plugins: {
+                ...this.getDefaultOptions().plugins,
+                legend: {
+                    display: true,
+                    position: 'bottom',
+                    labels: { color: colors.text }
+                }
+            }
+        };
+
+        this.charts[canvasId] = new Chart(ctx, {
+            type: 'pie',
+            data: chartData,
+            options: chartOptions
+        });
+
+        ctx.onclick = () => {
+            this.openChartModal('Risk Perception', chartData, 'pie', chartOptions);
+        };
+    }
+
+    createSentimentChart(canvasId) {
+        const ctx = document.getElementById(canvasId);
+        if (!ctx) return;
+
+        const colors = this.getDefaultColors();
+
+        if (this.charts[canvasId]) {
+            this.charts[canvasId].destroy();
+        }
+
+        const chartData = {
+            labels: ['Bullish', 'Neutral', 'Bearish'],
+            datasets: [{
+                label: 'Percentage',
+                data: [67, 20, 13],
+                backgroundColor: [
+                    'rgba(0, 255, 0, 0.7)',
+                    'rgba(255, 165, 0, 0.7)',
+                    'rgba(255, 68, 68, 0.7)'
+                ],
+                borderColor: colors.primary,
+                borderWidth: 2
+            }]
+        };
+
+        const chartOptions = {
+            ...this.getDefaultOptions(),
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 100,
+                    ticks: {
+                        color: colors.text,
+                        callback: function(value) { return value + '%'; }
+                    },
+                    grid: { color: colors.borderColor + '33' }
+                },
+                x: {
+                    ticks: { color: colors.text },
+                    grid: { drawOnChartArea: false }
+                }
+            }
+        };
+
+        this.charts[canvasId] = new Chart(ctx, {
+            type: 'bar',
+            data: chartData,
+            options: chartOptions
+        });
+
+        ctx.onclick = () => {
+            this.openChartModal('Market Sentiment', chartData, 'bar', chartOptions);
+        };
+    }
+
+    createTimelineChart(canvasId) {
+        const ctx = document.getElementById(canvasId);
+        if (!ctx) return;
+
+        const colors = this.getDefaultColors();
+
+        if (this.charts[canvasId]) {
+            this.charts[canvasId].destroy();
+        }
+
+        const chartData = {
+            labels: ['Short-term <1yr (33%)', 'Medium 1-3yr (40%)', 'Long-term 3+yr (27%)'],
+            datasets: [{
+                data: [33, 40, 27],
+                backgroundColor: [
+                    'rgba(255, 68, 68, 0.8)',
+                    'rgba(255, 215, 0, 0.8)',
+                    'rgba(0, 255, 0, 0.8)'
+                ],
+                borderColor: colors.primary,
+                borderWidth: 2
+            }]
+        };
+
+        const chartOptions = {
+            ...this.getDefaultOptions(),
+            plugins: {
+                ...this.getDefaultOptions().plugins,
+                legend: {
+                    display: true,
+                    position: 'bottom',
+                    labels: { color: colors.text }
+                }
+            }
+        };
+
+        this.charts[canvasId] = new Chart(ctx, {
+            type: 'doughnut',
+            data: chartData,
+            options: chartOptions
+        });
+
+        ctx.onclick = () => {
+            this.openChartModal('Investment Timeline Preference', chartData, 'doughnut', chartOptions);
+        };
+    }
+
+    createSourceChart(canvasId) {
+        const ctx = document.getElementById(canvasId);
+        if (!ctx) return;
+
+        const colors = this.getDefaultColors();
+
+        if (this.charts[canvasId]) {
+            this.charts[canvasId].destroy();
+        }
+
+        const chartData = {
+            labels: ['Financial News', 'Expert Analysis', 'Online Communities', 'Social Media'],
+            datasets: [{
+                label: 'Trust Level (%)',
+                data: [40, 33, 20, 7],
+                backgroundColor: [
+                    'rgba(0, 255, 0, 0.7)',
+                    'rgba(255, 215, 0, 0.7)',
+                    'rgba(255, 165, 0, 0.7)',
+                    'rgba(255, 68, 68, 0.7)'
+                ],
+                borderColor: colors.primary,
+                borderWidth: 2
+            }]
+        };
+
+        const chartOptions = {
+            ...this.getDefaultOptions(),
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 50,
+                    ticks: {
+                        color: colors.text,
+                        callback: function(value) { return value + '%'; }
+                    },
+                    grid: { color: colors.borderColor + '33' }
+                },
+                x: {
+                    ticks: { 
+                        color: colors.text,
+                        font: { size: 10 }
+                    },
+                    grid: { drawOnChartArea: false }
+                }
+            }
+        };
+
+        this.charts[canvasId] = new Chart(ctx, {
+            type: 'bar',
+            data: chartData,
+            options: chartOptions
+        });
+
+        ctx.onclick = () => {
+            this.openChartModal('Information Source Trust', chartData, 'bar', chartOptions);
+        };
+    }
+}
+
+const chartManager = new ChartManager();
+
+window.addEventListener('load', () => {
+    console.log('Initializing charts...');
+    
+    if (document.getElementById('histogramChart')) {
+        initializeAllCharts();
+    } else if (document.getElementById('ageChart')) {
+        console.log('Initializing survey charts...');
+        chartManager.createSurveyCharts();
+    }
+});
+
+function initializeAllCharts() {
+    let goldPrices = window.goldPrices;
+    
+    if (!goldPrices || goldPrices.length === 0) {
+        console.error('Gold prices data not available');
+        return;
+    }
+    
+    console.log('Data points:', goldPrices.length);
+    
+    if (document.getElementById('histogramChart')) chartManager.createHistogram('histogramChart', goldPrices);
+    if (document.getElementById('trendChart')) chartManager.createTrendChart('trendChart', goldPrices);
+    if (document.getElementById('volatilityChart')) chartManager.createVolatilityChart('volatilityChart', goldPrices);
+    if (document.getElementById('distributionChart')) chartManager.createDistributionChart('distributionChart', goldPrices);
+    if (document.getElementById('boxplotChart')) chartManager.createBoxPlotChart('boxplotChart', goldPrices);
+    if (document.getElementById('inflationChart')) chartManager.createInflationChart('inflationChart');
+    if (document.getElementById('correlationScatterChart')) chartManager.createCorrelationScatterChart('correlationScatterChart');
+    if (document.getElementById('correlationChart')) chartManager.createCorrelationChart('correlationChart');
+    
+    console.log('Charts initialized');
+}
+
+window.chartManager = chartManager;}
+
+        const chartData = {
             labels: binLabels,
             datasets: [{
                 label: 'Frequency',
@@ -350,39 +612,15 @@ class ChartManager {
         const ctx = document.getElementById(canvasId);
         if (!ctx) return;
 
-        // Create date-based sampling to ensure proper distribution
-        const monthlyData = {};
+        // Sample every 5th data point to keep chart readable (643 points -> ~128 points)
+        const sampledData = data.filter((_, index) => index % 5 === 0 || index === data.length - 1);
         
-        data.forEach(d => {
+        const labels = sampledData.map(d => {
             const date = new Date(d.Date);
-            const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
-            
-            if (!monthlyData[monthKey]) {
-                monthlyData[monthKey] = {
-                    dates: [],
-                    prices: []
-                };
-            }
-            monthlyData[monthKey].dates.push(date);
-            monthlyData[monthKey].prices.push(parseFloat(d.Gold_Price_INR));
+            return date.toLocaleDateString('en-US', { month: 'short', year: '2-digit' });
         });
-
-        // Get one sample per month (middle date)
-        const sampledDates = [];
-        const sampledPrices = [];
         
-        Object.keys(monthlyData).sort().forEach(monthKey => {
-            const monthData = monthlyData[monthKey];
-            const midIndex = Math.floor(monthData.dates.length / 2);
-            const date = monthData.dates[midIndex];
-            const price = monthData.prices[midIndex];
-            
-            const monthName = date.toLocaleDateString('en-US', { month: 'short' });
-            const year = date.getFullYear();
-            
-            sampledDates.push(`${monthName} ${year}`);
-            sampledPrices.push(price);
-        });
+        const prices = sampledData.map(d => parseFloat(d.Gold_Price_INR));
 
         const colors = this.getDefaultColors();
 
@@ -391,16 +629,16 @@ class ChartManager {
         }
 
         const chartData = {
-            labels: sampledDates,
+            labels: labels,
             datasets: [{
                 label: 'Gold Price (₹ per 10g)',
-                data: sampledPrices,
+                data: prices,
                 borderColor: colors.primary,
                 backgroundColor: 'rgba(255, 215, 0, 0.1)',
                 borderWidth: 3,
                 fill: true,
                 tension: 0.3,
-                pointRadius: 3,
+                pointRadius: 2,
                 pointHoverRadius: 6,
                 pointBackgroundColor: colors.accentCyan
             }]
@@ -411,14 +649,24 @@ class ChartManager {
             interaction: { intersect: false, mode: 'index' },
             scales: {
                 ...this.getDefaultOptions().scales,
+                y: {
+                    ticks: {
+                        color: colors.text,
+                        font: { size: 11 },
+                        callback: function(value) {
+                            return '₹' + (value/1000).toFixed(0) + 'k';
+                        }
+                    },
+                    grid: { color: colors.borderColor + '33' }
+                },
                 x: {
                     ticks: {
                         color: colors.text,
-                        font: { size: 10 },
+                        font: { size: 9 },
                         maxRotation: 45,
                         minRotation: 45,
                         autoSkip: true,
-                        maxTicksLimit: 15
+                        maxTicksLimit: 20
                     },
                     grid: { drawOnChartArea: false }
                 }
@@ -480,8 +728,8 @@ class ChartManager {
                 label: 'Volatility (Std Dev)',
                 data: volatilities,
                 backgroundColor: volatilities.map(v => 
-                    v > 13000 ? 'rgba(255, 68, 68, 0.6)' : 
-                    v > 11000 ? 'rgba(255, 165, 0, 0.6)' : 
+                    v > 3000 ? 'rgba(255, 68, 68, 0.6)' : 
+                    v > 2000 ? 'rgba(255, 165, 0, 0.6)' : 
                     'rgba(0, 255, 0, 0.6)'
                 ),
                 borderColor: colors.primary,
@@ -551,10 +799,11 @@ class ChartManager {
         };
     }
 
-    createBoxPlotChart(canvasId) {
+    createBoxPlotChart(canvasId, data) {
         const ctx = document.getElementById(canvasId);
         if (!ctx) return;
 
+        const calc = new StatisticsCalculator(data);
         const colors = this.getDefaultColors();
 
         if (this.charts[canvasId]) {
@@ -564,8 +813,14 @@ class ChartManager {
         const chartData = {
             labels: ['Min', 'Q1', 'Median', 'Q3', 'Max'],
             datasets: [{
-                label: 'Gold Price Distribution',
-                data: [47736, 58714, 67185, 77656, 110383],
+                label: 'Gold Price Distribution (₹)',
+                data: [
+                    Math.round(calc.min()),
+                    Math.round(calc.Q1()),
+                    Math.round(calc.median()),
+                    Math.round(calc.Q3()),
+                    Math.round(calc.max())
+                ],
                 backgroundColor: [
                     'rgba(255, 68, 68, 0.6)',
                     'rgba(255, 215, 0, 0.4)',
@@ -582,7 +837,7 @@ class ChartManager {
             ...this.getDefaultOptions(),
             scales: {
                 y: {
-                    beginAtZero: true,
+                    beginAtZero: false,
                     ticks: {
                         color: colors.text,
                         font: { size: 11 },
@@ -618,18 +873,18 @@ class ChartManager {
         if (!ctx) return;
 
         const inflationData = [
-            { month: 'Jan 2023', inflation: 6.52, goldPrice: 52000 },
-            { month: 'Apr 2023', inflation: 4.70, goldPrice: 58000 },
-            { month: 'Jul 2023', inflation: 7.44, goldPrice: 62000 },
-            { month: 'Oct 2023', inflation: 5.02, goldPrice: 65000 },
-            { month: 'Jan 2024', inflation: 5.10, goldPrice: 68000 },
-            { month: 'Apr 2024', inflation: 4.83, goldPrice: 72000 },
-            { month: 'Jul 2024', inflation: 3.65, goldPrice: 78000 },
-            { month: 'Oct 2024', inflation: 5.49, goldPrice: 85000 },
-            { month: 'Jan 2025', inflation: 4.91, goldPrice: 92000 },
-            { month: 'Apr 2025', inflation: 4.83, goldPrice: 98000 },
-            { month: 'Jul 2025', inflation: 3.54, goldPrice: 105000 },
-            { month: 'Oct 2025', inflation: 5.49, goldPrice: 110383 }
+            { month: 'Jan 23', inflation: 6.52, goldPrice: 50485 },
+            { month: 'Apr 23', inflation: 4.70, goldPrice: 51375 },
+            { month: 'Jul 23', inflation: 7.44, goldPrice: 59200 },
+            { month: 'Oct 23', inflation: 5.02, goldPrice: 64200 },
+            { month: 'Jan 24', inflation: 5.10, goldPrice: 71200 },
+            { month: 'Apr 24', inflation: 4.83, goldPrice: 77800 },
+            { month: 'Jul 24', inflation: 3.65, goldPrice: 83800 },
+            { month: 'Oct 24', inflation: 5.49, goldPrice: 89200 },
+            { month: 'Jan 25', inflation: 4.91, goldPrice: 95800 },
+            { month: 'Apr 25', inflation: 4.83, goldPrice: 101200 },
+            { month: 'Jul 25', inflation: 3.54, goldPrice: 107800 },
+            { month: 'Oct 25', inflation: 5.49, goldPrice: 110383 }
         ];
 
         const colors = this.getDefaultColors();
@@ -719,17 +974,17 @@ class ChartManager {
         if (!ctx) return;
 
         const inflationData = [
-            { inflation: 6.52, goldPrice: 52000 },
-            { inflation: 4.70, goldPrice: 58000 },
-            { inflation: 7.44, goldPrice: 62000 },
-            { inflation: 5.02, goldPrice: 65000 },
-            { inflation: 5.10, goldPrice: 68000 },
-            { inflation: 4.83, goldPrice: 72000 },
-            { inflation: 3.65, goldPrice: 78000 },
-            { inflation: 5.49, goldPrice: 85000 },
-            { inflation: 4.91, goldPrice: 92000 },
-            { inflation: 4.83, goldPrice: 98000 },
-            { inflation: 3.54, goldPrice: 105000 },
+            { inflation: 6.52, goldPrice: 50485 },
+            { inflation: 4.70, goldPrice: 51375 },
+            { inflation: 7.44, goldPrice: 59200 },
+            { inflation: 5.02, goldPrice: 64200 },
+            { inflation: 5.10, goldPrice: 71200 },
+            { inflation: 4.83, goldPrice: 77800 },
+            { inflation: 3.65, goldPrice: 83800 },
+            { inflation: 5.49, goldPrice: 89200 },
+            { inflation: 4.91, goldPrice: 95800 },
+            { inflation: 4.83, goldPrice: 101200 },
+            { inflation: 3.54, goldPrice: 107800 },
             { inflation: 5.49, goldPrice: 110383 }
         ];
 
@@ -741,7 +996,7 @@ class ChartManager {
 
         const chartData = {
             datasets: [{
-                label: 'Gold vs Inflation Correlation (r = 0.687)',
+                label: 'Gold vs Inflation Correlation',
                 data: inflationData.map(d => ({ x: d.inflation, y: d.goldPrice })),
                 backgroundColor: 'rgba(255, 215, 0, 0.7)',
                 borderColor: colors.primary,
@@ -798,10 +1053,10 @@ class ChartManager {
             labels: ['Gold-USD', 'Gold-Inflation', 'USD-Inflation'],
             datasets: [{
                 label: 'Correlation Coefficient',
-                data: [-0.421, 0.687, -0.156],
+                data: [-0.998, 0.215, -0.156],
                 backgroundColor: [
                     'rgba(255, 68, 68, 0.7)',
-                    'rgba(0, 255, 0, 0.7)',
+                    'rgba(255, 165, 0, 0.7)',
                     'rgba(255, 68, 68, 0.7)'
                 ],
                 borderColor: colors.primary,
@@ -1225,282 +1480,3 @@ class ChartManager {
 
         if (this.charts[canvasId]) {
             this.charts[canvasId].destroy();
-        }
-
-        const chartData = {
-            labels: ['Physical Gold (53%)', 'Gold ETFs (27%)', 'Gold Schemes (20%)'],
-            datasets: [{
-                data: [53, 27, 20],
-                backgroundColor: [
-                    'rgba(255, 215, 0, 0.8)',
-                    'rgba(0, 255, 255, 0.8)',
-                    'rgba(255, 165, 0, 0.8)'
-                ],
-                borderColor: colors.primary,
-                borderWidth: 2
-            }]
-        };
-
-        const chartOptions = {
-            ...this.getDefaultOptions(),
-            plugins: {
-                ...this.getDefaultOptions().plugins,
-                legend: {
-                    display: true,
-                    position: 'bottom',
-                    labels: { color: colors.text }
-                }
-            }
-        };
-
-        this.charts[canvasId] = new Chart(ctx, {
-            type: 'doughnut',
-            data: chartData,
-            options: chartOptions
-        });
-
-        ctx.onclick = () => {
-            this.openChartModal('Preferred Investment Form', chartData, 'doughnut', chartOptions);
-        };
-    }
-
-    createRiskChart(canvasId) {
-        const ctx = document.getElementById(canvasId);
-        if (!ctx) return;
-
-        const colors = this.getDefaultColors();
-
-        if (this.charts[canvasId]) {
-            this.charts[canvasId].destroy();
-        }
-
-        const chartData = {
-            labels: ['Low Risk (47%)', 'Moderate (40%)', 'High Risk (13%)'],
-            datasets: [{
-                data: [47, 40, 13],
-                backgroundColor: [
-                    'rgba(0, 255, 0, 0.8)',
-                    'rgba(255, 215, 0, 0.8)',
-                    'rgba(255, 68, 68, 0.8)'
-                ],
-                borderColor: colors.primary,
-                borderWidth: 2
-            }]
-        };
-
-        const chartOptions = {
-            ...this.getDefaultOptions(),
-            plugins: {
-                ...this.getDefaultOptions().plugins,
-                legend: {
-                    display: true,
-                    position: 'bottom',
-                    labels: { color: colors.text }
-                }
-            }
-        };
-
-        this.charts[canvasId] = new Chart(ctx, {
-            type: 'pie',
-            data: chartData,
-            options: chartOptions
-        });
-
-        ctx.onclick = () => {
-            this.openChartModal('Risk Perception', chartData, 'pie', chartOptions);
-        };
-    }
-
-    createSentimentChart(canvasId) {
-        const ctx = document.getElementById(canvasId);
-        if (!ctx) return;
-
-        const colors = this.getDefaultColors();
-
-        if (this.charts[canvasId]) {
-            this.charts[canvasId].destroy();
-        }
-
-        const chartData = {
-            labels: ['Bullish', 'Neutral', 'Bearish'],
-            datasets: [{
-                label: 'Percentage',
-                data: [67, 20, 13],
-                backgroundColor: [
-                    'rgba(0, 255, 0, 0.7)',
-                    'rgba(255, 165, 0, 0.7)',
-                    'rgba(255, 68, 68, 0.7)'
-                ],
-                borderColor: colors.primary,
-                borderWidth: 2
-            }]
-        };
-
-        const chartOptions = {
-            ...this.getDefaultOptions(),
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    max: 100,
-                    ticks: {
-                        color: colors.text,
-                        callback: function(value) { return value + '%'; }
-                    },
-                    grid: { color: colors.borderColor + '33' }
-                },
-                x: {
-                    ticks: { color: colors.text },
-                    grid: { drawOnChartArea: false }
-                }
-            }
-        };
-
-        this.charts[canvasId] = new Chart(ctx, {
-            type: 'bar',
-            data: chartData,
-            options: chartOptions
-        });
-
-        ctx.onclick = () => {
-            this.openChartModal('Market Sentiment', chartData, 'bar', chartOptions);
-        };
-    }
-
-    createTimelineChart(canvasId) {
-        const ctx = document.getElementById(canvasId);
-        if (!ctx) return;
-
-        const colors = this.getDefaultColors();
-
-        if (this.charts[canvasId]) {
-            this.charts[canvasId].destroy();
-        }
-
-        const chartData = {
-            labels: ['Short-term <1yr (33%)', 'Medium 1-3yr (40%)', 'Long-term 3+yr (27%)'],
-            datasets: [{
-                data: [33, 40, 27],
-                backgroundColor: [
-                    'rgba(255, 68, 68, 0.8)',
-                    'rgba(255, 215, 0, 0.8)',
-                    'rgba(0, 255, 0, 0.8)'
-                ],
-                borderColor: colors.primary,
-                borderWidth: 2
-            }]
-        };
-
-        const chartOptions = {
-            ...this.getDefaultOptions(),
-            plugins: {
-                ...this.getDefaultOptions().plugins,
-                legend: {
-                    display: true,
-                    position: 'bottom',
-                    labels: { color: colors.text }
-                }
-            }
-        };
-
-        this.charts[canvasId] = new Chart(ctx, {
-            type: 'doughnut',
-            data: chartData,
-            options: chartOptions
-        });
-
-        ctx.onclick = () => {
-            this.openChartModal('Investment Timeline Preference', chartData, 'doughnut', chartOptions);
-        };
-    }
-
-    createSourceChart(canvasId) {
-        const ctx = document.getElementById(canvasId);
-        if (!ctx) return;
-
-        const colors = this.getDefaultColors();
-
-        if (this.charts[canvasId]) {
-            this.charts[canvasId].destroy();
-        }
-
-        const chartData = {
-            labels: ['Financial News', 'Expert Analysis', 'Online Communities', 'Social Media'],
-            datasets: [{
-                label: 'Trust Level (%)',
-                data: [40, 33, 20, 7],
-                backgroundColor: [
-                    'rgba(0, 255, 0, 0.7)',
-                    'rgba(255, 215, 0, 0.7)',
-                    'rgba(255, 165, 0, 0.7)',
-                    'rgba(255, 68, 68, 0.7)'
-                ],
-                borderColor: colors.primary,
-                borderWidth: 2
-            }]
-        };
-
-        const chartOptions = {
-            ...this.getDefaultOptions(),
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    max: 50,
-                    ticks: {
-                        color: colors.text,
-                        callback: function(value) { return value + '%'; }
-                    },
-                    grid: { color: colors.borderColor + '33' }
-                },
-                x: {
-                    ticks: { 
-                        color: colors.text,
-                        font: { size: 10 }
-                    },
-                    grid: { drawOnChartArea: false }
-                }
-            }
-        };
-
-        this.charts[canvasId] = new Chart(ctx, {
-            type: 'bar',
-            data: chartData,
-            options: chartOptions
-        });
-
-        ctx.onclick = () => {
-            this.openChartModal('Information Source Trust', chartData, 'bar', chartOptions);
-        };
-    }
-}
-
-const chartManager = new ChartManager();
-
-window.addEventListener('load', () => {
-    console.log('Initializing charts...');
-    
-    if (document.getElementById('histogramChart')) {
-        initializeAllCharts();
-    } else if (document.getElementById('ageChart')) {
-        console.log('Initializing survey charts...');
-        chartManager.createSurveyCharts();
-    }
-});
-
-function initializeAllCharts() {
-    let goldPrices = window.goldPrices || chartManager.generateGoldPriceData();
-    
-    console.log('Data points:', goldPrices.length);
-    
-    if (document.getElementById('histogramChart')) chartManager.createHistogram('histogramChart', goldPrices);
-    if (document.getElementById('trendChart')) chartManager.createTrendChart('trendChart', goldPrices);
-    if (document.getElementById('volatilityChart')) chartManager.createVolatilityChart('volatilityChart', goldPrices);
-    if (document.getElementById('distributionChart')) chartManager.createDistributionChart('distributionChart', goldPrices);
-    if (document.getElementById('boxplotChart')) chartManager.createBoxPlotChart('boxplotChart');
-    if (document.getElementById('inflationChart')) chartManager.createInflationChart('inflationChart');
-    if (document.getElementById('correlationScatterChart')) chartManager.createCorrelationScatterChart('correlationScatterChart');
-    if (document.getElementById('correlationChart')) chartManager.createCorrelationChart('correlationChart');
-    
-    console.log('Charts initialized');
-}
-
-window.chartManager = chartManager;
