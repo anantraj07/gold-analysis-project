@@ -1,27 +1,51 @@
 /* ============================================
-   GOLD PRICE ANALYSIS - CHARTS.JS (INTEGRATED)
-   Works with statistics.js, theme.js, and main.js
-   All charts working with correct data
+   GOLD PRICE ANALYSIS - CHARTS.JS (COMPLETE)
+   Working with correct data
    ============================================ */
 
-// Load Chart.js dynamically if not already loaded
-function loadChartJS(callback) {
-    if (typeof Chart !== 'undefined') {
-        callback();
-        return;
+class StatisticsCalculator {
+    constructor(data) {
+        this.data = data;
+        this.values = data.map(d => parseFloat(d.Gold_Price_INR));
     }
-    
-    console.log('Loading Chart.js...');
-    const script = document.createElement('script');
-    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js';
-    script.onload = () => {
-        console.log('✓ Chart.js loaded successfully');
-        callback();
-    };
-    script.onerror = () => {
-        console.error('✗ Failed to load Chart.js from CDN');
-    };
-    document.head.appendChild(script);
+
+    mean() {
+        return this.values.reduce((a, b) => a + b, 0) / this.values.length;
+    }
+
+    median() {
+        const sorted = [...this.values].sort((a, b) => a - b);
+        const mid = Math.floor(sorted.length / 2);
+        return sorted.length % 2 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
+    }
+
+    min() {
+        return Math.min(...this.values);
+    }
+
+    max() {
+        return Math.max(...this.values);
+    }
+
+    standardDeviation() {
+        const mean = this.mean();
+        const variance = this.values.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / this.values.length;
+        return Math.sqrt(variance);
+    }
+
+    quartile(q) {
+        const sorted = [...this.values].sort((a, b) => a - b);
+        const pos = (q / 4) * (sorted.length - 1);
+        const base = Math.floor(pos);
+        const rest = pos - base;
+        if (base + 1 < sorted.length) {
+            return sorted[base] + rest * (sorted[base + 1] - sorted[base]);
+        }
+        return sorted[base];
+    }
+
+    Q1() { return this.quartile(1); }
+    Q3() { return this.quartile(3); }
 }
 
 class ChartManager {
@@ -57,6 +81,7 @@ class ChartManager {
                     width: 100%;
                     height: 100%;
                     background-color: rgba(0, 0, 0, 0.9);
+                    overflow: auto;
                 }
 
                 .chart-modal-content {
@@ -78,31 +103,58 @@ class ChartManager {
                     font-size: 2.5rem;
                     font-weight: bold;
                     cursor: pointer;
-                    transition: color 0.3s;
+                    transition: all 0.3s ease;
                 }
 
                 .chart-modal-close:hover {
                     color: #DAA520;
+                    transform: scale(1.1);
                 }
 
                 .chart-modal-content h3 {
                     color: #FFD700;
                     margin-bottom: 1.5rem;
-                    text-align: center;
+                    font-size: 1.5rem;
                 }
 
                 .chart-modal-content canvas {
                     width: 100% !important;
                     height: 600px !important;
+                    max-height: 70vh;
+                }
+
+                .chart-container {
+                    cursor: zoom-in;
+                    position: relative;
+                }
+
+                .chart-container::after {
+                    content: '🔍 Click to enlarge';
+                    position: absolute;
+                    top: 10px;
+                    right: 10px;
+                    background: rgba(255, 215, 0, 0.9);
+                    color: #000;
+                    padding: 0.25rem 0.75rem;
+                    border-radius: 4px;
+                    font-size: 0.75rem;
+                    font-weight: 600;
+                    opacity: 0;
+                    transition: opacity 0.3s ease;
+                    pointer-events: none;
+                }
+
+                .chart-container:hover::after {
+                    opacity: 1;
                 }
 
                 @media (max-width: 768px) {
                     .chart-modal-content {
                         width: 98%;
-                        padding: 1rem;
                         margin: 5% auto;
+                        padding: 1rem;
                     }
-                    
+
                     .chart-modal-content canvas {
                         height: 400px !important;
                     }
@@ -120,21 +172,21 @@ class ChartManager {
         const modal = document.getElementById('chartModal');
         const closeBtn = document.querySelector('.chart-modal-close');
 
-        if (closeBtn) {
-            closeBtn.onclick = () => {
-                modal.style.display = 'none';
-                if (this.charts['modalCanvas']) {
-                    this.charts['modalCanvas'].destroy();
-                    delete this.charts['modalCanvas'];
-                }
-            };
-        }
+        closeBtn.onclick = () => {
+            modal.style.display = 'none';
+            const modalChart = this.charts['modalCanvas'];
+            if (modalChart) {
+                modalChart.destroy();
+                delete this.charts['modalCanvas'];
+            }
+        };
 
         window.onclick = (event) => {
             if (event.target === modal) {
                 modal.style.display = 'none';
-                if (this.charts['modalCanvas']) {
-                    this.charts['modalCanvas'].destroy();
+                const modalChart = this.charts['modalCanvas'];
+                if (modalChart) {
+                    modalChart.destroy();
                     delete this.charts['modalCanvas'];
                 }
             }
@@ -146,11 +198,6 @@ class ChartManager {
         const modalCanvas = document.getElementById('modalCanvas');
         const modalTitle = document.getElementById('modalChartTitle');
 
-        if (!modal || !modalCanvas || !modalTitle) {
-            console.error('Modal elements not found');
-            return;
-        }
-
         modalTitle.textContent = chartTitle;
         modal.style.display = 'block';
 
@@ -161,7 +208,10 @@ class ChartManager {
         this.charts['modalCanvas'] = new Chart(modalCanvas, {
             type: chartType,
             data: chartData,
-            options: { ...chartOptions, maintainAspectRatio: false }
+            options: {
+                ...chartOptions,
+                maintainAspectRatio: false
+            }
         });
     }
 
@@ -201,24 +251,9 @@ class ChartManager {
 
     createHistogram(canvasId, data) {
         const ctx = document.getElementById(canvasId);
-        if (!ctx) {
-            console.error(`Canvas ${canvasId} not found`);
-            return;
-        }
+        if (!ctx) return;
 
-        // Use StatisticsCalculator if available, otherwise fallback
-        let calc;
-        if (typeof window.StatisticsCalculator !== 'undefined') {
-            calc = new window.StatisticsCalculator(data);
-        } else {
-            // Fallback calculation
-            const values = data.map(d => parseFloat(d.Gold_Price_INR));
-            calc = {
-                min: () => Math.min(...values),
-                max: () => Math.max(...values)
-            };
-        }
-
+        const calc = new StatisticsCalculator(data);
         const bins = 15;
         const min = calc.min();
         const max = calc.max();
@@ -253,71 +288,88 @@ class ChartManager {
             }]
         };
 
+        const chartOptions = this.getDefaultOptions();
+
         this.charts[canvasId] = new Chart(ctx, {
             type: 'bar',
             data: chartData,
-            options: this.getDefaultOptions()
+            options: chartOptions
         });
 
-        ctx.style.cursor = 'pointer';
         ctx.onclick = () => {
-            this.openChartModal('Price Distribution Histogram', chartData, 'bar', this.getDefaultOptions());
+            this.openChartModal('Price Distribution Histogram', chartData, 'bar', chartOptions);
         };
     }
 
     createTrendChart(canvasId, data) {
         const ctx = document.getElementById(canvasId);
-        if (!ctx) {
-            console.error(`Canvas ${canvasId} not found`);
-            return;
-        }
+        if (!ctx) return;
 
-        const sampledData = data.filter((_, index) => index % 5 === 0 || index === data.length - 1);
+        const monthlyData = {};
         
-        const labels = sampledData.map(d => {
+        data.forEach(d => {
             const date = new Date(d.Date);
-            return date.toLocaleDateString('en-US', { month: 'short', year: '2-digit' });
+            const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+            
+            if (!monthlyData[monthKey]) {
+                monthlyData[monthKey] = {
+                    dates: [],
+                    prices: []
+                };
+            }
+            monthlyData[monthKey].dates.push(date);
+            monthlyData[monthKey].prices.push(parseFloat(d.Gold_Price_INR));
         });
+
+        const sampledDates = [];
+        const sampledPrices = [];
         
-        const prices = sampledData.map(d => parseFloat(d.Gold_Price_INR));
+        Object.keys(monthlyData).sort().forEach(monthKey => {
+            const monthData = monthlyData[monthKey];
+            const midIndex = Math.floor(monthData.dates.length / 2);
+            const date = monthData.dates[midIndex];
+            const price = monthData.prices[midIndex];
+            
+            const monthName = date.toLocaleDateString('en-US', { month: 'short' });
+            const year = date.getFullYear();
+            
+            sampledDates.push(`${monthName} ${year}`);
+            sampledPrices.push(price);
+        });
 
         if (this.charts[canvasId]) {
             this.charts[canvasId].destroy();
         }
 
         const chartData = {
-            labels: labels,
+            labels: sampledDates,
             datasets: [{
                 label: 'Gold Price (₹ per 10g)',
-                data: prices,
+                data: sampledPrices,
                 borderColor: '#FFD700',
                 backgroundColor: 'rgba(255, 215, 0, 0.1)',
                 borderWidth: 3,
                 fill: true,
                 tension: 0.3,
-                pointRadius: 2,
+                pointRadius: 3,
                 pointHoverRadius: 6,
                 pointBackgroundColor: '#00ffff'
             }]
         };
 
-        const options = {
+        const chartOptions = {
             ...this.getDefaultOptions(),
+            interaction: { intersect: false, mode: 'index' },
             scales: {
-                y: {
-                    ticks: {
-                        color: '#ffffff',
-                        callback: function(value) {
-                            return '₹' + (value/1000).toFixed(0) + 'k';
-                        }
-                    },
-                    grid: { color: 'rgba(255, 255, 255, 0.1)' }
-                },
+                ...this.getDefaultOptions().scales,
                 x: {
                     ticks: {
                         color: '#ffffff',
+                        font: { size: 10 },
                         maxRotation: 45,
-                        minRotation: 45
+                        minRotation: 45,
+                        autoSkip: true,
+                        maxTicksLimit: 15
                     },
                     grid: { drawOnChartArea: false }
                 }
@@ -327,21 +379,17 @@ class ChartManager {
         this.charts[canvasId] = new Chart(ctx, {
             type: 'line',
             data: chartData,
-            options: options
+            options: chartOptions
         });
 
-        ctx.style.cursor = 'pointer';
         ctx.onclick = () => {
-            this.openChartModal('Price Trend Over Time', chartData, 'line', options);
+            this.openChartModal('Price Trend Over Time (Jan 2023 - Oct 2025)', chartData, 'line', chartOptions);
         };
     }
 
     createVolatilityChart(canvasId, data) {
         const ctx = document.getElementById(canvasId);
-        if (!ctx) {
-            console.error(`Canvas ${canvasId} not found`);
-            return;
-        }
+        if (!ctx) return;
 
         const quarterlyData = {};
         
@@ -390,39 +438,24 @@ class ChartManager {
             }]
         };
 
+        const chartOptions = this.getDefaultOptions();
+
         this.charts[canvasId] = new Chart(ctx, {
             type: 'bar',
             data: chartData,
-            options: this.getDefaultOptions()
+            options: chartOptions
         });
 
-        ctx.style.cursor = 'pointer';
         ctx.onclick = () => {
-            this.openChartModal('Quarterly Volatility', chartData, 'bar', this.getDefaultOptions());
+            this.openChartModal('Quarterly Volatility Analysis', chartData, 'bar', chartOptions);
         };
     }
 
     createDistributionChart(canvasId, data) {
         const ctx = document.getElementById(canvasId);
-        if (!ctx) {
-            console.error(`Canvas ${canvasId} not found`);
-            return;
-        }
+        if (!ctx) return;
 
-        // Use StatisticsCalculator if available
-        let calc;
-        if (typeof window.StatisticsCalculator !== 'undefined') {
-            calc = new window.StatisticsCalculator(data);
-        } else {
-            const values = data.map(d => parseFloat(d.Gold_Price_INR));
-            const mean = values.reduce((a, b) => a + b, 0) / values.length;
-            const variance = values.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / values.length;
-            calc = {
-                mean: () => mean,
-                standardDeviation: () => Math.sqrt(variance)
-            };
-        }
-
+        const calc = new StatisticsCalculator(data);
         const mean = calc.mean();
         const std = calc.standardDeviation();
         
@@ -452,39 +485,24 @@ class ChartManager {
             }]
         };
 
+        const chartOptions = this.getDefaultOptions();
+
         this.charts[canvasId] = new Chart(ctx, {
             type: 'line',
             data: chartData,
-            options: this.getDefaultOptions()
+            options: chartOptions
         });
 
-        ctx.style.cursor = 'pointer';
         ctx.onclick = () => {
-            this.openChartModal('Normal Distribution', chartData, 'line', this.getDefaultOptions());
+            this.openChartModal('Normal Distribution Analysis', chartData, 'line', chartOptions);
         };
     }
 
     createBoxPlotChart(canvasId, data) {
         const ctx = document.getElementById(canvasId);
-        if (!ctx) {
-            console.error(`Canvas ${canvasId} not found`);
-            return;
-        }
+        if (!ctx) return;
 
-        // Use StatisticsCalculator if available
-        let calc;
-        if (typeof window.StatisticsCalculator !== 'undefined') {
-            calc = new window.StatisticsCalculator(data);
-        } else {
-            const values = data.map(d => parseFloat(d.Gold_Price_INR)).sort((a, b) => a - b);
-            calc = {
-                min: () => values[0],
-                max: () => values[values.length - 1],
-                Q1: () => values[Math.floor(values.length * 0.25)],
-                median: () => values[Math.floor(values.length * 0.5)],
-                Q3: () => values[Math.floor(values.length * 0.75)]
-            };
-        }
+        const calc = new StatisticsCalculator(data);
 
         if (this.charts[canvasId]) {
             this.charts[canvasId].destroy();
@@ -493,7 +511,7 @@ class ChartManager {
         const chartData = {
             labels: ['Min', 'Q1', 'Median', 'Q3', 'Max'],
             datasets: [{
-                label: 'Gold Price Distribution (₹)',
+                label: 'Gold Price Distribution',
                 data: [
                     Math.round(calc.min()),
                     Math.round(calc.Q1()),
@@ -513,12 +531,14 @@ class ChartManager {
             }]
         };
 
-        const options = {
+        const chartOptions = {
             ...this.getDefaultOptions(),
             scales: {
                 y: {
+                    beginAtZero: true,
                     ticks: {
                         color: '#ffffff',
+                        font: { size: 11 },
                         callback: function(value) {
                             return '₹' + (value/1000).toFixed(0) + 'k';
                         }
@@ -526,7 +546,10 @@ class ChartManager {
                     grid: { color: 'rgba(255, 255, 255, 0.1)' }
                 },
                 x: {
-                    ticks: { color: '#ffffff' },
+                    ticks: {
+                        color: '#ffffff',
+                        font: { size: 11 }
+                    },
                     grid: { drawOnChartArea: false }
                 }
             }
@@ -535,21 +558,17 @@ class ChartManager {
         this.charts[canvasId] = new Chart(ctx, {
             type: 'bar',
             data: chartData,
-            options: options
+            options: chartOptions
         });
 
-        ctx.style.cursor = 'pointer';
         ctx.onclick = () => {
-            this.openChartModal('Box Plot Analysis', chartData, 'bar', options);
+            this.openChartModal('Box Plot Analysis', chartData, 'bar', chartOptions);
         };
     }
 
     createInflationChart(canvasId) {
         const ctx = document.getElementById(canvasId);
-        if (!ctx) {
-            console.error(`Canvas ${canvasId} not found`);
-            return;
-        }
+        if (!ctx) return;
 
         const inflationData = [
             { month: 'Jan 23', inflation: 6.52, goldPrice: 50485 },
@@ -597,43 +616,39 @@ class ChartManager {
             ]
         };
 
-        const options = {
-            responsive: true,
-            maintainAspectRatio: false,
+        const chartOptions = {
+            ...this.getDefaultOptions(),
             interaction: { mode: 'index', intersect: false },
-            plugins: {
-                legend: {
-                    labels: { color: '#ffffff' }
-                },
-                tooltip: {
-                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                    titleColor: '#FFD700',
-                    bodyColor: '#ffffff',
-                    borderColor: '#FFD700',
-                    borderWidth: 1
-                }
-            },
             scales: {
                 y: {
                     type: 'linear',
+                    display: true,
                     position: 'left',
                     ticks: {
                         color: '#FFA500',
+                        font: { size: 11 },
                         callback: function(value) { return value.toFixed(1) + '%'; }
                     },
                     grid: { color: 'rgba(255, 165, 0, 0.1)' }
                 },
                 y1: {
                     type: 'linear',
+                    display: true,
                     position: 'right',
                     ticks: {
                         color: '#FFD700',
+                        font: { size: 11 },
                         callback: function(value) { return '₹' + value + 'k'; }
                     },
                     grid: { drawOnChartArea: false }
                 },
                 x: {
-                    ticks: { color: '#ffffff' },
+                    ticks: {
+                        color: '#ffffff',
+                        font: { size: 10 },
+                        maxRotation: 45,
+                        minRotation: 45
+                    },
                     grid: { drawOnChartArea: false }
                 }
             }
@@ -642,21 +657,17 @@ class ChartManager {
         this.charts[canvasId] = new Chart(ctx, {
             type: 'line',
             data: chartData,
-            options: options
+            options: chartOptions
         });
 
-        ctx.style.cursor = 'pointer';
         ctx.onclick = () => {
-            this.openChartModal('Gold vs Inflation', chartData, 'line', options);
+            this.openChartModal('Gold Prices vs Inflation Rate', chartData, 'line', chartOptions);
         };
     }
 
     createCorrelationScatterChart(canvasId) {
         const ctx = document.getElementById(canvasId);
-        if (!ctx) {
-            console.error(`Canvas ${canvasId} not found`);
-            return;
-        }
+        if (!ctx) return;
 
         const inflationData = [
             { inflation: 6.52, goldPrice: 50485 },
@@ -679,7 +690,7 @@ class ChartManager {
 
         const chartData = {
             datasets: [{
-                label: 'Gold vs Inflation',
+                label: 'Gold vs Inflation Correlation',
                 data: inflationData.map(d => ({ x: d.inflation, y: d.goldPrice })),
                 backgroundColor: 'rgba(255, 215, 0, 0.7)',
                 borderColor: '#FFD700',
@@ -689,12 +700,13 @@ class ChartManager {
             }]
         };
 
-        const options = {
+        const chartOptions = {
             ...this.getDefaultOptions(),
             scales: {
                 y: {
                     ticks: {
                         color: '#ffffff',
+                        font: { size: 11 },
                         callback: function(value) { return '₹' + (value/1000).toFixed(0) + 'k'; }
                     },
                     grid: { color: 'rgba(255, 255, 255, 0.1)' }
@@ -702,6 +714,7 @@ class ChartManager {
                 x: {
                     ticks: {
                         color: '#ffffff',
+                        font: { size: 11 },
                         callback: function(value) { return value.toFixed(1) + '%'; }
                     },
                     grid: { color: 'rgba(255, 255, 255, 0.1)' }
@@ -712,21 +725,17 @@ class ChartManager {
         this.charts[canvasId] = new Chart(ctx, {
             type: 'scatter',
             data: chartData,
-            options: options
+            options: chartOptions
         });
 
-        ctx.style.cursor = 'pointer';
         ctx.onclick = () => {
-            this.openChartModal('Correlation Scatter', chartData, 'scatter', options);
+            this.openChartModal('Correlation: Gold Price & Inflation', chartData, 'scatter', chartOptions);
         };
     }
 
     createCorrelationChart(canvasId) {
         const ctx = document.getElementById(canvasId);
-        if (!ctx) {
-            console.error(`Canvas ${canvasId} not found`);
-            return;
-        }
+        if (!ctx) return;
 
         if (this.charts[canvasId]) {
             this.charts[canvasId].destroy();
@@ -747,7 +756,7 @@ class ChartManager {
             }]
         };
 
-        const options = {
+        const chartOptions = {
             ...this.getDefaultOptions(),
             scales: {
                 y: {
@@ -755,12 +764,16 @@ class ChartManager {
                     max: 1,
                     ticks: {
                         color: '#ffffff',
+                        font: { size: 11 },
                         callback: function(value) { return value.toFixed(2); }
                     },
                     grid: { color: 'rgba(255, 255, 255, 0.1)' }
                 },
                 x: {
-                    ticks: { color: '#ffffff' },
+                    ticks: {
+                        color: '#ffffff',
+                        font: { size: 11 }
+                    },
                     grid: { drawOnChartArea: false }
                 }
             }
@@ -769,18 +782,15 @@ class ChartManager {
         this.charts[canvasId] = new Chart(ctx, {
             type: 'bar',
             data: chartData,
-            options: options
+            options: chartOptions
         });
 
-        ctx.style.cursor = 'pointer';
         ctx.onclick = () => {
-            this.openChartModal('Correlation Matrix', chartData, 'bar', options);
+            this.openChartModal('Correlation Matrix', chartData, 'bar', chartOptions);
         };
     }
 
-    // Survey Charts
     createSurveyCharts() {
-        console.log('Creating survey charts...');
         this.createAgeChart('ageChart');
         this.createGenderChart('genderChart');
         this.createOccupationChart('occupationChart');
@@ -793,7 +803,6 @@ class ChartManager {
         this.createSentimentChart('sentimentChart');
         this.createTimelineChart('timelineChart');
         this.createSourceChart('sourceChart');
-        console.log('✓ Survey charts created');
     }
 
     createAgeChart(canvasId) {
@@ -816,14 +825,7 @@ class ChartManager {
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: { 
-                    legend: { labels: { color: '#ffffff' } },
-                    tooltip: {
-                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                        titleColor: '#FFD700',
-                        bodyColor: '#ffffff'
-                    }
-                }
+                plugins: { legend: { labels: { color: '#ffffff' } } }
             }
         });
     }
@@ -848,14 +850,7 @@ class ChartManager {
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: { 
-                    legend: { labels: { color: '#ffffff' } },
-                    tooltip: {
-                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                        titleColor: '#FFD700',
-                        bodyColor: '#ffffff'
-                    }
-                }
+                plugins: { legend: { labels: { color: '#ffffff' } } }
             }
         });
     }
@@ -936,14 +931,7 @@ class ChartManager {
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: { 
-                    legend: { labels: { color: '#ffffff' } },
-                    tooltip: {
-                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                        titleColor: '#FFD700',
-                        bodyColor: '#ffffff'
-                    }
-                }
+                plugins: { legend: { labels: { color: '#ffffff' } } }
             }
         });
     }
@@ -968,14 +956,7 @@ class ChartManager {
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: { 
-                    legend: { labels: { color: '#ffffff' } },
-                    tooltip: {
-                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                        titleColor: '#FFD700',
-                        bodyColor: '#ffffff'
-                    }
-                }
+                plugins: { legend: { labels: { color: '#ffffff' } } }
             }
         });
     }
@@ -1028,14 +1009,7 @@ class ChartManager {
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: { 
-                    legend: { labels: { color: '#ffffff' } },
-                    tooltip: {
-                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                        titleColor: '#FFD700',
-                        bodyColor: '#ffffff'
-                    }
-                }
+                plugins: { legend: { labels: { color: '#ffffff' } } }
             }
         });
     }
@@ -1060,14 +1034,7 @@ class ChartManager {
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: { 
-                    legend: { labels: { color: '#ffffff' } },
-                    tooltip: {
-                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                        titleColor: '#FFD700',
-                        bodyColor: '#ffffff'
-                    }
-                }
+                plugins: { legend: { labels: { color: '#ffffff' } } }
             }
         });
     }
@@ -1120,14 +1087,7 @@ class ChartManager {
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: { 
-                    legend: { labels: { color: '#ffffff' } },
-                    tooltip: {
-                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                        titleColor: '#FFD700',
-                        bodyColor: '#ffffff'
-                    }
-                }
+                plugins: { legend: { labels: { color: '#ffffff' } } }
             }
         });
     }
@@ -1170,129 +1130,34 @@ class ChartManager {
     }
 }
 
-// Initialize chart manager
-let chartManager = null;
+const chartManager = new ChartManager();
 
-// Initialize all price analysis charts
+window.addEventListener('load', () => {
+    console.log('Initializing charts...');
+    
+    if (document.getElementById('histogramChart')) {
+        initializeAllCharts();
+    } else if (document.getElementById('ageChart')) {
+        console.log('Initializing survey charts...');
+        chartManager.createSurveyCharts();
+    }
+});
+
 function initializeAllCharts() {
-    // Get gold prices data from global scope
-    let goldPrices = window.goldPrices;
+    let goldPrices = window.goldPrices || chartManager.generateGoldPriceData();
     
-    if (!goldPrices || goldPrices.length === 0) {
-        console.error('✗ Gold prices data not available! Make sure goldPrices.js is loaded first.');
-        return;
-    }
+    console.log('Data points:', goldPrices.length);
     
-    console.log('Creating charts with ' + goldPrices.length + ' data points');
+    if (document.getElementById('histogramChart')) chartManager.createHistogram('histogramChart', goldPrices);
+    if (document.getElementById('trendChart')) chartManager.createTrendChart('trendChart', goldPrices);
+    if (document.getElementById('volatilityChart')) chartManager.createVolatilityChart('volatilityChart', goldPrices);
+    if (document.getElementById('distributionChart')) chartManager.createDistributionChart('distributionChart', goldPrices);
+    if (document.getElementById('boxplotChart')) chartManager.createBoxPlotChart('boxplotChart', goldPrices);
+    if (document.getElementById('inflationChart')) chartManager.createInflationChart('inflationChart');
+    if (document.getElementById('correlationScatterChart')) chartManager.createCorrelationScatterChart('correlationScatterChart');
+    if (document.getElementById('correlationChart')) chartManager.createCorrelationChart('correlationChart');
     
-    // Create all charts
-    try {
-        if (document.getElementById('histogramChart')) {
-            chartManager.createHistogram('histogramChart', goldPrices);
-            console.log('✓ Histogram created');
-        }
-        
-        if (document.getElementById('trendChart')) {
-            chartManager.createTrendChart('trendChart', goldPrices);
-            console.log('✓ Trend chart created');
-        }
-        
-        if (document.getElementById('volatilityChart')) {
-            chartManager.createVolatilityChart('volatilityChart', goldPrices);
-            console.log('✓ Volatility chart created');
-        }
-        
-        if (document.getElementById('distributionChart')) {
-            chartManager.createDistributionChart('distributionChart', goldPrices);
-            console.log('✓ Distribution chart created');
-        }
-        
-        if (document.getElementById('boxplotChart')) {
-            chartManager.createBoxPlotChart('boxplotChart', goldPrices);
-            console.log('✓ Box plot created');
-        }
-        
-        if (document.getElementById('inflationChart')) {
-            chartManager.createInflationChart('inflationChart');
-            console.log('✓ Inflation chart created');
-        }
-        
-        if (document.getElementById('correlationScatterChart')) {
-            chartManager.createCorrelationScatterChart('correlationScatterChart');
-            console.log('✓ Correlation scatter created');
-        }
-        
-        if (document.getElementById('correlationChart')) {
-            chartManager.createCorrelationChart('correlationChart');
-            console.log('✓ Correlation chart created');
-        }
-    
-        console.log('✓✓✓ All charts initialized successfully!');
-    } catch (error) {
-        console.error('✗ Error creating charts:', error);
-    }
+    console.log('Charts initialized');
 }
 
-// Wait for DOM and Chart.js to be ready
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => loadChartJS(initCharts));
-} else {
-    loadChartJS(initCharts);
-}
-
-function initCharts() {
-    console.log('═══════════════════════════════════════');
-    console.log('  GOLD PRICE ANALYSIS - INITIALIZING');
-    console.log('═══════════════════════════════════════');
-    
-    // Check if Chart.js is available
-    if (typeof Chart === 'undefined') {
-        console.error('✗ Chart.js not loaded! Please check your internet connection.');
-        return;
-    }
-    console.log('✓ Chart.js loaded');
-
-    // Check if StatisticsCalculator is available
-    if (typeof window.StatisticsCalculator !== 'undefined') {
-        console.log('✓ Statistics.js loaded');
-    } else {
-        console.warn('⚠ Statistics.js not loaded - using fallback calculations');
-    }
-
-    // Initialize chart manager
-    chartManager = new ChartManager();
-    console.log('✓ Chart Manager initialized');
-    
-    // Small delay to ensure DOM is fully ready
-    setTimeout(() => {
-        // Initialize based on page type
-        if (document.getElementById('histogramChart')) {
-            console.log('✓ Price analysis page detected');
-            initializeAllCharts();
-        } else if (document.getElementById('ageChart')) {
-            console.log('✓ Survey page detected');
-            chartManager.createSurveyCharts();
-        } else {
-            console.warn('⚠ No chart containers found - check canvas IDs in HTML');
-        }
-        
-        console.log('═══════════════════════════════════════');
-    }, 100);
-}
-
-// Make chartManager available globally for external access
-window.chartManager = chartManager;
-
-// Expose initialization function globally
-window.initializeCharts = function() {
-    if (chartManager) {
-        console.log('Reinitializing charts...');
-        chartManager.destroyAllCharts();
-        initCharts();
-    } else {
-        console.log('First time initialization...');
-        loadChartJS(initCharts);
-    }
-};
-
-console.log('✓ Charts.js loaded - waiting for DOM...');
+window.chartManager = chartManager
