@@ -307,7 +307,7 @@ class ChartManager {
 
         for (let i = 0; i < bins; i++) {
             const binMin = min + i * binWidth;
-            binLabels.push(₹${Math.round(binMin / 1000)}k);
+            binLabels.push(`₹${Math.round(binMin / 1000)}k`);
         }
 
         data.forEach(d => {
@@ -355,7 +355,7 @@ class ChartManager {
         
         data.forEach(d => {
             const date = new Date(d.Date);
-            const monthKey = ${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')};
+            const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
             
             if (!monthlyData[monthKey]) {
                 monthlyData[monthKey] = {
@@ -380,7 +380,7 @@ class ChartManager {
             const monthName = date.toLocaleDateString('en-US', { month: 'short' });
             const year = date.getFullYear();
             
-            sampledDates.push(${monthName} ${year});
+            sampledDates.push(`${monthName} ${year}`);
             sampledPrices.push(price);
         });
 
@@ -446,7 +446,7 @@ class ChartManager {
             const date = new Date(d.Date);
             const year = date.getFullYear();
             const quarter = Math.floor(date.getMonth() / 3) + 1;
-            const quarterKey = Q${quarter} ${year};
+            const quarterKey = `Q${quarter} ${year}`;
             
             if (!quarterlyData[quarterKey]) {
                 quarterlyData[quarterKey] = [];
@@ -525,7 +525,7 @@ class ChartManager {
         }
 
         const chartData = {
-            labels: x.map(v => ₹${Math.round(v/1000)}k),
+            labels: x.map(v => `₹${Math.round(v/1000)}k`),
             datasets: [{
                 label: 'Normal Distribution',
                 data: y,
