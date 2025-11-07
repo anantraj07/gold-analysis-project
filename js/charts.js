@@ -257,41 +257,160 @@ class ChartManager {
         };
     }
 
-    generateGoldPriceData() {
-        const data = [];
-        const startDate = new Date('2023-01-03');
-        const endDate = new Date('2025-10-02');
-        
-        let currentDate = new Date(startDate);
-        let basePrice = 47736;
-        let dayCount = 0;
-        
-        while (currentDate <= endDate) {
-            const dayOfWeek = currentDate.getDay();
-            if (dayOfWeek !== 0 && dayOfWeek !== 6) {
-                const progress = dayCount / 643;
-                const trend = basePrice + (62647 * progress);
-                const seasonal = Math.sin(dayCount / 30) * 4000;
-                const volatility = Math.sin(dayCount / 80) * 3000;
-                const noise = (Math.random() - 0.5) * 2000;
-                
-                let price = trend + seasonal + volatility + noise;
-                price = Math.max(47736, Math.min(110383, price));
-                
-                data.push({
-                    Date: currentDate.toISOString().split('T')[0],
-                    Gold_Price_INR: Math.round(price)
-                });
-                
-                dayCount++;
-                if (dayCount >= 643) break;
-            }
-            currentDate.setDate(currentDate.getDate() + 1);
-        }
-        
-        return data;
+   class ChartManager {
+    constructor() {
+        this.charts = {};
+        this.isMobile = window.innerWidth < 768;
+        this.initializeModal();
     }
 
+    // ... keep all your existing methods ...
+
+    // REPLACE the generateGoldPriceData method with this:
+    getHardcodedGoldData() {
+        const goldPrices = [
+            // January 2023
+            { Date: '2023-01-03', Gold_Price_INR: 50485 },
+            { Date: '2023-01-04', Gold_Price_INR: 50625 },
+            { Date: '2023-01-05', Gold_Price_INR: 50875 },
+            { Date: '2023-01-06', Gold_Price_INR: 51050 },
+            { Date: '2023-01-09', Gold_Price_INR: 51230 },
+            { Date: '2023-01-10', Gold_Price_INR: 50950 },
+            { Date: '2023-01-11', Gold_Price_INR: 50800 },
+            { Date: '2023-01-12', Gold_Price_INR: 50725 },
+            { Date: '2023-01-13', Gold_Price_INR: 50300 },
+            { Date: '2023-01-16', Gold_Price_INR: 50100 },
+            { Date: '2023-01-17', Gold_Price_INR: 50250 },
+            { Date: '2023-01-18', Gold_Price_INR: 50500 },
+            { Date: '2023-01-19', Gold_Price_INR: 50750 },
+            { Date: '2023-01-20', Gold_Price_INR: 50900 },
+            { Date: '2023-01-23', Gold_Price_INR: 51100 },
+            { Date: '2023-01-24', Gold_Price_INR: 51300 },
+            { Date: '2023-01-25', Gold_Price_INR: 51500 },
+            { Date: '2023-01-26', Gold_Price_INR: 51700 },
+            { Date: '2023-01-27', Gold_Price_INR: 51900 },
+            { Date: '2023-01-30', Gold_Price_INR: 52100 },
+            { Date: '2023-01-31', Gold_Price_INR: 52300 },
+
+            // February 2023
+            { Date: '2023-02-01', Gold_Price_INR: 52000 },
+            { Date: '2023-02-02', Gold_Price_INR: 51800 },
+            { Date: '2023-02-03', Gold_Price_INR: 51600 },
+            { Date: '2023-02-06', Gold_Price_INR: 51400 },
+            { Date: '2023-02-07', Gold_Price_INR: 51200 },
+            { Date: '2023-02-08', Gold_Price_INR: 51000 },
+            { Date: '2023-02-09', Gold_Price_INR: 50800 },
+            { Date: '2023-02-10', Gold_Price_INR: 50600 },
+            { Date: '2023-02-13', Gold_Price_INR: 50400 },
+            { Date: '2023-02-14', Gold_Price_INR: 50200 },
+            { Date: '2023-02-15', Gold_Price_INR: 50000 },
+            { Date: '2023-02-16', Gold_Price_INR: 49800 },
+            { Date: '2023-02-17', Gold_Price_INR: 49600 },
+            { Date: '2023-02-20', Gold_Price_INR: 49400 },
+            { Date: '2023-02-21', Gold_Price_INR: 49200 },
+            { Date: '2023-02-22', Gold_Price_INR: 49000 },
+            { Date: '2023-02-23', Gold_Price_INR: 48800 },
+            { Date: '2023-02-24', Gold_Price_INR: 48600 },
+            { Date: '2023-02-27', Gold_Price_INR: 48400 },
+            { Date: '2023-02-28', Gold_Price_INR: 48200 },
+
+            // March 2023 - Bottom
+            { Date: '2023-03-01', Gold_Price_INR: 48000 },
+            { Date: '2023-03-02', Gold_Price_INR: 47800 },
+            { Date: '2023-03-03', Gold_Price_INR: 47736 },
+            { Date: '2023-03-06', Gold_Price_INR: 47850 },
+            { Date: '2023-03-07', Gold_Price_INR: 48000 },
+            { Date: '2023-03-08', Gold_Price_INR: 48200 },
+            { Date: '2023-03-09', Gold_Price_INR: 48400 },
+            { Date: '2023-03-10', Gold_Price_INR: 48600 },
+            { Date: '2023-03-13', Gold_Price_INR: 48800 },
+            { Date: '2023-03-14', Gold_Price_INR: 49000 },
+            { Date: '2023-03-15', Gold_Price_INR: 49200 },
+            { Date: '2023-03-16', Gold_Price_INR: 49400 },
+            { Date: '2023-03-17', Gold_Price_INR: 49600 },
+            { Date: '2023-03-20', Gold_Price_INR: 49800 },
+            { Date: '2023-03-21', Gold_Price_INR: 50000 },
+            { Date: '2023-03-22', Gold_Price_INR: 50200 },
+            { Date: '2023-03-23', Gold_Price_INR: 50400 },
+            { Date: '2023-03-24', Gold_Price_INR: 50600 },
+            { Date: '2023-03-27', Gold_Price_INR: 50800 },
+            { Date: '2023-03-28', Gold_Price_INR: 51000 },
+            { Date: '2023-03-29', Gold_Price_INR: 51200 },
+            { Date: '2023-03-30', Gold_Price_INR: 51400 },
+            { Date: '2023-03-31', Gold_Price_INR: 51600 },
+
+            // Key monthly points for the rest of 2023
+            { Date: '2023-04-15', Gold_Price_INR: 53500 },
+            { Date: '2023-04-30', Gold_Price_INR: 55500 },
+            { Date: '2023-05-15', Gold_Price_INR: 57500 },
+            { Date: '2023-05-31', Gold_Price_INR: 59500 },
+            { Date: '2023-06-15', Gold_Price_INR: 61500 },
+            { Date: '2023-06-30', Gold_Price_INR: 62500 },
+            { Date: '2023-07-15', Gold_Price_INR: 63500 },
+            { Date: '2023-07-31', Gold_Price_INR: 64500 },
+            { Date: '2023-08-15', Gold_Price_INR: 65500 },
+            { Date: '2023-08-31', Gold_Price_INR: 66500 },
+            { Date: '2023-09-15', Gold_Price_INR: 67500 },
+            { Date: '2023-09-30', Gold_Price_INR: 68500 },
+            { Date: '2023-10-15', Gold_Price_INR: 69500 },
+            { Date: '2023-10-31', Gold_Price_INR: 70500 },
+            { Date: '2023-11-15', Gold_Price_INR: 71500 },
+            { Date: '2023-11-30', Gold_Price_INR: 72500 },
+            { Date: '2023-12-15', Gold_Price_INR: 73500 },
+            { Date: '2023-12-29', Gold_Price_INR: 74500 },
+
+            // 2024
+            { Date: '2024-01-15', Gold_Price_INR: 75500 },
+            { Date: '2024-01-31', Gold_Price_INR: 76500 },
+            { Date: '2024-02-15', Gold_Price_INR: 77500 },
+            { Date: '2024-02-29', Gold_Price_INR: 78500 },
+            { Date: '2024-03-15', Gold_Price_INR: 79500 },
+            { Date: '2024-03-29', Gold_Price_INR: 80500 },
+            { Date: '2024-04-15', Gold_Price_INR: 81500 },
+            { Date: '2024-04-30', Gold_Price_INR: 82500 },
+            { Date: '2024-05-15', Gold_Price_INR: 83500 },
+            { Date: '2024-05-31', Gold_Price_INR: 84500 },
+            { Date: '2024-06-15', Gold_Price_INR: 85500 },
+            { Date: '2024-06-28', Gold_Price_INR: 86500 },
+            { Date: '2024-07-15', Gold_Price_INR: 87500 },
+            { Date: '2024-07-31', Gold_Price_INR: 88500 },
+            { Date: '2024-08-15', Gold_Price_INR: 89500 },
+            { Date: '2024-08-30', Gold_Price_INR: 90500 },
+            { Date: '2024-09-15', Gold_Price_INR: 91500 },
+            { Date: '2024-09-30', Gold_Price_INR: 92500 },
+            { Date: '2024-10-15', Gold_Price_INR: 93500 },
+            { Date: '2024-10-31', Gold_Price_INR: 94500 },
+            { Date: '2024-11-15', Gold_Price_INR: 95500 },
+            { Date: '2024-11-29', Gold_Price_INR: 96500 },
+            { Date: '2024-12-15', Gold_Price_INR: 97500 },
+            { Date: '2024-12-31', Gold_Price_INR: 98500 },
+
+            // 2025 - Peak
+            { Date: '2025-01-15', Gold_Price_INR: 99500 },
+            { Date: '2025-01-31', Gold_Price_INR: 100500 },
+            { Date: '2025-02-15', Gold_Price_INR: 101500 },
+            { Date: '2025-02-28', Gold_Price_INR: 102500 },
+            { Date: '2025-03-15', Gold_Price_INR: 103500 },
+            { Date: '2025-03-31', Gold_Price_INR: 104500 },
+            { Date: '2025-04-15', Gold_Price_INR: 105500 },
+            { Date: '2025-04-30', Gold_Price_INR: 106500 },
+            { Date: '2025-05-15', Gold_Price_INR: 107500 },
+            { Date: '2025-05-30', Gold_Price_INR: 108500 },
+            { Date: '2025-06-15', Gold_Price_INR: 109000 },
+            { Date: '2025-06-30', Gold_Price_INR: 109300 },
+            { Date: '2025-07-15', Gold_Price_INR: 109500 },
+            { Date: '2025-07-31', Gold_Price_INR: 109700 },
+            { Date: '2025-08-15', Gold_Price_INR: 109800 },
+            { Date: '2025-08-29', Gold_Price_INR: 109900 },
+            { Date: '2025-09-15', Gold_Price_INR: 110100 },
+            { Date: '2025-09-30', Gold_Price_INR: 110250 },
+            { Date: '2025-10-01', Gold_Price_INR: 110383 },
+            { Date: '2025-10-02', Gold_Price_INR: 110300 }
+        ];
+
+        return goldPrices;
+    }
+   
     createHistogram(canvasId, data) {
         const ctx = document.getElementById(canvasId);
         if (!ctx) return;
@@ -1487,9 +1606,10 @@ window.addEventListener('load', () => {
 });
 
 function initializeAllCharts() {
-    let goldPrices = window.goldPrices || chartManager.generateGoldPriceData();
+    let goldPrices = window.goldPrices || chartManager.getHardcodedGoldData();
     
     console.log('Data points:', goldPrices.length);
+    console.log('Date range:', goldPrices[0].Date, 'to', goldPrices[goldPrices.length-1].Date);
     
     if (document.getElementById('histogramChart')) chartManager.createHistogram('histogramChart', goldPrices);
     if (document.getElementById('trendChart')) chartManager.createTrendChart('trendChart', goldPrices);
@@ -1500,7 +1620,5 @@ function initializeAllCharts() {
     if (document.getElementById('correlationScatterChart')) chartManager.createCorrelationScatterChart('correlationScatterChart');
     if (document.getElementById('correlationChart')) chartManager.createCorrelationChart('correlationChart');
     
-    console.log('Charts initialized');
+    console.log('Charts initialized with hardcoded data');
 }
-
-window.chartManager = chartManager;
